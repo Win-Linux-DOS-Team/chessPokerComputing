@@ -36,7 +36,7 @@ constexpr Point JOKER_POINT = 0;
 constexpr Player INVALID_PLAYER = (Player)(-1);
 
 
-enum class Suit
+enum class Suit : unsigned char
 {
 	Diamond = 0, 
 	Club = 1, 
@@ -47,7 +47,7 @@ enum class Suit
 	Cover = 6
 };
 
-enum class TokenType
+enum class Type : unsigned char
 {
 	Empty = 0b00000000, 
 	
@@ -86,7 +86,7 @@ enum class TokenType
 	Invalid = 0b11111111
 };
 
-enum class Status
+enum class Status : unsigned char
 {
 	Ready = 0, 
 	Initialized = 1, 
@@ -96,7 +96,14 @@ enum class Status
 	Over = 5
 };
 
-enum class LandlordScore
+enum class Comparison : char
+{
+	Smaller = -1, 
+	Equal = 0, 
+	Greater = 1
+};
+
+enum class Score : unsigned char
 {
 	None = 0, 
 	One = 1, 
@@ -104,7 +111,7 @@ enum class LandlordScore
 	Three = 3
 };
 
-enum class Action
+enum class Action : unsigned char
 {
 	None = 0, 
 	Again = 1, 
@@ -117,7 +124,10 @@ struct Card
 {
 	Point point = JOKER_POINT; // JOKER_POINT (0) is for the Jokers, the Cover Card, and the default value. 
 	Suit suit = Suit::Cover;
-
+	
+	Card() : point(JOKER_POINT), suit(Suit::Cover) {}
+	Card(const Point point) : point(0 <= point && point <= 13 ? point : JOKER_POINT), suit(Suit::Cover) {}
+	Card(const Point point, const Suit suit) : point(0 <= point && point <= 13 ? point : JOKER_POINT), suit(((1 <= point && point <= 13 && (suit <= Suit::Spade || Suit::Cover == suit)) || (JOKER_POINT == point && suit >= Suit::Black)) ? suit : Suit::Cover) {}
 	friend bool operator==(const Card& a, const Card& b)
 	{
 		return a.point == b.point && a.suit == b.suit;
@@ -185,26 +195,28 @@ struct Card
 	}
 };
 
-struct Token
+struct Hand
 {
 	Player player = INVALID_PLAYER;
 	vector<Card> cards{};
-	TokenType tokenType = TokenType::Invalid;
+	Type type = Type::Invalid;
 	
 	operator const bool() const
 	{
-		return this->player != INVALID_PLAYER || this->tokenType != TokenType::Invalid;
+		return this->player != INVALID_PLAYER || this->type != Type::Invalid;
 	}
-	friend bool operator==(const Token& a, const Token& b)
+	friend bool operator==(const Hand& a, const Hand& b)
 	{
-		return a.player == b.player && a.cards == b.cards && a.tokenType == b.tokenType;
+		return a.player == b.player && a.cards == b.cards && a.type == b.type;
 	}
 };
 
-struct PossibleToken
+struct Candidate
 {
-	Token token{};
+	Hand hand{};
 	string description{};
+	
+	Candidate(const Hand& t, const string& s) : hand(t), description(s) {}
 };
 
 
@@ -252,9 +264,9 @@ protected:
 	Values values{};
 	vector<vector<Card>> players{};
 	vector<Card> deck{};
-	vector<vector<Token>> records{};
+	vector<vector<Hand>> records{};
 	Player currentPlayer = INVALID_PLAYER, dealer = INVALID_PLAYER;
-	Token lastToken{};
+	Hand lastHand{};
 	vector<Amount> amounts{};
 	Status status = Status::Ready;
 	
@@ -290,11 +302,12 @@ protected:
 		this->add54CardsToDeck(this->deck);
 		return;
 	}
-	virtual const bool sortCards(vector<Card>& cards, Sorting sorting) const final // Using ``Sorting& sorting`` is not good. 
+	virtual const bool sortCards(vector<Card>& cards, const Sorting _sorting) const final
 	{
+		Sorting sorting = _sorting;
 		bool pointFlag = false, valueFlag = false, suitFlag = false, pointCountFlag = false, unionCountFlag = false, valueCountFlag = false, suitCountFlag = false;
 		vector<function<const int(const Card, const Card)>> lambdas{};
-		Count pointCounts[14] = { 0 }, unionCounts[14][4] = {0}, valueCounts[15] = {0}, suitCounts[7] = {0};
+		Count pointCounts[14] = { 0 }, unionCounts[14][4] = { 0 }, valueCounts[15] = { 0 }, suitCounts[7] = { 0 };
 		while (sorting)
 		{
 			switch (sorting & 0b1111)
@@ -458,14 +471,14 @@ protected:
 	{
 		if (Status::Dealt == this->status && this->records.empty())
 		{
-			this->records.push_back(vector<Token>{});
+			this->records.push_back(vector<Hand>{});
 			const size_t playerCount = this->players.size();
 			for (Player player = 0; player < playerCount; ++player)
-				this->records[0].push_back(Token{ player, vector<Card>{ this->players[player].back() } });
-			sort(this->records[0].begin(), this->records[0].end(), [this](Token a, Token b) { return this->values[a.cards.back().point] > this->values[b.cards.back().point] || (this->values[a.cards.back().point] == this->values[b.cards.back().point] && a.cards.back().suit > b.cards.back().suit); });
+				this->records[0].push_back(Hand{ player, vector<Card>{ this->players[player].back() } });
+			sort(this->records[0].begin(), this->records[0].end(), [this](Hand a, Hand b) { return this->values[a.cards.back().point] > this->values[b.cards.back().point] || (this->values[a.cards.back().point] == this->values[b.cards.back().point] && a.cards.back().suit > b.cards.back().suit); });
 			this->currentPlayer = this->records[0].back().player;
 			this->dealer = this->records[0].back().player;
-			this->lastToken = Token{};
+			this->lastHand = Hand{};
 			this->amounts.clear();
 			this->status = Status::Assigned;
 			return true;
@@ -759,7 +772,7 @@ protected:
 			const size_t indexToLastPoint = cardCount - repeatedCount;
 			if (JOKER_POINT == sortedCards[indexToLastPoint].point)
 				return false;
-			else if (static_cast<size_t>(repeatedCount) * 13 != cardCount) // Straights from the largest to the smallest
+			else if (static_cast<size_t>(repeatedCount) * 13 == cardCount) // Straights from the largest to the smallest
 			{
 				if (applySorting)
 				{
@@ -853,7 +866,7 @@ protected:
 		else
 			return 0;
 	}
-	virtual const bool processToken(Token& token, vector<PossibleToken>& possibleTokens) const = 0;
+	virtual const bool processHand(Hand& hand, vector<Candidate>& candidates) const = 0;
 	virtual const bool removeCards(const vector<Card>& smallerCards, vector<Card>& largerCards) const final // The vector ``largerCards`` must have been sorted according to the default sorting method. 
 	{
 		vector<Card> sortedCards(smallerCards);
@@ -883,7 +896,7 @@ protected:
 		else
 			return true;
 	}
-	virtual const bool processBasis(const Token& token) { UNREFERENCED_PARAMETER(token); return false; }
+	virtual const bool processBasis(const Hand& hand) { UNREFERENCED_PARAMETER(hand); return false; }
 	virtual const bool isOver() const
 	{
 		if (this->status >= Status::Started)
@@ -894,10 +907,10 @@ protected:
 	}
 	virtual const bool computeAmounts(const unsigned char multiplication1Opening7, const unsigned int basis12Calling4Robbing4Real4Empty4Spring4) { UNREFERENCED_PARAMETER(multiplication1Opening7); UNREFERENCED_PARAMETER(basis12Calling4Robbing4Real4Empty4Spring4); return false; }
 	virtual const bool computeAmounts() = 0;
-	virtual const bool isAbsolutelyLargest(const Token& token) const = 0;
+	virtual const bool isAbsolutelyLargest(const Hand& hand) const = 0;
 	
 	/* PokerGame::play */
-	virtual const bool coverLastToken(const Token& currentToken) const = 0;
+	virtual const bool coverLastHand(const Hand& currentHand) const = 0;
 	
 	/* PokerGame::display */
 	virtual const string getBasisString() const { return ""; }
@@ -999,9 +1012,9 @@ protected:
 					else
 					{
 						cout << this->cards2string(this->records[round][0].cards, "", "+", "", "要不起") << "（玩家 " << (this->records[round][0].player + 1) << "）";
-						const size_t tokenCount = this->records[round].size();
-						for (size_t tokenID = 1; tokenID < tokenCount; ++tokenID)
-							cout << " -> " << this->cards2string(this->records[round][tokenID].cards, "", "+", "", "要不起") << "（玩家 " << (this->records[round][tokenID].player + 1) << "）";
+						const size_t handCount = this->records[round].size();
+						for (size_t handID = 1; handID < handCount; ++handID)
+							cout << " -> " << this->cards2string(this->records[round][handID].cards, "", "+", "", "要不起") << "（玩家 " << (this->records[round][handID].player + 1) << "）";
 						cout << endl;
 					}
 				}
@@ -1030,9 +1043,9 @@ public:
 	{
 		
 	}
-	virtual const bool initialize() = 0; // values, players (= vector<vector<Card>>(n)), deck (clear), records (clear), currentPlayer (reset), dealer (reset), lastToken (reset), amounts (clear), and status = Status::Initialized
-	virtual const bool initialize(const size_t playerCount) = 0; // values, players (= vector<vector<Card>>(n)), deck (clear), records (clear), currentPlayer (reset), dealer (reset), lastToken (reset), amounts (clear), and status = Status::Initialized
-	virtual const bool deal() = 0; // players, deck, records (clear) -> records[0], currentPlayer, dealer, lastToken (reset), amounts (clear) | amounts = vector<Amount>{ 0 }, and status = Status::Dealt | Status::Assigned
+	virtual const bool initialize() = 0; // values, players (= vector<vector<Card>>(n)), deck (clear), records (clear), currentPlayer (reset), dealer (reset), lastHand (reset), amounts (clear), and status = Status::Initialized
+	virtual const bool initialize(const size_t playerCount) = 0; // values, players (= vector<vector<Card>>(n)), deck (clear), records (clear), currentPlayer (reset), dealer (reset), lastHand (reset), amounts (clear), and status = Status::Initialized
+	virtual const bool deal() = 0; // players, deck, records (clear) -> records[0], currentPlayer, dealer, lastHand (reset), amounts (clear) | amounts = vector<Amount>{ 0 }, and status = Status::Dealt | Status::Assigned
 	virtual const bool getCurrentPlayer(Player& player) const final // const
 	{
 		if ((Status::Dealt <= this->status && this->status <= Status::Started && 0 <= this->currentPlayer && this->currentPlayer < this->players.size()) || Status::Over == this->status)
@@ -1043,29 +1056,29 @@ public:
 		else
 			return false;
 	}
-	virtual const bool setLandlord(const bool b) { UNREFERENCED_PARAMETER(b); return false; } // records[0], currentPlayer, dealer (const) -> dealer, lastToken -> lastToken (reset), amounts[0], and status (const) -> status = Status::Assigned
-	virtual const bool setLandlord(const LandlordScore landlordScore) { UNREFERENCED_PARAMETER(landlordScore); return false; } // records[0], currentPlayer, dealer (const) -> dealer, lastToken -> lastToken (reset), amounts[0], and status (const) -> status = Status::Assigned
-	virtual const bool start(const vector<Card>& cards, vector<PossibleToken>& possibleTokens) final // records[1], currentPlayer, lastToken, amounts (const) | amounts[0] | amounts(this->players.size()), and status = Status::Started | Status::Over
+	virtual const bool setLandlord(const bool b) { UNREFERENCED_PARAMETER(b); return false; } // records[0], currentPlayer, dealer (const) -> dealer, lastHand -> lastHand (reset), amounts[0], and status (const) -> status = Status::Assigned
+	virtual const bool setLandlord(const Score score) { UNREFERENCED_PARAMETER(score); return false; } // records[0], currentPlayer, dealer (const) -> dealer, lastHand -> lastHand (reset), amounts[0], and status (const) -> status = Status::Assigned
+	virtual const bool start(const vector<Card>& cards, vector<Candidate>& candidates) final // records[1], currentPlayer, lastHand, amounts (const) | amounts[0] | amounts(this->players.size()), and status = Status::Started | Status::Over
 	{
 		if (Status::Assigned == this->status && this->records.size() == 1 && !this->records[0].empty() && 0 <= this->currentPlayer && this->currentPlayer < this->players.size() && this->checkStarting(cards))
 		{
-			Token token{ this->currentPlayer, cards };
-			if (this->processToken(token, possibleTokens) && this->removeCards(cards, this->players[this->currentPlayer]))
+			Hand hand{ this->currentPlayer, cards };
+			if (this->processHand(hand, candidates) && this->removeCards(cards, this->players[this->currentPlayer]))
 			{
-				this->records.push_back(vector<Token>{ token });
-				this->processBasis(token);
+				this->records.push_back(vector<Hand>{ hand });
+				this->processBasis(hand);
 				if (this->isOver())
 				{
 					this->currentPlayer = INVALID_PLAYER;
-					this->lastToken = Token{};
+					this->lastHand = Hand{};
 					this->status = Status::Over;
 					this->computeAmounts();
 				}
 				else
 				{
-					if (!this->isAbsolutelyLargest(token))
+					if (!this->isAbsolutelyLargest(hand))
 						this->nextPlayer();
-					this->lastToken = this->records[1][0];
+					this->lastHand = this->records[1][0];
 					this->status = Status::Started;
 				}
 				return true;
@@ -1077,72 +1090,72 @@ public:
 			return false;
 
 	}
-	virtual const bool start(const string& description, vector<PossibleToken>& possibleTokens) final // records[1], currentPlayer, lastToken, amounts (const) | amounts[0] | amounts(this->players.size()), and status = Status::Started | Status::Over
+	virtual const bool start(const string& description, vector<Candidate>& candidates) final // records[1], currentPlayer, lastHand, amounts (const) | amounts[0] | amounts(this->players.size()), and status = Status::Started | Status::Over
 	{
 		if (Status::Assigned == this->status && this->records.size() == 1 && !this->records[0].empty())
 		{
 			vector<Card> cards{};
-			return this->description2cards(description, cards) && this->start(cards, possibleTokens);
+			return this->description2cards(description, cards) && this->start(cards, candidates);
 		}
 		else
 			return false;
 	}
-	virtual const bool play(const vector<Card>& cards, vector<PossibleToken>& possibleTokens) final // records, currentPlayer, lastToken, amounts (const) | amounts[0] | amounts(this->players.size()), and status (const) -> status = Status::Over
+	virtual const bool play(const vector<Card>& cards, vector<Candidate>& candidates) final // records, currentPlayer, lastHand, amounts (const) | amounts[0] | amounts(this->players.size()), and status (const) -> status = Status::Over
 	{
-		if (Status::Started == this->status && this->records.size() >= 2 && !this->records.back().empty() && 0 <= this->currentPlayer && this->currentPlayer < this->players.size() && this->lastToken)
+		if (Status::Started == this->status && this->records.size() >= 2 && !this->records.back().empty() && 0 <= this->currentPlayer && this->currentPlayer < this->players.size() && this->lastHand)
 		{
-			Token token{ this->currentPlayer, cards };
-			if (this->processToken(token, possibleTokens))
-				if (token.player == this->lastToken.player)
-					if (TokenType::Empty != token.tokenType && this->removeCards(cards, this->players[this->currentPlayer]))
-						if (this->coverLastToken(token))
-							this->records.back().push_back(token);
+			Hand hand{ this->currentPlayer, cards };
+			if (this->processHand(hand, candidates))
+				if (hand.player == this->lastHand.player)
+					if (Type::Empty != hand.type && this->removeCards(cards, this->players[this->currentPlayer]))
+						if (this->coverLastHand(hand))
+							this->records.back().push_back(hand);
 						else
-							this->records.push_back(vector<Token>{ token });
+							this->records.push_back(vector<Hand>{ hand });
 					else
 						return false;
-				else if (TokenType::Empty == token.tokenType)
+				else if (Type::Empty == hand.type)
 				{
-					this->records.back().push_back(token);
+					this->records.back().push_back(hand);
 					this->nextPlayer();
 					return true;
 				}
-				else if (this->coverLastToken(token) && this->removeCards(token.cards, this->players[this->currentPlayer]))
-					this->records.back().push_back(token);
+				else if (this->coverLastHand(hand) && this->removeCards(hand.cards, this->players[this->currentPlayer]))
+					this->records.back().push_back(hand);
 				else
 					return false;
 			else
 				return false;
-			this->processBasis(token);
+			this->processBasis(hand);
 			if (this->isOver())
 			{
 				this->currentPlayer = INVALID_PLAYER;
-				this->lastToken = Token{};
+				this->lastHand = Hand{};
 				this->status = Status::Over;
 				this->computeAmounts();
 			}
 			else
 			{
-				if (!this->isAbsolutelyLargest(token))
+				if (!this->isAbsolutelyLargest(hand))
 					this->nextPlayer();
-				this->lastToken = this->records.back().back();
+				this->lastHand = this->records.back().back();
 			}
 			return true;
 		}
 		else
 			return false;
 	}
-	virtual const bool play(const string& description, vector<PossibleToken>& possibleTokens) final // records, currentPlayer, lastToken, amounts (const) | amounts[0] | amounts(this->players.size()), and status (const) -> status = Status::Over
+	virtual const bool play(const string& description, vector<Candidate>& candidates) final // records, currentPlayer, lastHand, amounts (const) | amounts[0] | amounts(this->players.size()), and status (const) -> status = Status::Over
 	{
 		if (Status::Started == this->status && this->records.size() >= 2 && !this->records.back().empty())
 		{
 			vector<Card> cards{};
-			return this->description2cards(description, cards) && this->play(cards, possibleTokens);
+			return this->description2cards(description, cards) && this->play(cards, candidates);
 		}
 		else
 			return false;
 	}
-	virtual const bool set(const vector<char>& binaryChars) final // values, players, deck, records, currentPlayer, dealer, lastToken, amounts, and status
+	virtual const bool set(const vector<char>& binaryChars) final // values, players, deck, records, currentPlayer, dealer, lastHand, amounts, and status
 	{
 		const size_t length = binaryChars.size(), playerCount = this->players.size();
 		char keyChar = 0;
@@ -1193,22 +1206,22 @@ public:
 			case 'l':
 				if (valueBuffer.size() >= 1)
 				{
-					LandlordScore landlordScore = LandlordScore::None;
+					Score score = Score::None;
 					switch (valueBuffer[0])
 					{
 					case '1':
-						landlordScore = LandlordScore::One;
+						score = Score::One;
 						break;
 					case '2':
-						landlordScore = LandlordScore::Two;
+						score = Score::Two;
 						break;
 					case '3':
-						landlordScore = LandlordScore::Three;
+						score = Score::Three;
 						break;
 					default:
 						break;
 					}
-					if (this->setLandlord(landlordScore))
+					if (this->setLandlord(score))
 						break;
 					else
 						return false;
@@ -1218,8 +1231,8 @@ public:
 			case 'S':
 			case 's':
 			{
-				vector<PossibleToken> possibleTokens{};
-				if (this->start(cards, possibleTokens))
+				vector<Candidate> candidates{};
+				if (this->start(cards, candidates))
 					break;
 				else
 					return false;
@@ -1227,8 +1240,8 @@ public:
 			case 'P':
 			case 'p':
 			{
-				vector<PossibleToken> possibleTokens{};
-				if (this->play(cards, possibleTokens))
+				vector<Candidate> candidates{};
+				if (this->play(cards, candidates))
 					break;
 				else
 					return false;
@@ -1256,11 +1269,11 @@ private:
 	{
 		if (Status::Dealt == this->status && this->records.empty())
 		{
-			this->records.push_back(vector<Token>{});
+			this->records.push_back(vector<Hand>{});
 			uniform_int_distribution<size_t> distribution(0, this->players.size() - 1);
 			this->currentPlayer = (Player)(distribution(this->seed));
 			this->dealer = INVALID_PLAYER;
-			this->lastToken = Token{};
+			this->lastHand = Hand{};
 			this->amounts = vector<Amount>{ 0b0 };
 			return true;
 		}
@@ -1271,12 +1284,12 @@ private:
 	{
 		return !cards.empty();
 	}
-	const bool processBasis(const Token& token) override final
+	const bool processBasis(const Hand& hand) override final
 	{
 		if (Status::Assigned <= this->status && this->status <= Status::Started && !this->records.empty() && !this->records.back().empty() && this->amounts.size() == 1)
 		{
-			if (TokenType::Quadruple == token.tokenType || TokenType::PairJokers == token.tokenType)
-				this->amounts[0] += token.player == this->lastToken.player ? 0b1 : 0b10000;
+			if (Type::Quadruple == hand.type || Type::PairJokers == hand.type)
+				this->amounts[0] += hand.player == this->lastHand.player ? 0b1 : 0b10000;
 			return true;
 		}
 		else
@@ -1380,9 +1393,9 @@ private:
 	{
 		return this->computeAmounts(0b10000000, 0b00000000101011001100110011001100);
 	}
-	const bool isAbsolutelyLargest(const Token& token) const override final
+	const bool isAbsolutelyLargest(const Hand& hand) const override final
 	{
-		return TokenType::PairJokers == token.tokenType;
+		return Type::PairJokers == hand.type;
 	}
 	const string getBasisString() const
 	{
@@ -1439,12 +1452,13 @@ private:
 	}
 	
 protected:
-	const bool processToken(Token& token, vector<PossibleToken>& possibleTokens) const override
+	const bool processHand(Hand& hand, vector<Candidate>& candidates) const override
 	{
-		possibleTokens.clear();
+		hand.type = Type::Invalid;
+		candidates.clear();
 		bool littleJoker = false, bigJoker = false;
 		vector<Count> counts(14);
-		for (const Card& card : token.cards)
+		for (const Card& card : hand.cards)
 			if (JOKER_POINT == card.point)
 				switch (card.suit)
 				{
@@ -1465,24 +1479,24 @@ protected:
 				++counts[card.point];
 			else
 				return false;
-		sort(token.cards.begin(), token.cards.end(), [&counts, this](const Card a, const Card b) { const Count countA = counts[a.point], countB = counts[b.point]; const Value valueA = this->values[a.point], valueB = this->values[b.point]; return countA > countB || (countA == countB && valueA > valueB) || (countA == countB && valueA == valueB && a.suit > b.suit); });
-		if (adjacent_find(token.cards.begin(), token.cards.end()) != token.cards.end())
+		sort(hand.cards.begin(), hand.cards.end(), [&counts, this](const Card a, const Card b) { const Count countA = counts[a.point], countB = counts[b.point]; const Value valueA = this->values[a.point], valueB = this->values[b.point]; return countA > countB || (countA == countB && valueA > valueB) || (countA == countB && valueA == valueB && a.suit > b.suit); });
+		if (adjacent_find(hand.cards.begin(), hand.cards.end()) != hand.cards.end())
 			return false;
 		sort(counts.begin(), counts.end(), [](const Count a, const Count b) { return a > b; });
 		if (counts[0] > 4)
 			return false;
-		switch (token.cards.size())
+		switch (hand.cards.size())
 		{
 		case 0:
-			token.tokenType = TokenType::Empty; // 要不起
+			hand.type = Type::Empty; // 要不起
 			return true;
 		case 1:
-			token.tokenType = TokenType::Single; // 单牌
+			hand.type = Type::Single; // 单牌
 			return true;
 		case 2:
 			if (2 == counts[0])
 			{
-				token.tokenType = JOKER_POINT == token.cards[0].point ? TokenType::PairJokers : TokenType::Pair; // 王炸/火箭 | 对子
+				hand.type = JOKER_POINT == hand.cards[0].point ? Type::PairJokers : Type::Pair; // 王炸/火箭 | 对子
 				return true;
 			}
 			else
@@ -1490,7 +1504,7 @@ protected:
 		case 3:
 			if (3 == counts[0])
 			{
-				token.tokenType = TokenType::Triple; // 三条
+				hand.type = Type::Triple; // 三条
 				return true;
 			}
 			else
@@ -1499,10 +1513,10 @@ protected:
 			switch (counts[0])
 			{
 			case 4:
-				token.tokenType = TokenType::Quadruple; // 炸弹
+				hand.type = Type::Quadruple; // 炸弹
 				return true;
 			case 3: // if (1 == counts[1])
-				token.tokenType = TokenType::TripleWithSingle; // 三带一
+				hand.type = Type::TripleWithSingle; // 三带一
 				return true;
 			default:
 				return false;
@@ -1511,17 +1525,17 @@ protected:
 			switch (counts[0])
 			{
 			case 3: // if (2 == counts[1])
-				if (JOKER_POINT == token.cards[3].point) // 双王不是对子/被带的牌不能含有王炸
+				if (JOKER_POINT == hand.cards[3].point) // 双王不是对子/被带的牌不能含有王炸
 					return false;
 				else
 				{
-					token.tokenType = TokenType::TripleWithPair; // 三带一对
+					hand.type = Type::TripleWithPair; // 三带一对
 					return true;
 				}
 			case 1: // && 1 == counts[1] && 1 == counts[2] && 1 == counts[3] && 1 == counts[4]
-				if (this->values[token.cards[0].point] <= 12 && this->values[token.cards[4].point] + 4 == this->values[token.cards[0].point])
+				if (this->values[hand.cards[0].point] <= 12 && this->values[hand.cards[4].point] + 4 == this->values[hand.cards[0].point])
 				{
-					token.tokenType = TokenType::SingleStraight; // 顺子
+					hand.type = Type::SingleStraight; // 顺子
 					return true;
 				}
 				else
@@ -1531,25 +1545,25 @@ protected:
 			switch (counts[0])
 			{
 			case 4:
-				if (1 == counts[1] || JOKER_POINT != token.cards[4].point) // (&& 1 == counts[2] || (&& 2 == counts[2] | 被带的牌不能含有王炸))
+				if (1 == counts[1] || JOKER_POINT != hand.cards[4].point) // (&& 1 == counts[2] || (&& 2 == counts[2] | 被带的牌不能含有王炸))
 				{
-					token.tokenType = TokenType::QuadrupleWithSingleSingle; // 四带二单
+					hand.type = Type::QuadrupleWithSingleSingle; // 四带二单
 					return true;
 				}
 				else
 					return false;
 			case 2:
-				if (2 == counts[1] && 2 == counts[2] && this->values[token.cards[0].point] <= 12 && this->values[token.cards[4].point] + 2 == this->values[token.cards[0].point])
+				if (2 == counts[1] && 2 == counts[2] && this->values[hand.cards[0].point] <= 12 && this->values[hand.cards[4].point] + 2 == this->values[hand.cards[0].point])
 				{
-					token.tokenType = TokenType::PairStraight; // 连对
+					hand.type = Type::PairStraight; // 连对
 					return true;
 				}
 				else
 					return false;
 			case 1: // && 1 == counts[1] && ... && 1 == counts[5]
-				if (this->values[token.cards[0].point] <= 12 && this->values[token.cards[5].point] + 5 == this->values[token.cards[0].point])
+				if (this->values[hand.cards[0].point] <= 12 && this->values[hand.cards[5].point] + 5 == this->values[hand.cards[0].point])
 				{
-					token.tokenType = TokenType::SingleStraight; // 顺子
+					hand.type = Type::SingleStraight; // 顺子
 					return true;
 				}
 				else
@@ -1558,9 +1572,9 @@ protected:
 				return false;
 			}
 		case 7:
-			if (1 == counts[0] && this->values[token.cards[0].point] <= 12 && this->values[token.cards[6].point] + 6 == this->values[token.cards[0].point]) // && 1 == counts[1] && ... && 1 == counts[6]
+			if (1 == counts[0] && this->values[hand.cards[0].point] <= 12 && this->values[hand.cards[6].point] + 6 == this->values[hand.cards[0].point]) // && 1 == counts[1] && ... && 1 == counts[6]
 			{
-				token.tokenType = TokenType::SingleStraight; // 顺子
+				hand.type = Type::SingleStraight; // 顺子
 				return true;
 			}
 			else
@@ -1569,33 +1583,33 @@ protected:
 			switch (counts[0])
 			{
 			case 4:
-				if (2 == counts[1] && 2 == counts[2] && JOKER_POINT != token.cards[4].point) //  && JOKER_POINT != token.cards[6].point | 双王不是对子/被带的牌不能含有王炸
+				if (2 == counts[1] && 2 == counts[2] && JOKER_POINT != hand.cards[4].point) //  && JOKER_POINT != hand.cards[6].point | 双王不是对子/被带的牌不能含有王炸
 				{
-					token.tokenType = TokenType::QuadrupleWithPairPair; // 四带二对
+					hand.type = Type::QuadrupleWithPairPair; // 四带二对
 					return true;
 				}
 				else
 					return false;
 			case 3:
-				if (3 == counts[1] && this->values[token.cards[0].point] <= 12 && this->values[token.cards[3].point] + 1 == this->values[token.cards[0].point] && (1 == counts[2] || JOKER_POINT != token.cards[6].point)) // 被带的牌不能含有王炸 || 1 == counts[3]
+				if (3 == counts[1] && this->values[hand.cards[0].point] <= 12 && this->values[hand.cards[3].point] + 1 == this->values[hand.cards[0].point] && (1 == counts[2] || JOKER_POINT != hand.cards[6].point)) // 被带的牌不能含有王炸 || 1 == counts[3]
 				{
-					token.tokenType = TokenType::TripleStraightWithSingles; // 飞机带小翼
+					hand.type = Type::TripleStraightWithSingles; // 飞机带小翼
 					return true;
 				}
 				else
 					return false;
 			case 2:
-				if (2 == counts[1] && 2 == counts[2] && 2 == counts[3] && this->values[token.cards[0].point] <= 12 && this->values[token.cards[6].point] + 3 == this->values[token.cards[0].point])
+				if (2 == counts[1] && 2 == counts[2] && 2 == counts[3] && this->values[hand.cards[0].point] <= 12 && this->values[hand.cards[6].point] + 3 == this->values[hand.cards[0].point])
 				{
-					token.tokenType = TokenType::PairStraight; // 连对
+					hand.type = Type::PairStraight; // 连对
 					return true;
 				}
 				else
 					return false;
 			case 1: // && 1 == counts[1] && ... && 1 == counts[7]
-				if (this->values[token.cards[0].point] <= 12 && this->values[token.cards[7].point] + 7 == this->values[token.cards[0].point])
+				if (this->values[hand.cards[0].point] <= 12 && this->values[hand.cards[7].point] + 7 == this->values[hand.cards[0].point])
 				{
-					token.tokenType = TokenType::SingleStraight; // 顺子
+					hand.type = Type::SingleStraight; // 顺子
 					return true;
 				}
 				else
@@ -1607,17 +1621,17 @@ protected:
 			switch (counts[0])
 			{
 			case 3:
-				if (3 == counts[1] && 3 == counts[2] && this->values[token.cards[0].point] <= 12 && this->values[token.cards[6].point] + 2 == this->values[token.cards[0].point])
+				if (3 == counts[1] && 3 == counts[2] && this->values[hand.cards[0].point] <= 12 && this->values[hand.cards[6].point] + 2 == this->values[hand.cards[0].point])
 				{
-					token.tokenType = TokenType::TripleStraight; // 飞机（不带翅膀）
+					hand.type = Type::TripleStraight; // 飞机（不带翅膀）
 					return true;
 				}
 				else
 					return false;
 			case 1: // && 1 == counts[1] && ... && 1 == counts[8]
-				if (this->values[token.cards[0].point] <= 12 && this->values[token.cards[8].point] + 8 == this->values[token.cards[0].point])
+				if (this->values[hand.cards[0].point] <= 12 && this->values[hand.cards[8].point] + 8 == this->values[hand.cards[0].point])
 				{
-					token.tokenType = TokenType::SingleStraight; // 顺子
+					hand.type = Type::SingleStraight; // 顺子
 					return true;
 				}
 				else
@@ -1629,25 +1643,25 @@ protected:
 			switch (counts[0])
 			{
 			case 3:
-				if (3 == counts[1] && 2 == counts[2] && 2 == counts[3] && this->values[token.cards[0].point] <= 12 && this->values[token.cards[3].point] + 1 == this->values[token.cards[0].point] && JOKER_POINT != token.cards[6].point) // && JOKER_POINT != token.cards[8].point | 双王不是对子/被带的牌不能含有王炸
+				if (3 == counts[1] && 2 == counts[2] && 2 == counts[3] && this->values[hand.cards[0].point] <= 12 && this->values[hand.cards[3].point] + 1 == this->values[hand.cards[0].point] && JOKER_POINT != hand.cards[6].point) // && JOKER_POINT != hand.cards[8].point | 双王不是对子/被带的牌不能含有王炸
 				{
-					token.tokenType = TokenType::TripleStraightWithPairs; // 飞机带大翼
+					hand.type = Type::TripleStraightWithPairs; // 飞机带大翼
 					return true;
 				}
 				else
 					return false;
 			case 2:
-				if (2 == counts[1] && 2 == counts[2] && 2 == counts[3] && 2 == counts[4] && this->values[token.cards[0].point] <= 12 && this->values[token.cards[8].point] + 4 == this->values[token.cards[0].point])
+				if (2 == counts[1] && 2 == counts[2] && 2 == counts[3] && 2 == counts[4] && this->values[hand.cards[0].point] <= 12 && this->values[hand.cards[8].point] + 4 == this->values[hand.cards[0].point])
 				{
-					token.tokenType = TokenType::PairStraight; // 连对
+					hand.type = Type::PairStraight; // 连对
 					return true;
 				}
 				else
 					return false;
 			case 1: // && 1 == counts[1] && ... && 1 == counts[9]
-				if (this->values[token.cards[0].point] <= 12 && this->values[token.cards[9].point] + 9 == this->values[token.cards[0].point])
+				if (this->values[hand.cards[0].point] <= 12 && this->values[hand.cards[9].point] + 9 == this->values[hand.cards[0].point])
 				{
-					token.tokenType = TokenType::SingleStraight; // 顺子
+					hand.type = Type::SingleStraight; // 顺子
 					return true;
 				}
 				else
@@ -1656,9 +1670,9 @@ protected:
 				return false;
 			}
 		case 11:
-			if (1 == counts[0] && this->values[token.cards[0].point] <= 12 && this->values[token.cards[10].point] + 10 == this->values[token.cards[0].point]) // && 1 == counts[1] && ... && 1 == counts[10]
+			if (1 == counts[0] && this->values[hand.cards[0].point] <= 12 && this->values[hand.cards[10].point] + 10 == this->values[hand.cards[0].point]) // && 1 == counts[1] && ... && 1 == counts[10]
 			{
-				token.tokenType = TokenType::SingleStraight; // 顺子
+				hand.type = Type::SingleStraight; // 顺子
 				return true;
 			}
 			else
@@ -1671,39 +1685,39 @@ protected:
 					switch (counts[3])
 					{
 					case 3:
-						if (this->values[token.cards[0].point] <= 12)
-							if (this->values[token.cards[9].point] + 3 == this->values[token.cards[0].point])
+						if (this->values[hand.cards[0].point] <= 12)
+							if (this->values[hand.cards[9].point] + 3 == this->values[hand.cards[0].point])
 							{
-								token.tokenType = TokenType::TripleStraight; // 飞机（不带翅膀）
+								hand.type = Type::TripleStraight; // 飞机（不带翅膀）
 								return true;
 							}
-							else if (this->values[token.cards[6].point] + 2 == this->values[token.cards[0].point])
+							else if (this->values[hand.cards[6].point] + 2 == this->values[hand.cards[0].point])
 							{
-								token.tokenType = TokenType::TripleStraightWithSingles; // 飞机带小翼
+								hand.type = Type::TripleStraightWithSingles; // 飞机带小翼
 								return true;
 							}
-						if (this->values[token.cards[9].point] + 2 == this->values[token.cards[3].point])
+						if (this->values[hand.cards[9].point] + 2 == this->values[hand.cards[3].point])
 						{
-							rotate(token.cards.begin(), token.cards.begin() + 3, token.cards.end()); // e.g., 222999888777 -> 999888777 + 222
-							token.tokenType = TokenType::TripleStraightWithSingles; // 飞机带小翼
+							rotate(hand.cards.begin(), hand.cards.begin() + 3, hand.cards.end()); // e.g., 222999888777 -> 999888777 + 222
+							hand.type = Type::TripleStraightWithSingles; // 飞机带小翼
 							return true;
 						}
 						else
 							return false;
 					case 2: // && 1 == counts[4]
-						if (this->values[token.cards[0].point] <= 12 && this->values[token.cards[6].point] + 2 == this->values[token.cards[0].point] && JOKER_POINT != token.cards[9].point) // 被带的牌不能含有王炸
+						if (this->values[hand.cards[0].point] <= 12 && this->values[hand.cards[6].point] + 2 == this->values[hand.cards[0].point] && JOKER_POINT != hand.cards[9].point) // 被带的牌不能含有王炸
 						{
-							if (this->values[token.cards[9].point] < this->values[token.cards[11].point])
-								rotate(token.cards.begin() + 9, token.cards.begin() + 11, token.cards.end()); // e.g., 999888777335 -> 999888777 + 533
-							token.tokenType = TokenType::TripleStraightWithSingles; // 飞机带小翼
+							if (this->values[hand.cards[9].point] < this->values[hand.cards[11].point])
+								rotate(hand.cards.begin() + 9, hand.cards.begin() + 11, hand.cards.end()); // e.g., 999888777335 -> 999888777 + 533
+							hand.type = Type::TripleStraightWithSingles; // 飞机带小翼
 							return true;
 						}
 						else
 							return false;
 					case 1: // && 1 == counts[4] && 1 == counts[5]
-						if (this->values[token.cards[0].point] <= 12 && this->values[token.cards[6].point] + 2 == this->values[token.cards[0].point])
+						if (this->values[hand.cards[0].point] <= 12 && this->values[hand.cards[6].point] + 2 == this->values[hand.cards[0].point])
 						{
-							token.tokenType = TokenType::TripleStraightWithSingles; // 飞机带小翼
+							hand.type = Type::TripleStraightWithSingles; // 飞机带小翼
 							return true;
 						}
 						else
@@ -1714,17 +1728,17 @@ protected:
 				else
 					return false;
 			case 2:
-				if (2 == counts[1] && 2 == counts[2] && 2 == counts[3] && 2 == counts[4] && 2 == counts[5] && this->values[token.cards[0].point] <= 12 && this->values[token.cards[10].point] + 5 == this->values[token.cards[0].point])
+				if (2 == counts[1] && 2 == counts[2] && 2 == counts[3] && 2 == counts[4] && 2 == counts[5] && this->values[hand.cards[0].point] <= 12 && this->values[hand.cards[10].point] + 5 == this->values[hand.cards[0].point])
 				{
-					token.tokenType = TokenType::PairStraight; // 连对
+					hand.type = Type::PairStraight; // 连对
 					return true;
 				}
 				else
 					return false;
 			case 1: // && 1 == counts[1] && ... && 1 == counts[11]
-				if (this->values[token.cards[0].point] <= 12 && this->values[token.cards[11].point] + 11 == this->values[token.cards[0].point])
+				if (this->values[hand.cards[0].point] <= 12 && this->values[hand.cards[11].point] + 11 == this->values[hand.cards[0].point])
 				{
-					token.tokenType = TokenType::SingleStraight; // 顺子
+					hand.type = Type::SingleStraight; // 顺子
 					return true;
 				}
 				else
@@ -1733,9 +1747,9 @@ protected:
 				return false;
 			}
 		case 14:
-			if (2 == counts[0] && 2 == counts[1] && 2 == counts[2] && 2 == counts[3] && 2 == counts[4] && 2 == counts[5] && 2 == counts[6] && this->values[token.cards[0].point] <= 12 && this->values[token.cards[12].point] + 6 == this->values[token.cards[0].point])
+			if (2 == counts[0] && 2 == counts[1] && 2 == counts[2] && 2 == counts[3] && 2 == counts[4] && 2 == counts[5] && 2 == counts[6] && this->values[hand.cards[0].point] <= 12 && this->values[hand.cards[12].point] + 6 == this->values[hand.cards[0].point])
 			{
-				token.tokenType = TokenType::PairStraight; // 连对
+				hand.type = Type::PairStraight; // 连对
 				return true;
 			}
 			else
@@ -1745,17 +1759,17 @@ protected:
 				switch (counts[3])
 				{
 				case 3:
-					if (3 == counts[4] && this->values[token.cards[0].point] <= 12 && this->values[token.cards[12].point] + 4 == this->values[token.cards[0].point])
+					if (3 == counts[4] && this->values[hand.cards[0].point] <= 12 && this->values[hand.cards[12].point] + 4 == this->values[hand.cards[0].point])
 					{
-						token.tokenType = TokenType::TripleStraight; // 飞机（不带翅膀）
+						hand.type = Type::TripleStraight; // 飞机（不带翅膀）
 						return true;
 					}
 					else
 						return false;
 				case 2:
-					if (2 == counts[4] && 2 == counts[5] && this->values[token.cards[0].point] <= 12 && this->values[token.cards[6].point] + 2 == this->values[token.cards[0].point] && JOKER_POINT != token.cards[9].point) // && JOKER_POINT != token.cards[11].point && JOKER_POINT != token.cards[13].point | 双王不是对子/被带的牌不能含有王炸
+					if (2 == counts[4] && 2 == counts[5] && this->values[hand.cards[0].point] <= 12 && this->values[hand.cards[6].point] + 2 == this->values[hand.cards[0].point] && JOKER_POINT != hand.cards[9].point) // && JOKER_POINT != hand.cards[11].point && JOKER_POINT != hand.cards[13].point | 双王不是对子/被带的牌不能含有王炸
 					{
-						token.tokenType = TokenType::TripleStraightWithPairs; // 飞机带大翼
+						hand.type = Type::TripleStraightWithPairs; // 飞机带大翼
 						return true;
 					}
 					else
@@ -1773,44 +1787,44 @@ protected:
 					switch (counts[4])
 					{
 					case 3:
-						if (this->values[token.cards[0].point] <= 12)
-							if (this->values[token.cards[12].point] + 4 == this->values[token.cards[0].point])
+						if (this->values[hand.cards[0].point] <= 12)
+							if (this->values[hand.cards[12].point] + 4 == this->values[hand.cards[0].point])
 								return false;
-							else if (this->values[token.cards[9].point] + 3 == this->values[token.cards[0].point])
+							else if (this->values[hand.cards[9].point] + 3 == this->values[hand.cards[0].point])
 							{
-								if (this->values[token.cards[12].point] < this->values[token.cards[15].point])
-									rotate(token.cards.begin() + 12, token.cards.begin() + 15, token.cards.end()); // e.g., AAAKKKQQQJJJ3335 -> AAAKKKQQQJJJ + 5333
-								token.tokenType = TokenType::TripleStraightWithSingles; // 飞机带小翼
+								if (this->values[hand.cards[12].point] < this->values[hand.cards[15].point])
+									rotate(hand.cards.begin() + 12, hand.cards.begin() + 15, hand.cards.end()); // e.g., AAAKKKQQQJJJ3335 -> AAAKKKQQQJJJ + 5333
+								hand.type = Type::TripleStraightWithSingles; // 飞机带小翼
 								return true;
 							}
-						if (this->values[token.cards[12].point] + 3 == this->values[token.cards[3].point])
+						if (this->values[hand.cards[12].point] + 3 == this->values[hand.cards[3].point])
 						{
-							rotate(token.cards.begin(), token.cards.begin() + 3, this->values[token.cards[0].point] < this->values[token.cards[15].point] ? token.cards.end() : token.cards.end() - 1); // e.g., KKK9998887776662 -> 999888777666 + 2KKK | 222999888777666K -> 999888777666 + 222K
-							token.tokenType = TokenType::TripleStraightWithSingles; // 飞机带小翼
+							rotate(hand.cards.begin(), hand.cards.begin() + 3, this->values[hand.cards[0].point] < this->values[hand.cards[15].point] ? hand.cards.end() : hand.cards.end() - 1); // e.g., KKK9998887776662 -> 999888777666 + 2KKK | 222999888777666K -> 999888777666 + 222K
+							hand.type = Type::TripleStraightWithSingles; // 飞机带小翼
 							return true;
 						}
 						else
 							return false;
 					case 2:
-						if (this->values[token.cards[0].point] <= 12 && this->values[token.cards[9].point] + 3 == this->values[token.cards[0].point] && JOKER_POINT != token.cards[12].point) // 被带的牌不能含有王炸
-							if (2 == counts[5]) // && JOKER_POINT != token.cards[14].point |  被带的牌不能含有王炸
+						if (this->values[hand.cards[0].point] <= 12 && this->values[hand.cards[9].point] + 3 == this->values[hand.cards[0].point] && JOKER_POINT != hand.cards[12].point) // 被带的牌不能含有王炸
+							if (2 == counts[5]) // && JOKER_POINT != hand.cards[14].point |  被带的牌不能含有王炸
 							{
-								token.tokenType = TokenType::TripleStraightWithSingles; // 飞机带小翼
+								hand.type = Type::TripleStraightWithSingles; // 飞机带小翼
 								return true;
 							}
 							else // if (1 == counts[5] && 1 == counts[6])
 							{
-								if (this->values[token.cards[12].point] < this->values[token.cards[14].point])
-									rotate(token.cards.begin() + 12, token.cards.begin() + 14, this->values[token.cards[12].point] < this->values[token.cards[15].point] ? token.cards.end() : token.cards.end() - 1); // e.g., AAAKKKQQQJJJ3375 -> AAAKKKQQQJJJ + 7533 | AAAKKKQQQJJJ5573 -> AAAKKKQQQJJJ + 7553
-								token.tokenType = TokenType::TripleStraightWithSingles; // 飞机带小翼
+								if (this->values[hand.cards[12].point] < this->values[hand.cards[14].point])
+									rotate(hand.cards.begin() + 12, hand.cards.begin() + 14, this->values[hand.cards[12].point] < this->values[hand.cards[15].point] ? hand.cards.end() : hand.cards.end() - 1); // e.g., AAAKKKQQQJJJ3375 -> AAAKKKQQQJJJ + 7533 | AAAKKKQQQJJJ5573 -> AAAKKKQQQJJJ + 7553
+								hand.type = Type::TripleStraightWithSingles; // 飞机带小翼
 								return true;
 							}
 						else
 							return false;
 					case 1: // && 1 == counts[5] && 1 == counts[6] && 1 == counts[7]
-						if (this->values[token.cards[0].point] <= 12 && this->values[token.cards[9].point] + 3 == this->values[token.cards[0].point])
+						if (this->values[hand.cards[0].point] <= 12 && this->values[hand.cards[9].point] + 3 == this->values[hand.cards[0].point])
 						{
-							token.tokenType = TokenType::TripleStraightWithSingles; // 飞机带小翼
+							hand.type = Type::TripleStraightWithSingles; // 飞机带小翼
 							return true;
 						}
 						else
@@ -1821,9 +1835,9 @@ protected:
 				else
 					return false;
 			case 2:
-				if (2 == counts[1] && 2 == counts[2] && 2 == counts[3] && 2 == counts[4] && 2 == counts[5] && 2 == counts[6] && 2 == counts[7] && this->values[token.cards[0].point] <= 12 && this->values[token.cards[14].point] + 7 == this->values[token.cards[0].point])
+				if (2 == counts[1] && 2 == counts[2] && 2 == counts[3] && 2 == counts[4] && 2 == counts[5] && 2 == counts[6] && 2 == counts[7] && this->values[hand.cards[0].point] <= 12 && this->values[hand.cards[14].point] + 7 == this->values[hand.cards[0].point])
 				{
-					token.tokenType = TokenType::PairStraight; // 连对
+					hand.type = Type::PairStraight; // 连对
 					return true;
 				}
 				else
@@ -1835,17 +1849,17 @@ protected:
 			switch (counts[0])
 			{
 			case 3:
-				if (3 == counts[1] && 3 == counts[2] && 3 == counts[3] && 3 == counts[4] && 3 == counts[5] && this->values[token.cards[0].point] <= 12 && this->values[token.cards[15].point] + 5 == this->values[token.cards[0].point])
+				if (3 == counts[1] && 3 == counts[2] && 3 == counts[3] && 3 == counts[4] && 3 == counts[5] && this->values[hand.cards[0].point] <= 12 && this->values[hand.cards[15].point] + 5 == this->values[hand.cards[0].point])
 				{
-					token.tokenType = TokenType::TripleStraight; // 飞机（不带翅膀）
+					hand.type = Type::TripleStraight; // 飞机（不带翅膀）
 					return true;
 				}
 				else
 					return false;
 			case 2:
-				if (2 == counts[1] && 2 == counts[2] && 2 == counts[3] && 2 == counts[4] && 2 == counts[5] && 2 == counts[6] && 2 == counts[7] && 2 == counts[8] && this->values[token.cards[0].point] <= 12 && this->values[token.cards[16].point] + 8 == this->values[token.cards[0].point])
+				if (2 == counts[1] && 2 == counts[2] && 2 == counts[3] && 2 == counts[4] && 2 == counts[5] && 2 == counts[6] && 2 == counts[7] && 2 == counts[8] && this->values[hand.cards[0].point] <= 12 && this->values[hand.cards[16].point] + 8 == this->values[hand.cards[0].point])
 				{
-					token.tokenType = TokenType::PairStraight; // 连对
+					hand.type = Type::PairStraight; // 连对
 					return true;
 				}
 				else
@@ -1864,76 +1878,78 @@ protected:
 						switch (counts[5])
 						{
 						case 3:
-							if (this->values[token.cards[0].point] <= 12)
-								if (this->values[token.cards[15].point] + 5 == this->values[token.cards[0].point])
+							if (this->values[hand.cards[0].point] <= 12)
+								if (this->values[hand.cards[15].point] + 5 == this->values[hand.cards[0].point])
 									return false;
-								else if (this->values[token.cards[12].point] + 4 == this->values[token.cards[0].point])
+								else if (this->values[hand.cards[12].point] + 4 == this->values[hand.cards[0].point])
 									if (2 == counts[6])
-										if (JOKER_POINT != token.cards[18].point) // 被带的牌不能含有王炸
+										if (JOKER_POINT != hand.cards[18].point) // 被带的牌不能含有王炸
 										{
-											if (this->values[token.cards[15].point] < this->values[token.cards[18].point])
-												rotate(token.cards.begin() + 15, token.cards.begin() + 18, token.cards.end()); // e.g., KKK...99933355 -> KKK...999 + 55333
-											token.tokenType = TokenType::TripleStraightWithSingles; // 飞机带小翼
+											if (this->values[hand.cards[15].point] < this->values[hand.cards[18].point])
+												rotate(hand.cards.begin() + 15, hand.cards.begin() + 18, hand.cards.end()); // e.g., KKK...99933355 -> KKK...999 + 55333
+											hand.type = Type::TripleStraightWithSingles; // 飞机带小翼
 											return true;
 										}
 										else
 											return false;
 									else // if (1 == counts[7])
 									{
-										if (this->values[token.cards[15].point] < this->values[token.cards[18].point])
-											rotate(token.cards.begin() + 15, token.cards.begin() + 18, this->values[token.cards[15].point] < this->values[token.cards[19].point] ? token.cards.end() : token.cards.end() - 1); // e.g., KKK...99933375 -> KKK...999 + 75333 | KKK...99955573 -> KKK...999 + 75553
-										token.tokenType = TokenType::TripleStraightWithSingles; // 飞机带小翼
+										if (this->values[hand.cards[15].point] < this->values[hand.cards[18].point])
+											rotate(hand.cards.begin() + 15, hand.cards.begin() + 18, this->values[hand.cards[15].point] < this->values[hand.cards[19].point] ? hand.cards.end() : hand.cards.end() - 1); // e.g., KKK...99933375 -> KKK...999 + 75333 | KKK...99955573 -> KKK...999 + 75553
+										hand.type = Type::TripleStraightWithSingles; // 飞机带小翼
 										return true;
 									}
-							if (this->values[token.cards[15].point] + 4 == this->values[token.cards[3].point])
+							if (this->values[hand.cards[15].point] + 4 == this->values[hand.cards[3].point])
 								if (2 == counts[6])
-									if (JOKER_POINT != token.cards[18].point) // 被带的牌不能含有王炸
+									if (JOKER_POINT != hand.cards[18].point) // 被带的牌不能含有王炸
 									{
-										rotate(token.cards.begin(), token.cards.begin() + 3, this->values[token.cards[0].point] < this->values[token.cards[18].point] ? token.cards.end() : token.cards.end() - 2); // e.g., KKK99988877766655522 -> 999888777666555 + 22KKK | 222999888777666555KK -> 999888777666555 + 222KK
-										token.tokenType = TokenType::TripleStraightWithSingles; // 飞机带小翼
+										rotate(hand.cards.begin(), hand.cards.begin() + 3, this->values[hand.cards[0].point] < this->values[hand.cards[18].point] ? hand.cards.end() : hand.cards.end() - 2); // e.g., KKK99988877766655522 -> 999888777666555 + 22KKK | 222999888777666555KK -> 999888777666555 + 222KK
+										hand.type = Type::TripleStraightWithSingles; // 飞机带小翼
 										return true;
 									}
 									else
 										return false;
 								else // if (1 == counts[6] && 1 == counts[7])
 								{
-									rotate(token.cards.begin(), token.cards.begin() + 3, this->values[token.cards[0].point] < this->values[token.cards[18].point] ? (this->values[token.cards[0].point] < this->values[token.cards[19].point] ? token.cards.end() : token.cards.end() - 1) : token.cards.end() - 2); // e.g., JJJ9998887776665552K -> 999888777666555 + 2KJJJ | KKK9998887776665552J -> 999888777666555 + 2KKKJ | 222999888777666555KJ -> 999888777666555 + 222KJ
-									token.tokenType = TokenType::TripleStraightWithSingles; // 飞机带小翼
+									rotate(hand.cards.begin(), hand.cards.begin() + 3, this->values[hand.cards[0].point] < this->values[hand.cards[18].point] ? (this->values[hand.cards[0].point] < this->values[hand.cards[19].point] ? hand.cards.end() : hand.cards.end() - 1) : hand.cards.end() - 2); // e.g., JJJ9998887776665552K -> 999888777666555 + 2KJJJ | KKK9998887776665552J -> 999888777666555 + 2KKKJ | 222999888777666555KJ -> 999888777666555 + 222KJ
+									hand.type = Type::TripleStraightWithSingles; // 飞机带小翼
 									return true;
 								}
 							else
 								return false;
 						case 2:
-							if (this->values[token.cards[0].point] <= 12 && this->values[token.cards[12].point] + 4 == this->values[token.cards[0].point])
+							if (this->values[hand.cards[0].point] <= 12 && this->values[hand.cards[12].point] + 4 == this->values[hand.cards[0].point])
 								if (2 == counts[6]) // && 1 == counts[7]
-									if (JOKER_POINT != token.cards[15].point) // && JOKER_POINT != token.cards[17].point | 被带的牌不能含有王炸
+									if (JOKER_POINT != hand.cards[15].point) // && JOKER_POINT != hand.cards[17].point | 被带的牌不能含有王炸
 									{
-										if (this->values[token.cards[17].point] < this->values[token.cards[19].point])
-											rotate(token.cards.begin() + (this->values[token.cards[15].point] < this->values[token.cards[19].point] ? 15 : 17), token.cards.begin() + 19, token.cards.end()); // e.g., KKK...99955337 -> KKK...999 + 75533 | KKK...99977335 -> KKK...999 + 77533
-										token.tokenType = TokenType::TripleStraightWithSingles; // 飞机带小翼
+										const Value value19 = this->values[hand.cards[19].point];
+										if (this->values[hand.cards[17].point] < value19)
+											rotate(hand.cards.begin() + (this->values[hand.cards[15].point] < value19 ? 15 : 17), hand.cards.begin() + 19, hand.cards.end()); // e.g., KKK...99955337 -> KKK...999 + 75533 | KKK...99977335 -> KKK...999 + 77533
+										hand.type = Type::TripleStraightWithSingles; // 飞机带小翼
 										return true;
 									}
 									else
 										return false;
 								else // if (1 == counts[6] && 1 == counts[7] && 1 == counts[8])
 								{
-									if (this->values[token.cards[15].point] < this->values[token.cards[17].point])
-										rotate(token.cards.begin() + 15, token.cards.begin() + 17, this->values[token.cards[15].point] < this->values[token.cards[18].point] ? (this->values[token.cards[15].point] < this->values[token.cards[19].point] ? token.cards.end() : token.cards.end() - 1) : token.cards.end() - 2); // e.g., KKK...99933765 -> KKK...999 + 76533 | KKK...99944653 -> KKK...99965443 | KKK...99955643 -> KKK...99965543
-									token.tokenType = TokenType::TripleStraightWithSingles; // 飞机带小翼
+									const Value value15 = this->values[hand.cards[15].point];
+									if (value15 < this->values[hand.cards[17].point])
+										rotate(hand.cards.begin() + 15, hand.cards.begin() + 17, value15 < this->values[hand.cards[18].point] ? (value15 < this->values[hand.cards[19].point] ? hand.cards.end() : hand.cards.end() - 1) : hand.cards.end() - 2); // e.g., KKK...99933765 -> KKK...999 + 76533 | KKK...99944653 -> KKK...99965443 | KKK...99955643 -> KKK...99965543
+									hand.type = Type::TripleStraightWithSingles; // 飞机带小翼
 									return true;
 								}
 							else
 								return false;
 						case 1: // && 1 == counts[6] && 1 == counts[7] && 1 == counts[8] && 1 == counts[9]
-							token.tokenType = TokenType::TripleStraightWithSingles; // 飞机带小翼
+							hand.type = Type::TripleStraightWithSingles; // 飞机带小翼
 							return true;
 						default:
 							return false;
 						}
 					case 2:
-						if (2 == counts[5] && 2 == counts[6] && 2 == counts[7] && this->values[token.cards[0].point] <= 12 && this->values[token.cards[9].point] + 3 == this->values[token.cards[0].point] && JOKER_POINT != token.cards[12].point) // && JOKER_POINT != token.cards[14].point && JOKER_POINT != token.cards[16].point && JOKER_POINT != token.cards[18].point | 被带的牌不能含有王炸
+						if (2 == counts[5] && 2 == counts[6] && 2 == counts[7] && this->values[hand.cards[0].point] <= 12 && this->values[hand.cards[9].point] + 3 == this->values[hand.cards[0].point] && JOKER_POINT != hand.cards[12].point) // && JOKER_POINT != hand.cards[14].point && JOKER_POINT != hand.cards[16].point && JOKER_POINT != hand.cards[18].point | 双王不是对子/被带的牌不能含有王炸
 						{
-							token.tokenType = TokenType::TripleStraightWithPairs; // 飞机带大翼
+							hand.type = Type::TripleStraightWithPairs; // 飞机带大翼
 							return true;
 						}
 						else
@@ -1944,9 +1960,9 @@ protected:
 				else
 					return false;
 			case 2:
-				if (2 == counts[1] && 2 == counts[2] && 2 == counts[3] && 2 == counts[4] && 2 == counts[5] && 2 == counts[6] && 2 == counts[7] && 2 == counts[8] && 2 == counts[9] && this->values[token.cards[0].point] <= 12 && this->values[token.cards[18].point] + 9 == this->values[token.cards[0].point])
+				if (2 == counts[1] && 2 == counts[2] && 2 == counts[3] && 2 == counts[4] && 2 == counts[5] && 2 == counts[6] && 2 == counts[7] && 2 == counts[8] && 2 == counts[9] && this->values[hand.cards[0].point] <= 12 && this->values[hand.cards[18].point] + 9 == this->values[hand.cards[0].point])
 				{
-					token.tokenType = TokenType::PairStraight; // 连对
+					hand.type = Type::PairStraight; // 连对
 					return true;
 				}
 				else
@@ -1958,29 +1974,29 @@ protected:
 			return false;
 		}
 	}
-	const bool coverLastToken(const Token& currentToken) const override final
+	const bool coverLastHand(const Hand& currentHand) const override final
 	{
-		if (this->lastToken && TokenType::Single <= this->lastToken.tokenType && this->lastToken.tokenType <= TokenType::QuadrupleWithPairPair && !this->lastToken.cards.empty() && TokenType::Single <= currentToken.tokenType && currentToken.tokenType <= TokenType::QuadrupleWithPairPair && !currentToken.cards.empty())
-			switch (this->lastToken.tokenType)
+		if (this->lastHand && Type::Single <= this->lastHand.type && this->lastHand.type <= Type::QuadrupleWithPairPair && !this->lastHand.cards.empty() && Type::Single <= currentHand.type && currentHand.type <= Type::QuadrupleWithPairPair && !currentHand.cards.empty())
+			switch (this->lastHand.type)
 			{
-			case TokenType::Single: // 单牌
-				return TokenType::PairJokers == currentToken.tokenType || TokenType::Quadruple == currentToken.tokenType || (TokenType::Single == currentToken.tokenType && (JOKER_POINT == currentToken.cards[0].point && JOKER_POINT == this->lastToken.cards[0].point ? currentToken.cards[0].suit > this->lastToken.cards[0].suit : this->values[currentToken.cards[0].point] > this->values[this->lastToken.cards[0].point]));
-			case TokenType::SingleStraight: // 顺子
-			case TokenType::Pair: // 对子
-			case TokenType::PairStraight: // 连对
-			case TokenType::Triple: // 三条
-			case TokenType::TripleWithSingle: // 三带一
-			case TokenType::TripleWithPair: // 三带一对
-			case TokenType::TripleStraight: // 飞机（不带翅膀）
-			case TokenType::TripleStraightWithSingles: // 飞机带小翼
-			case TokenType::TripleStraightWithPairs: // 飞机带大翼
-			case TokenType::QuadrupleWithSingleSingle: // 四带二单
-			case TokenType::QuadrupleWithPairPair: // 四带二对
-				return TokenType::PairJokers == currentToken.tokenType || TokenType::Quadruple == currentToken.tokenType || (currentToken.tokenType == this->lastToken.tokenType && currentToken.cards.size() == this->lastToken.cards.size() && this->values[currentToken.cards[0].point] > this->values[this->lastToken.cards[0].point]);
-			case TokenType::PairJokers: // 王炸/火箭
+			case Type::Single: // 单牌
+				return Type::PairJokers == currentHand.type || Type::Quadruple == currentHand.type || (Type::Single == currentHand.type && (JOKER_POINT == currentHand.cards[0].point && JOKER_POINT == this->lastHand.cards[0].point ? currentHand.cards[0].suit > this->lastHand.cards[0].suit : this->values[currentHand.cards[0].point] > this->values[this->lastHand.cards[0].point]));
+			case Type::SingleStraight: // 顺子
+			case Type::Pair: // 对子
+			case Type::PairStraight: // 连对
+			case Type::Triple: // 三条
+			case Type::TripleWithSingle: // 三带一
+			case Type::TripleWithPair: // 三带一对
+			case Type::TripleStraight: // 飞机（不带翅膀）
+			case Type::TripleStraightWithSingles: // 飞机带小翼
+			case Type::TripleStraightWithPairs: // 飞机带大翼
+			case Type::QuadrupleWithSingleSingle: // 四带二单
+			case Type::QuadrupleWithPairPair: // 四带二对
+				return Type::PairJokers == currentHand.type || Type::Quadruple == currentHand.type || (currentHand.type == this->lastHand.type && currentHand.cards.size() == this->lastHand.cards.size() && this->values[currentHand.cards[0].point] > this->values[this->lastHand.cards[0].point]);
+			case Type::PairJokers: // 王炸/火箭
 				return false;
-			case TokenType::Quadruple: // 炸弹
-				return TokenType::PairJokers == currentToken.tokenType || (TokenType::Quadruple == currentToken.tokenType && this->values[currentToken.cards[0].point] > this->values[this->lastToken.cards[0].point]);
+			case Type::Quadruple: // 炸弹
+				return Type::PairJokers == currentHand.type || (Type::Quadruple == currentHand.type && this->values[currentHand.cards[0].point] > this->values[this->lastHand.cards[0].point]);
 			default:
 				return false;
 			}
@@ -2008,7 +2024,7 @@ public:
 			this->records.clear();
 			this->currentPlayer = INVALID_PLAYER;
 			this->dealer = INVALID_PLAYER;
-			this->lastToken = Token{};
+			this->lastHand = Hand{};
 			this->amounts.clear();
 			this->status = Status::Initialized;
 			return true;
@@ -2050,42 +2066,42 @@ public:
 			case 0:
 				if (b)
 				{
-					this->records[0].push_back(Token{ this->currentPlayer, vector<Card>{ Card{} } });
-					this->lastToken = this->records[0][0];
+					this->records[0].push_back(Hand{ this->currentPlayer, vector<Card>{ Card{} } });
+					this->lastHand = this->records[0][0];
 					this->amounts[0] = 0b10000000000;
 				}
 				else
-					this->records[0].push_back(Token{ this->currentPlayer, vector<Card>{} });
+					this->records[0].push_back(Hand{ this->currentPlayer, vector<Card>{} });
 				this->nextPlayer();
 				return true;
 			case 1:
 				if (b)
 				{
-					this->records[0].push_back(Token{ this->currentPlayer, vector<Card>{ Card{} } });
-					if (this->lastToken)
+					this->records[0].push_back(Hand{ this->currentPlayer, vector<Card>{ Card{} } });
+					if (this->lastHand)
 						this->amounts[0] += 0b100000000;
 					else
 					{
-						this->lastToken = this->records[0][1];
+						this->lastHand = this->records[0][1];
 						this->amounts[0] = 0b10000000000;
 					}
 				}
 				else
-					this->records[0].push_back(Token{ this->currentPlayer, vector<Card>{} });
+					this->records[0].push_back(Hand{ this->currentPlayer, vector<Card>{} });
 				this->nextPlayer();
 				return true;
 			case 2:
 			{
 				if (b)
 				{
-					this->records[0].push_back(Token{ this->currentPlayer, vector<Card>{ Card{} } });
-					if (this->lastToken)
+					this->records[0].push_back(Hand{ this->currentPlayer, vector<Card>{ Card{} } });
+					if (this->lastHand)
 						this->amounts[0] += 0b100000000;
 					else
 						this->amounts[0] = 0b10000000000;
 				}
 				else
-					this->records[0].push_back(Token{ this->currentPlayer, vector<Card>{} });
+					this->records[0].push_back(Hand{ this->currentPlayer, vector<Card>{} });
 				Count callerAndRobberCount = 0;
 				for (size_t idx = 0; idx < 3; ++idx)
 					if (!this->records[0][idx].cards.empty())
@@ -2095,18 +2111,18 @@ public:
 				case 0:
 					this->currentPlayer = this->records[0][0].player;
 					this->dealer = this->records[0][0].player;
-					this->lastToken = Token{};
+					this->lastHand = Hand{};
 					this->status = Status::Assigned;
 					return true;
 				case 1:
-					this->currentPlayer = this->lastToken.player;
-					this->dealer = this->lastToken.player;
-					this->lastToken = Token{};
+					this->currentPlayer = this->lastHand.player;
+					this->dealer = this->lastHand.player;
+					this->lastHand = Hand{};
 					this->status = Status::Assigned;
 					return true;
 				case 2:
 				case 3:
-					this->currentPlayer = this->lastToken.player;
+					this->currentPlayer = this->lastHand.player;
 					return true;
 				default:
 					return false;
@@ -2115,19 +2131,19 @@ public:
 			case 3:
 				if (b)
 				{
-					this->records[0].push_back(Token{ this->currentPlayer, vector<Card>{ Card{} } });
-					if (this->lastToken)
+					this->records[0].push_back(Hand{ this->currentPlayer, vector<Card>{ Card{} } });
+					if (this->lastHand)
 						this->amounts[0] += 0b100000000;
 					else
 						return false;
 				}
 				else
 				{
-					this->records[0].push_back(Token{ this->currentPlayer, vector<Card>{} });
+					this->records[0].push_back(Hand{ this->currentPlayer, vector<Card>{} });
 					this->currentPlayer = this->records[0][2].cards.empty() ? this->records[0][1].player : this->records[0][2].player;
 				}
 				this->dealer = this->currentPlayer;
-				this->lastToken = Token{};
+				this->lastHand = Hand{};
 				this->status = Status::Assigned;
 				return true;
 			default:
@@ -2145,18 +2161,19 @@ public:
 class LandlordsX : public Landlords /* Previous: Landlords | Next: Landlord4P */
 {
 protected:
-	const bool processToken(Token& token, vector<PossibleToken>& possibleTokens) const override final
+	const bool processHand(Hand& hand, vector<Candidate>& candidates) const override final
 	{
+		hand.type = Type::Invalid;
 		bool littleJoker = false, bigJoker = false;
 		vector<Count> counts(14);
-		for (const Card& card : token.cards)
+		for (const Card& card : hand.cards)
 			if (JOKER_POINT == card.point)
 				switch (card.suit)
 				{
 				case Suit::Black:
 					if (littleJoker)
 					{
-						possibleTokens.clear();
+						candidates.clear();
 						return false;
 					}
 					else
@@ -2164,58 +2181,58 @@ protected:
 				case Suit::Red:
 					if (bigJoker)
 					{
-						possibleTokens.clear();
+						candidates.clear();
 						return false;
 					}
 					else
 						bigJoker = true;
 				default:
-					possibleTokens.clear();
+					candidates.clear();
 					return false;
 				}
 			else if (this->values[card.point])
 				++counts[card.point];
 			else
 			{
-				possibleTokens.clear();
+				candidates.clear();
 				return false;
 			}
-		sort(token.cards.begin(), token.cards.end(), [&counts, this](const Card a, const Card b) { const Count countA = counts[a.point], countB = counts[b.point]; const Value valueA = this->values[a.point], valueB = this->values[b.point]; return countA > countB || (countA == countB && valueA > valueB) || (countA == countB && valueA == valueB && a.suit > b.suit); });
-		if (adjacent_find(token.cards.begin(), token.cards.end()) != token.cards.end())
+		sort(hand.cards.begin(), hand.cards.end(), [&counts, this](const Card a, const Card b) { const Count countA = counts[a.point], countB = counts[b.point]; const Value valueA = this->values[a.point], valueB = this->values[b.point]; return countA > countB || (countA == countB && valueA > valueB) || (countA == countB && valueA == valueB && a.suit > b.suit); });
+		if (adjacent_find(hand.cards.begin(), hand.cards.end()) != hand.cards.end())
 		{
-			possibleTokens.clear();
+			candidates.clear();
 			return false;
 		}
 		sort(counts.begin(), counts.end(), [](const Count a, const Count b) { return a > b; });
 		if (counts[0] > 4)
 		{
-			possibleTokens.clear();
+			candidates.clear();
 			return false;
 		}
-		switch (token.cards.size())
+		switch (hand.cards.size())
 		{
 		case 0:
-			token.tokenType = TokenType::Empty; // 要不起
-			possibleTokens.clear();
+			hand.type = Type::Empty; // 要不起
+			candidates.clear();
 			return true;
 		case 1:
-			token.tokenType = TokenType::Single; // 单牌
-			possibleTokens.clear();
+			hand.type = Type::Single; // 单牌
+			candidates.clear();
 			return true;
 		case 2:
-			possibleTokens.clear();
+			candidates.clear();
 			if (2 == counts[0])
 			{
-				token.tokenType = JOKER_POINT == token.cards[0].point ? TokenType::PairJokers : TokenType::Pair; // 王炸/火箭 | 对子
+				hand.type = JOKER_POINT == hand.cards[0].point ? Type::PairJokers : Type::Pair; // 王炸/火箭 | 对子
 				return true;
 			}
 			else
 				return false;
 		case 3:
-			possibleTokens.clear();
+			candidates.clear();
 			if (3 == counts[0])
 			{
-				token.tokenType = TokenType::Triple; // 三条
+				hand.type = Type::Triple; // 三条
 				return true;
 			}
 			else
@@ -2225,61 +2242,61 @@ protected:
 			{
 			case 4:
 			{
-				vector<PossibleToken> potentialTokens{};
+				vector<Candidate> potentialHands{};
 				char buffer[3] = { 0 };
-				this->convertPointToChars(token.cards[0].point, buffer);
-				potentialTokens.push_back(PossibleToken{ token, (string)"解析为点数为 " + buffer + " 的炸弹（``TokenType::Quadruple``）" });
-				potentialTokens.push_back(PossibleToken{ token, (string)"解析为点数为 " + buffer + " 的三带一（``TokenType::TripleWithSingle``）" });
+				this->convertPointToChars(hand.cards[0].point, buffer);
+				potentialHands.push_back(Candidate{ hand, (string)"解析为点数为 " + buffer + " 的炸弹（``Type::Quadruple``）" });
+				potentialHands.push_back(Candidate{ hand, (string)"解析为点数为 " + buffer + " 的三带一（``Type::TripleWithSingle``）" });
 				break;
 			}
 			case 3: // && 1 == counts[1]
-				token.tokenType = TokenType::TripleWithSingle; // 三带一
-				possibleTokens.clear();
+				hand.type = Type::TripleWithSingle; // 三带一
+				candidates.clear();
 				return true;
 			default:
-				possibleTokens.clear();
+				candidates.clear();
 				return false;
 			}
 		case 5:
-			possibleTokens.clear();
+			candidates.clear();
 			switch (counts[0])
 			{
 			case 3: // if (2 == counts[1])
-				if (JOKER_POINT == token.cards[3].point) // 双王不是对子
+				if (JOKER_POINT == hand.cards[3].point) // 双王不是对子
 					return false;
 				else
 				{
-					token.tokenType = TokenType::TripleWithPair; // 三带一对
+					hand.type = Type::TripleWithPair; // 三带一对
 					return true;
 				}
 			case 1: // && 1 == counts[1] && 1 == counts[2] && 1 == counts[3] && 1 == counts[4]
-				if (this->values[token.cards[0].point] <= 12 && this->values[token.cards[4].point] + 4 == this->values[token.cards[0].point])
+				if (this->values[hand.cards[0].point] <= 12 && this->values[hand.cards[4].point] + 4 == this->values[hand.cards[0].point])
 				{
-					token.tokenType = TokenType::SingleStraight; // 顺子
+					hand.type = Type::SingleStraight; // 顺子
 					return true;
 				}
 				else
 					return false;
 			}
 		case 6:
-			possibleTokens.clear();
+			candidates.clear();
 			switch (counts[0])
 			{
 			case 4:
-				token.tokenType = TokenType::QuadrupleWithSingleSingle; // 四带二单
+				hand.type = Type::QuadrupleWithSingleSingle; // 四带二单
 				return true;
 			case 2:
-				if (2 == counts[1] && 2 == counts[2] && this->values[token.cards[0].point] <= 12 && this->values[token.cards[4].point] + 2 == this->values[token.cards[0].point])
+				if (2 == counts[1] && 2 == counts[2] && this->values[hand.cards[0].point] <= 12 && this->values[hand.cards[4].point] + 2 == this->values[hand.cards[0].point])
 				{
-					token.tokenType = TokenType::PairStraight; // 连对
+					hand.type = Type::PairStraight; // 连对
 					return true;
 				}
 				else
 					return false;
 			case 1: // && 1 == counts[1] && ... && 1 == counts[5]
-				if (this->values[token.cards[0].point] <= 12 && this->values[token.cards[5].point] + 5 == this->values[token.cards[0].point])
+				if (this->values[hand.cards[0].point] <= 12 && this->values[hand.cards[5].point] + 5 == this->values[hand.cards[0].point])
 				{
-					token.tokenType = TokenType::SingleStraight; // 顺子
+					hand.type = Type::SingleStraight; // 顺子
 					return true;
 				}
 				else
@@ -2288,10 +2305,10 @@ protected:
 				return false;
 			}
 		case 7:
-			possibleTokens.clear();
-			if (1 == counts[0] && this->values[token.cards[0].point] <= 12 && this->values[token.cards[6].point] + 6 == this->values[token.cards[0].point]) // && 1 == counts[1] && ... && 1 == counts[6]
+			candidates.clear();
+			if (1 == counts[0] && this->values[hand.cards[0].point] <= 12 && this->values[hand.cards[6].point] + 6 == this->values[hand.cards[0].point]) // && 1 == counts[1] && ... && 1 == counts[6]
 			{
-				token.tokenType = TokenType::SingleStraight; // 顺子
+				hand.type = Type::SingleStraight; // 顺子
 				return true;
 			}
 			else
@@ -2304,123 +2321,122 @@ protected:
 				{
 				case 4:
 				{
-					vector<PossibleToken> potentialTokens{};
-					Token proposedToken(token);
-					char buffer[3] = { 0 };
-					this->convertPointToChars(token.cards[0].point, buffer);
-					if (this->values[token.cards[0].point] <= 12 && this->values[token.cards[4].point] + 1 == this->values[token.cards[0].point])
+					const Value value = this->values[hand.cards[0].point];
+					vector<Candidate> potentialHands{};
+					char buffers[2][3] = { 0 };
+					this->convertPointToChars(hand.cards[0].point, buffers[0]);
+					this->convertPointToChars(hand.cards[4].point, buffers[1]);
+					if (value <= 12 && this->values[hand.cards[4].point] + 1 == value)
 					{
-						rotate(proposedToken.cards.begin() + 3, proposedToken.cards.begin() + 4, proposedToken.cards.begin() + 7);
-						proposedToken.tokenType = TokenType::TripleStraightWithSingles; // 飞机带小翼
-						potentialTokens.push_back(PossibleToken{ proposedToken, (string)"解析为长度为 2 且点数为 " + buffer + " 的飞机带小翼（``TokenType::TripleStraightWithSingles``）" });
-						rotate(proposedToken.cards.begin() + 3, proposedToken.cards.begin() + 6, proposedToken.cards.begin() + 7);
+						potentialHands.emplace_back(hand, (string)"解析为长度为 2 且点数为 " + buffers[0] + " 的飞机带小翼（``Type::TripleStraightWithSingles``）");
+						rotate(potentialHands.back().hand.cards.begin() + 3, potentialHands.back().hand.cards.begin() + 4, potentialHands.back().hand.cards.begin() + 7);
+						potentialHands.back().hand.type = Type::TripleStraightWithSingles; // 飞机带小翼
 					}
-					proposedToken.tokenType = TokenType::QuadrupleWithPairPair; // 四带二对
-					potentialTokens.push_back(PossibleToken{ proposedToken, (string)"解析为点数为 " + buffer + " 的四带二对（``TokenType::QuadrupleWithPairPair``）" });
-					rotate(proposedToken.cards.begin(), proposedToken.cards.begin() + 4, proposedToken.cards.end());
-					proposedToken.tokenType = TokenType::QuadrupleWithPairPair; // 四带二对
-					this->convertPointToChars(token.cards[0].point, buffer);
-					potentialTokens.push_back(PossibleToken{ proposedToken, (string)"解析为点数为 " + buffer + " 的四带二对（``TokenType::QuadrupleWithPairPair``）" });
-					if (this->lastToken && token.player != this->lastToken.player)
-						for (vector<PossibleToken>::iterator it = potentialTokens.begin(); it != potentialTokens.end();)
-							if (this->coverLastToken(it->token))
+					potentialHands.emplace_back(hand, (string)"解析为点数为 " + buffers[0] + " 的四带二对（``Type::QuadrupleWithPairPair``），其中被带的牌包含两个点数为 " + buffers[1] + " 的对子");
+					potentialHands.back().hand.type = Type::QuadrupleWithPairPair; // 四带二对
+					potentialHands.emplace_back(hand, (string)"解析为点数为 " + buffers[1] + " 的四带二对（``Type::QuadrupleWithPairPair``），其中被带的牌包含两个点数为 " + buffers[0] + " 的对子");
+					rotate(potentialHands.back().hand.cards.begin(), potentialHands.back().hand.cards.begin() + 4, potentialHands.back().hand.cards.end());
+					potentialHands.back().hand.type = Type::QuadrupleWithPairPair; // 四带二对
+					if (this->lastHand && hand.player != this->lastHand.player)
+						for (vector<Candidate>::iterator it = potentialHands.begin(); it != potentialHands.end();)
+							if (this->coverLastHand(it->hand))
 								++it;
 							else
-								it = potentialTokens.erase(it);
-					switch (potentialTokens.size())
+								it = potentialHands.erase(it);
+					switch (potentialHands.size())
 					{
 					case 0:
-						possibleTokens.clear();
+						candidates.clear();
 						return false;
 					case 1:
-						token = potentialTokens[0].token;
-						possibleTokens.clear();
+						hand = move(potentialHands[0].hand);
+						candidates.clear();
 						return true;
 					default:
-						if (possibleTokens.size() == 1)
+						if (candidates.size() == 1)
 						{
-							const vector<PossibleToken>::iterator it = find_if(potentialTokens.begin(), potentialTokens.end(), [&possibleTokens](const PossibleToken& possibleToken) { return possibleToken.token == possibleTokens[0].token; });
-							if (it != potentialTokens.end())
+							const vector<Candidate>::iterator it = find_if(potentialHands.begin(), potentialHands.end(), [&candidates](const Candidate& candidate) { return candidate.hand == candidates[0].hand; });
+							if (it != potentialHands.end())
 							{
-								token = it->token;
-								possibleTokens.clear();
+								hand = move(it->hand);
+								candidates.clear();
 								return true;
 							}
 						}
-						possibleTokens = move(potentialTokens);
+						candidates = move(potentialHands);
 						return false;
 					}
 				}
 				case 3: // && 1 == counts[2]
-					possibleTokens.clear();
-					if (this->values[token.cards[0].point] <= 12 && this->values[token.cards[4].point] + 1 == this->values[token.cards[0].point])
+					candidates.clear();
+					if (this->values[hand.cards[0].point] <= 12 && this->values[hand.cards[4].point] + 1 == this->values[hand.cards[0].point])
 					{
-						rotate(token.cards.begin() + 3, token.cards.begin() + 4, token.cards.begin() + 7);
-						token.tokenType = TokenType::TripleStraightWithSingles; // 飞机带小翼
+						rotate(hand.cards.begin() + 3, hand.cards.begin() + 4, hand.cards.begin() + 7);
+						hand.type = Type::TripleStraightWithSingles; // 飞机带小翼
 						return true;
 					}
 					else
 						return false;
 				case 2:
-					possibleTokens.clear();
-					if (2 == counts[2] && JOKER_POINT != token.cards[4].point) //  && JOKER_POINT != token.cards[6].point | 双王不是对子
+					candidates.clear();
+					if (2 == counts[2] && JOKER_POINT != hand.cards[4].point) //  && JOKER_POINT != hand.cards[6].point | 双王不是对子
 					{
-						token.tokenType = TokenType::QuadrupleWithPairPair; // 四带二对
+						hand.type = Type::QuadrupleWithPairPair; // 四带二对
 						return true;
 					}
 					else
 						return false;
 				default:
-					possibleTokens.clear();
+					candidates.clear();
 					return false;
 				}
 			case 3:
-				possibleTokens.clear();
-				if (3 == counts[1] && this->values[token.cards[0].point] <= 12 && this->values[token.cards[3].point] + 1 == this->values[token.cards[0].point])
+				candidates.clear();
+				if (3 == counts[1] && this->values[hand.cards[0].point] <= 12 && this->values[hand.cards[3].point] + 1 == this->values[hand.cards[0].point])
 				{
-					token.tokenType = TokenType::TripleStraightWithSingles; // 飞机带小翼
+					hand.type = Type::TripleStraightWithSingles; // 飞机带小翼
 					return true;
 				}
 				else
 					return false;
 			case 2:
-				possibleTokens.clear();
-				if (2 == counts[1] && 2 == counts[2] && 2 == counts[3] && this->values[token.cards[0].point] <= 12 && this->values[token.cards[6].point] + 3 == this->values[token.cards[0].point])
+				candidates.clear();
+				if (2 == counts[1] && 2 == counts[2] && 2 == counts[3] && this->values[hand.cards[0].point] <= 12 && this->values[hand.cards[6].point] + 3 == this->values[hand.cards[0].point])
 				{
-					token.tokenType = TokenType::PairStraight; // 连对
+					hand.type = Type::PairStraight; // 连对
 					return true;
 				}
 				else
 					return false;
 			case 1: // && 1 == counts[1] && ... && 1 == counts[7]
-				possibleTokens.clear();
-				if (this->values[token.cards[0].point] <= 12 && this->values[token.cards[7].point] + 7 == this->values[token.cards[0].point])
+				candidates.clear();
+				if (this->values[hand.cards[0].point] <= 12 && this->values[hand.cards[7].point] + 7 == this->values[hand.cards[0].point])
 				{
-					token.tokenType = TokenType::SingleStraight; // 顺子
+					hand.type = Type::SingleStraight; // 顺子
 					return true;
 				}
 				else
 					return false;
 			default:
-				possibleTokens.clear();
+				candidates.clear();
 				return false;
 			}
 		case 9:
-			possibleTokens.clear();
+			candidates.clear();
 			switch (counts[0])
 			{
 			case 3:
-				if (3 == counts[1] && 3 == counts[2] && this->values[token.cards[0].point] <= 12 && this->values[token.cards[6].point] + 2 == this->values[token.cards[0].point])
+				if (3 == counts[1] && 3 == counts[2] && this->values[hand.cards[0].point] <= 12 && this->values[hand.cards[6].point] + 2 == this->values[hand.cards[0].point])
 				{
-					token.tokenType = TokenType::TripleStraight; // 飞机（不带翅膀）
+					hand.type = Type::TripleStraight; // 飞机（不带翅膀）
 					return true;
 				}
 				else
 					return false;
 			case 1: // && 1 == counts[1] && ... && 1 == counts[8]
-				if (this->values[token.cards[0].point] <= 12 && this->values[token.cards[8].point] + 8 == this->values[token.cards[0].point])
+				if (this->values[hand.cards[0].point] <= 12 && this->values[hand.cards[8].point] + 8 == this->values[hand.cards[0].point])
 				{
-					token.tokenType = TokenType::SingleStraight; // 顺子
+					hand.type = Type::SingleStraight; // 顺子
 					return true;
 				}
 				else
@@ -2429,38 +2445,38 @@ protected:
 				return false;
 			}
 		case 10:
-			possibleTokens.clear();
+			candidates.clear();
 			switch (counts[0])
 			{
 			case 4:
-				if (3 == counts[1] && 3 == counts[2] && this->values[token.cards[7].point] + 1 == this->values[token.cards[4].point])
+				if (3 == counts[1] && 3 == counts[2] && this->values[hand.cards[7].point] + 1 == this->values[hand.cards[4].point])
 				{
-					rotate(token.cards.begin(), token.cards.begin() + 4, token.cards.end());
-					token.tokenType = TokenType::TripleStraightWithPairs; // 飞机带大翼
+					rotate(hand.cards.begin(), hand.cards.begin() + 4, hand.cards.end());
+					hand.type = Type::TripleStraightWithPairs; // 飞机带大翼
 					return true;
 				}
 				else
 					return false;
 			case 3:
-				if (3 == counts[1] && 2 == counts[2] && 2 == counts[3] && this->values[token.cards[0].point] <= 12 && this->values[token.cards[3].point] + 1 == this->values[token.cards[0].point] && JOKER_POINT != token.cards[6].point) // && JOKER_POINT != token.cards[8].point | 双王不是对子
+				if (3 == counts[1] && 2 == counts[2] && 2 == counts[3] && this->values[hand.cards[0].point] <= 12 && this->values[hand.cards[3].point] + 1 == this->values[hand.cards[0].point] && JOKER_POINT != hand.cards[6].point) // && JOKER_POINT != hand.cards[8].point | 双王不是对子
 				{
-					token.tokenType = TokenType::TripleStraightWithPairs; // 飞机带大翼
+					hand.type = Type::TripleStraightWithPairs; // 飞机带大翼
 					return true;
 				}
 				else
 					return false;
 			case 2:
-				if (2 == counts[1] && 2 == counts[2] && 2 == counts[3] && 2 == counts[4] && this->values[token.cards[0].point] <= 12 && this->values[token.cards[8].point] + 4 == this->values[token.cards[0].point])
+				if (2 == counts[1] && 2 == counts[2] && 2 == counts[3] && 2 == counts[4] && this->values[hand.cards[0].point] <= 12 && this->values[hand.cards[8].point] + 4 == this->values[hand.cards[0].point])
 				{
-					token.tokenType = TokenType::PairStraight; // 连对
+					hand.type = Type::PairStraight; // 连对
 					return true;
 				}
 				else
 					return false;
 			case 1: // && 1 == counts[1] && ... && 1 == counts[9]
-				if (this->values[token.cards[0].point] <= 12 && this->values[token.cards[9].point] + 9 == this->values[token.cards[0].point])
+				if (this->values[hand.cards[0].point] <= 12 && this->values[hand.cards[9].point] + 9 == this->values[hand.cards[0].point])
 				{
-					token.tokenType = TokenType::SingleStraight; // 顺子
+					hand.type = Type::SingleStraight; // 顺子
 					return true;
 				}
 				else
@@ -2469,10 +2485,10 @@ protected:
 				return false;
 			}
 		case 11:
-			possibleTokens.clear();
-			if (1 == counts[0] && this->values[token.cards[0].point] <= 12 && this->values[token.cards[10].point] + 10 == this->values[token.cards[0].point]) // && 1 == counts[1] && ... && 1 == counts[10]
+			candidates.clear();
+			if (1 == counts[0] && this->values[hand.cards[0].point] <= 12 && this->values[hand.cards[10].point] + 10 == this->values[hand.cards[0].point]) // && 1 == counts[1] && ... && 1 == counts[10]
 			{
-				token.tokenType = TokenType::SingleStraight; // 顺子
+				hand.type = Type::SingleStraight; // 顺子
 				return true;
 			}
 			else
@@ -2480,139 +2496,190 @@ protected:
 		case 12:
 			switch (counts[0])
 			{
+			case 4:
+				candidates.clear();
+				switch (counts[1])
+				{
+				case 4:
+					if (counts[2] >= 3) // && 1 == counts[3]
+					{
+						rotate(hand.cards.begin() + 7, hand.cards.begin() + 8, hand.cards.end());
+						rotate(hand.cards.begin() + 3, hand.cards.begin() + 4, hand.cards.end() - 1);
+						const Value value6 = this->values[hand.cards[6].point];
+						if (value6 > this->values[hand.cards[3].point])
+							rotate(value6 > this->values[hand.cards[0].point] ? hand.cards.begin() : hand.cards.begin() + 3, hand.cards.begin() + 6, hand.cards.begin() + 9);
+						const Value value0 = this->values[hand.cards[0].point];
+						if (value0 <= 12 && this->values[hand.cards[6].point] + 2 == value0)
+						{
+							const Value value9 = this->values[hand.cards[9].point];
+							if (value9 < this->values[hand.cards[10].point])
+								rotate(hand.cards.begin() + 9, hand.cards.begin() + 10, value9 < this->values[hand.cards[11].point] ? hand.cards.end() : hand.cards.end() - 1);
+							hand.type = Type::TripleStraightWithSingles;
+							return true;
+						}
+						else
+							return false;
+					}
+					else
+						return false;
+				case 3:
+					if (3 == counts[2])
+					{
+						rotate(hand.cards.begin() + 3, hand.cards.begin() + 4, hand.cards.end() - 2);
+						const Value originalValue = this->values[hand.cards[0].point];
+						if (originalValue < this->values[hand.cards[3].point])
+							rotate(hand.cards.begin(), hand.cards.begin() + 3, originalValue < this->values[hand.cards[6].point] ? hand.cards.begin() + 9 : hand.cards.begin() + 6);
+						const Value newValue = this->values[hand.cards[0].point];
+						if (newValue <= 12 && this->values[hand.cards[6].point] + 2 == newValue)
+						{
+							const Value value9 = this->values[hand.cards[9].point];
+							if (value9 < this->values[hand.cards[10].point])
+								rotate(hand.cards.begin() + 9, hand.cards.begin() + 10, value9 < this->values[hand.cards[11].point] ? hand.cards.end() : hand.cards.end() - 1); // e.g., 9999888777KJ -> 9998887779KJ -> 999888777 + KJ9 | 9999888777J5 -> 9998887779J5 -> 999888777 + J95
+							hand.type = Type::TripleStraightWithSingles;
+							return true;
+						}
+						else
+							return false;
+					}
+					else
+						return false;
+				default:
+					return false;
+				}
 			case 3:
 				if (3 == counts[1] && 3 == counts[2])
 					switch (counts[3])
 					{
 					case 3:
-						if (this->values[token.cards[0].point] <= 12)
-							if (this->values[token.cards[9].point] + 3 == this->values[token.cards[0].point])
+						if (this->values[hand.cards[0].point] <= 12)
+							if (this->values[hand.cards[9].point] + 3 == this->values[hand.cards[0].point])
 							{
-								vector<PossibleToken> potentialTokens{};
+								vector<Candidate> potentialHands{};
 								char buffers[2][3] = { 0 };
-								this->convertPointToChars(token.cards[0].point, buffers[0]);
-								this->convertPointToChars(token.cards[9].point, buffers[1]);
-								token.tokenType = TokenType::TripleStraight; // 飞机（不带翅膀）
-								potentialTokens.push_back(PossibleToken{ token, (string)"解析为长度为 4 且点数为 " + buffers[0] + " 的飞机（``TokenType::TripleStraight``）" });
-								token.tokenType = TokenType::TripleStraightWithSingles; // 飞机带小翼
-								potentialTokens.push_back(PossibleToken{ token, (string)"解析为长度为 3 且点数为 " + buffers[0] + " 的飞机带小翼（``TokenType::TripleStraightWithSingles``），其中小翼的点数均为 " + buffers[1] });
-								rotate(token.cards.begin(), token.cards.begin() + 3, token.cards.end());
-								this->convertPointToChars(token.cards[0].point, buffers[1]);
-								potentialTokens.push_back(PossibleToken{ token, (string)"解析为长度为 3 且点数为 " + buffers[1] + " 的飞机带小翼（``TokenType::TripleStraightWithSingles``），其中小翼的点数均为 " + buffers[0] });
-								if (this->lastToken && token.player != this->lastToken.player)
-									for (vector<PossibleToken>::iterator it = potentialTokens.begin(); it != potentialTokens.end();)
-										if (this->coverLastToken(it->token))
+								this->convertPointToChars(hand.cards[0].point, buffers[0]);
+								potentialHands.emplace_back(hand, (string)"解析为长度为 4 且点数为 " + buffers[0] + " 的飞机（``Type::TripleStraight``）");
+								potentialHands.back().hand.type = Type::TripleStraight; // 飞机（不带翅膀）
+								this->convertPointToChars(hand.cards[9].point, buffers[1]);
+								potentialHands.emplace_back(hand, (string)"解析为长度为 3 且点数为 " + buffers[0] + " 的飞机带小翼（``Type::TripleStraightWithSingles``），其中小翼的点数均为 " + buffers[1]);
+								potentialHands.back().hand.type = Type::TripleStraightWithSingles; // 飞机带小翼
+								this->convertPointToChars(hand.cards[3].point, buffers[1]);
+								potentialHands.emplace_back(hand, (string)"解析为长度为 3 且点数为 " + buffers[1] + " 的飞机带小翼（``Type::TripleStraightWithSingles``），其中小翼的点数均为 " + buffers[0]);
+								rotate(potentialHands.back().hand.cards.begin(), potentialHands.back().hand.cards.begin() + 3, potentialHands.back().hand.cards.end());
+								potentialHands.back().hand.type = Type::TripleStraightWithSingles; // 飞机带小翼
+								if (this->lastHand && hand.player != this->lastHand.player)
+									for (vector<Candidate>::iterator it = potentialHands.begin(); it != potentialHands.end();)
+										if (this->coverLastHand(it->hand))
 											++it;
 										else
-											it = potentialTokens.erase(it);
-								switch (potentialTokens.size())
+											it = potentialHands.erase(it);
+								switch (potentialHands.size())
 								{
 								case 0:
-									possibleTokens.clear();
+									candidates.clear();
 									return false;
 								case 1:
-									token = potentialTokens[0].token;
-									possibleTokens.clear();
+									hand = move(potentialHands[0].hand);
+									candidates.clear();
 									return true;
 								default:
-									if (possibleTokens.size() == 1)
+									if (candidates.size() == 1)
 									{
-										const vector<PossibleToken>::iterator it = find_if(potentialTokens.begin(), potentialTokens.end(), [&possibleTokens](const PossibleToken& possibleToken) { return possibleToken.token == possibleTokens[0].token; });
-										if (it != potentialTokens.end())
+										const vector<Candidate>::iterator it = find_if(potentialHands.begin(), potentialHands.end(), [&candidates](const Candidate& candidate) { return candidate.hand == candidates[0].hand; });
+										if (it != potentialHands.end())
 										{
-											token = it->token;
-											possibleTokens.clear();
+											hand = move(it->hand);
+											candidates.clear();
 											return true;
 										}
 									}
-									possibleTokens = move(potentialTokens);
+									candidates = move(potentialHands);
 									return false;
 								}
 							}
-							else if (this->values[token.cards[6].point] + 2 == this->values[token.cards[0].point])
+							else if (this->values[hand.cards[6].point] + 2 == this->values[hand.cards[0].point])
 							{
-								token.tokenType = TokenType::TripleStraightWithSingles; // 飞机带小翼
-								possibleTokens.clear();
+								hand.type = Type::TripleStraightWithSingles; // 飞机带小翼
+								candidates.clear();
 								return true;
 							}
-						possibleTokens.clear();
-						if (this->values[token.cards[9].point] + 2 == this->values[token.cards[3].point])
+						candidates.clear();
+						if (this->values[hand.cards[9].point] + 2 == this->values[hand.cards[3].point])
 						{
-							rotate(token.cards.begin(), token.cards.begin() + 3, token.cards.end()); // e.g., 222999888777 -> 999888777 + 222
-							token.tokenType = TokenType::TripleStraightWithSingles; // 飞机带小翼
+							rotate(hand.cards.begin(), hand.cards.begin() + 3, hand.cards.end()); // e.g., 222999888777 -> 999888777 + 222
+							hand.type = Type::TripleStraightWithSingles; // 飞机带小翼
 							return true;
 						}
 						else
 							return false;
 					case 2: // && 1 == counts[4]
-						possibleTokens.clear();
-						if (this->values[token.cards[0].point] <= 12 && this->values[token.cards[6].point] + 2 == this->values[token.cards[0].point])
+						candidates.clear();
+						if (this->values[hand.cards[0].point] <= 12 && this->values[hand.cards[6].point] + 2 == this->values[hand.cards[0].point])
 						{
-							if (this->values[token.cards[9].point] < this->values[token.cards[11].point])
-								rotate(token.cards.begin() + 9, token.cards.begin() + 11, token.cards.end()); // e.g., 999888777335 -> 999888777 + 533
-							token.tokenType = TokenType::TripleStraightWithSingles; // 飞机带小翼
+							if (this->values[hand.cards[9].point] < this->values[hand.cards[11].point])
+								rotate(hand.cards.begin() + 9, hand.cards.begin() + 11, hand.cards.end()); // e.g., 999888777335 -> 999888777 + 533
+							hand.type = Type::TripleStraightWithSingles; // 飞机带小翼
 							return true;
 						}
 						else
 							return false;
 					case 1: // && 1 == counts[4] && 1 == counts[5]
-						possibleTokens.clear();
-						if (this->values[token.cards[0].point] <= 12 && this->values[token.cards[6].point] + 2 == this->values[token.cards[0].point])
+						candidates.clear();
+						if (this->values[hand.cards[0].point] <= 12 && this->values[hand.cards[6].point] + 2 == this->values[hand.cards[0].point])
 						{
-							token.tokenType = TokenType::TripleStraightWithSingles; // 飞机带小翼
+							hand.type = Type::TripleStraightWithSingles; // 飞机带小翼
 							return true;
 						}
 						else
 							return false;
 					default:
-						possibleTokens.clear();
+						candidates.clear();
 						return false;
 					}
 				else
 				{
-					possibleTokens.clear();
+					candidates.clear();
 					return false;
 				}
 			case 2:
-				possibleTokens.clear();
-				if (2 == counts[1] && 2 == counts[2] && 2 == counts[3] && 2 == counts[4] && 2 == counts[5] && this->values[token.cards[0].point] <= 12 && this->values[token.cards[10].point] + 5 == this->values[token.cards[0].point])
+				candidates.clear();
+				if (2 == counts[1] && 2 == counts[2] && 2 == counts[3] && 2 == counts[4] && 2 == counts[5] && this->values[hand.cards[0].point] <= 12 && this->values[hand.cards[10].point] + 5 == this->values[hand.cards[0].point])
 				{
-					token.tokenType = TokenType::PairStraight; // 连对
+					hand.type = Type::PairStraight; // 连对
 					return true;
 				}
 				else
 					return false;
 			case 1: // && 1 == counts[1] && ... && 1 == counts[11]
-				possibleTokens.clear();
-				if (this->values[token.cards[0].point] <= 12 && this->values[token.cards[11].point] + 11 == this->values[token.cards[0].point])
+				candidates.clear();
+				if (this->values[hand.cards[0].point] <= 12 && this->values[hand.cards[11].point] + 11 == this->values[hand.cards[0].point])
 				{
-					token.tokenType = TokenType::SingleStraight; // 顺子
+					hand.type = Type::SingleStraight; // 顺子
 					return true;
 				}
 				else
 					return false;
 			default:
-				possibleTokens.clear();
+				candidates.clear();
 				return false;
 			}
 		case 14:
-			possibleTokens.clear();
-			if (2 == counts[0] && 2 == counts[1] && 2 == counts[2] && 2 == counts[3] && 2 == counts[4] && 2 == counts[5] && 2 == counts[6] && this->values[token.cards[0].point] <= 12 && this->values[token.cards[12].point] + 6 == this->values[token.cards[0].point])
+			candidates.clear();
+			if (2 == counts[0] && 2 == counts[1] && 2 == counts[2] && 2 == counts[3] && 2 == counts[4] && 2 == counts[5] && 2 == counts[6] && this->values[hand.cards[0].point] <= 12 && this->values[hand.cards[12].point] + 6 == this->values[hand.cards[0].point])
 			{
-				token.tokenType = TokenType::PairStraight; // 连对
+				hand.type = Type::PairStraight; // 连对
 				return true;
 			}
 			else
 				return false;
 		case 15:
-			possibleTokens.clear();
+			candidates.clear();
 			switch (counts[0])
 			{
 			case 4:
-				if (3 == counts[1] && 3 == counts[2] && 3 == counts[4] && 2 == counts[5] && this->values[token.cards[4].point] <= 12 && this->values[token.cards[10].point] + 2 == this->values[token.cards[4].point] && JOKER_POINT != token.cards[13].point) // 双王不是对子
+				if (3 == counts[1] && 3 == counts[2] && 3 == counts[4] && 2 == counts[5] && this->values[hand.cards[4].point] <= 12 && this->values[hand.cards[10].point] + 2 == this->values[hand.cards[4].point] && JOKER_POINT != hand.cards[13].point) // 双王不是对子
 				{
-					rotate(token.cards.begin(), token.cards.begin() + 4, token.cards.begin() + 13);
-					token.tokenType = TokenType::TripleStraightWithPairs; // 飞机带大翼
+					rotate(hand.cards.begin(), hand.cards.begin() + 4, hand.cards.begin() + 13);
+					hand.type = Type::TripleStraightWithPairs; // 飞机带大翼
 					return true;
 				}
 				else
@@ -2622,17 +2689,17 @@ protected:
 					switch (counts[3])
 					{
 					case 3:
-						if (3 == counts[4] && this->values[token.cards[0].point] <= 12 && this->values[token.cards[12].point] + 4 == this->values[token.cards[0].point])
+						if (3 == counts[4] && this->values[hand.cards[0].point] <= 12 && this->values[hand.cards[12].point] + 4 == this->values[hand.cards[0].point])
 						{
-							token.tokenType = TokenType::TripleStraight; // 飞机（不带翅膀）
+							hand.type = Type::TripleStraight; // 飞机（不带翅膀）
 							return true;
 						}
 						else
 							return false;
 					case 2:
-						if (2 == counts[4] && 2 == counts[5] && this->values[token.cards[0].point] <= 12 && this->values[token.cards[6].point] + 2 == this->values[token.cards[0].point] && JOKER_POINT != token.cards[9].point) // && JOKER_POINT != token.cards[11].point && JOKER_POINT != token.cards[13].point | 双王不是对子
+						if (2 == counts[4] && 2 == counts[5] && this->values[hand.cards[0].point] <= 12 && this->values[hand.cards[6].point] + 2 == this->values[hand.cards[0].point] && JOKER_POINT != hand.cards[9].point) // && JOKER_POINT != hand.cards[11].point && JOKER_POINT != hand.cards[13].point | 双王不是对子
 						{
-							token.tokenType = TokenType::TripleStraightWithPairs; // 飞机带大翼
+							hand.type = Type::TripleStraightWithPairs; // 飞机带大翼
 							return true;
 						}
 						else
@@ -2649,239 +2716,306 @@ protected:
 			switch (counts[0])
 			{
 			case 4:
-				if (3 == counts[1] && 3 == counts[2] && 3 == counts[3])
-					switch (counts[4])
+				switch (counts[1])
+				{
+				case 4:
+					candidates.clear();
+					switch (counts[2])
 					{
+					case 4:
+						switch (counts[3])
+						{
+						case 4:
+						{
+							rotate(hand.cards.begin() + 11, hand.cards.begin() + 12, hand.cards.end() - 1);
+							rotate(hand.cards.begin() + 7, hand.cards.begin() + 8, hand.cards.end() - 2);
+							rotate(hand.cards.begin() + 3, hand.cards.begin() + 4, hand.cards.end() - 3);
+							const Value value0 = this->values[hand.cards[0].point];
+							if (value0 <= 12 && this->values[hand.cards[9].point] + 3 == value0)
+							{
+								hand.type = Type::TripleStraightWithSingles; // 飞机带小翼
+								return true;
+							}
+							else
+								return false;
+						}
+						case 3: // && 1 == counts[4]
+						{
+							rotate(hand.cards.begin() + 11, hand.cards.begin() + 12, hand.cards.end() - 1);
+							rotate(hand.cards.begin() + 7, hand.cards.begin() + 8, hand.cards.end() - 2);
+							rotate(hand.cards.begin() + 3, hand.cards.begin() + 4, hand.cards.end() - 3);
+							const Value value0 = this->values[hand.cards[0].point];
+							if (value0 <= 12 && this->values[hand.cards[9].point] + 3 == value0)
+							{
+								const Value value15 = this->values[hand.cards[15].point];
+								if (value15 > this->values[hand.cards[14].point])
+									rotate(hand.cards.begin() + (value15 > this->values[hand.cards[13].point] ? (value15 > value0 ? 12 : 13) : 14), hand.cards.begin() + 15, hand.cards.end());
+								hand.type = Type::TripleStraightWithSingles; // 飞机带小翼
+								return true;
+							}
+							else
+								return false;
+						}
+						default:
+							return false;
+						}
 					case 3:
-					{
-						rotate(token.cards.begin() + 3, token.cards.begin() + 4, token.cards.end());
-						vector<Card>::iterator cardIt = token.cards.begin() + 3;
-						const vector<Card>::iterator indexToLastPoint = token.cards.begin() + 12;
-						const Value value = this->values[token.cards[0].point];
-						while (cardIt <= indexToLastPoint && this->values[cardIt->point] > value)
-							cardIt += 3;
-						rotate(token.cards.begin(), token.cards.begin() + 3, cardIt);
-						if (this->values[token.cards[0].point] <= 12)
-							if (this->values[token.cards[12].point] + 4 == this->values[token.cards[0].point])
-							{
-								vector<PossibleToken> potentialTokens{};
-								char buffers[2][3] = { 0 };
-								this->convertPointToChars(token.cards[0].point, buffers[0]);
-								this->convertPointToChars(token.cards[12].point, buffers[1]);
-								if (this->values[token.cards[12].point] < this->values[token.cards[15].point])
-								{
-									rotate(token.cards.begin() + 12, token.cards.begin() + 15, token.cards.end()); // e.g., 9999888777666555 -> 9998887776665559 -> 999888777666 + 9555
-									token.tokenType = TokenType::TripleStraightWithSingles; // 飞机带小翼
-									potentialTokens.push_back(PossibleToken{ token, (string)"解析为长度为 4 且点数为 " + buffers[0] + " 的飞机带小翼（``TokenType::TripleStraightWithSingles``），其中小翼包含三张点数为 " + buffers[1] + " 的牌" });
-									rotate(token.cards.begin() + 12, token.cards.begin() + 13, token.cards.end());
-								}
-								else // e.g., 5555999888777666 -> 9998887776665555 -> 999888777666 + 5555
-								{
-									token.tokenType = TokenType::TripleStraightWithSingles; // 飞机带小翼
-									potentialTokens.push_back(PossibleToken{ token, (string)"解析为长度为 4 且点数为 " + buffers[0] + " 的飞机带小翼（``TokenType::TripleStraightWithSingles``），其中小翼包含三张点数为 " + buffers[1] + " 的牌" });
-								}
-								rotate(token.cards.begin(), token.cards.begin() + 3, token.cards.end() - 1); // e.g., 8888999777666555 -> 9998887776665558 -> 888777666555 + 9998
-								this->convertPointToChars(token.cards[0].point, buffers[1]);
-								potentialTokens.push_back(PossibleToken{ token, (string)"解析为长度为 4 且点数为 " + buffers[1] + " 的飞机带小翼（``TokenType::TripleStraightWithSingles``），其中小翼包含三张点数为 " + buffers[0] + " 的牌" });
-								if (this->lastToken && token.player != this->lastToken.player)
-									for (vector<PossibleToken>::iterator possibleTokenIt = potentialTokens.begin(); possibleTokenIt != potentialTokens.end();)
-										if (this->coverLastToken(possibleTokenIt->token))
-											++possibleTokenIt;
-										else
-											possibleTokenIt = potentialTokens.erase(possibleTokenIt);
-								switch (potentialTokens.size())
-								{
-								case 0:
-									possibleTokens.clear();
-									return false;
-								case 1:
-									token = potentialTokens[0].token;
-									possibleTokens.clear();
-									return true;
-								default:
-									if (possibleTokens.size() == 1)
-									{
-										const vector<PossibleToken>::iterator possibleTokenIt = find_if(potentialTokens.begin(), potentialTokens.end(), [&possibleTokens](const PossibleToken& possibleToken) { return possibleToken.token == possibleTokens[0].token; });
-										if (possibleTokenIt != potentialTokens.end())
-										{
-											token = possibleTokenIt->token;
-											possibleTokens.clear();
-											return true;
-										}
-									}
-									possibleTokens = move(potentialTokens);
-									return false;
-								}
-								token.tokenType = TokenType::TripleStraightWithSingles; // 飞机带小翼
-								return true;
-							}
-							else if (this->values[token.cards[9].point] + 3 == this->values[token.cards[0].point])
-							{
-								rotate(token.cards.begin() + 12, token.cards.begin() + 15, token.cards.end()); // if (this->values[token.cards[12].point] < this->values[token.cards[15].point]) | e.g., 8888999777666444 -> 9998887776664448 -> 999888777666 + 8444
-								token.tokenType = TokenType::TripleStraightWithSingles; // 飞机带小翼
-								possibleTokens.clear();
-								return true;
-							}
-						possibleTokens.clear();
-						if (this->values[token.cards[12].point] + 3 == this->values[token.cards[3].point])
+						if (counts[3] >= 3)
 						{
-							rotate(token.cards.begin(), token.cards.begin() + 3, token.cards.end() - 1); // e.g., 2222999888777666 -> 2229998887776662 -> 999888777666 + 2222
-							token.tokenType = TokenType::TripleStraightWithSingles; // 飞机带小翼
-							possibleTokens.clear();
-							return true;
+							rotate(hand.cards.begin() + 7, hand.cards.begin() + 8, hand.cards.end());
+							rotate(hand.cards.begin() + 3, hand.cards.begin() + 4, hand.cards.end() - 1);
+							const Value value0 = this->values[hand.cards[0].point];
+							if (value0 <= 12 && this->values[hand.cards[9].point] + 3 == value0)
+							{
+								if (this->values[hand.cards[12].point] < value0)
+									rotate(hand.cards.begin() + 12, hand.cards.begin() + 14, hand.cards.end());
+								const Value value13 = this->values[hand.cards[13].point];
+								if (value13 < this->values[hand.cards[14].point])
+									rotate(hand.cards.begin() + 13, hand.cards.begin() + 14, value13 < this->values[hand.cards[15].point] ? hand.cards.end() : hand.cards.end() - 1);
+								hand.type = Type::TripleStraightWithSingles; // 飞机带小翼
+								return true;
+							}
+							else
+								return false;
 						}
 						else
 							return false;
-					}
-					case 2: // && 1 == counts[5]
-					case 1: // && 1 == counts[5] && 1 == counts[6]
-					{
-						possibleTokens.clear();
-						rotate(token.cards.begin() + 3, token.cards.begin() + 4, token.cards.begin() + 13);
-						vector<Card>::iterator it = token.cards.begin() + 3;
-						const vector<Card>::iterator indexToLastPoint = token.cards.begin() + 9;
-						const Value value = this->values[token.cards[0].point];
-						while (it <= indexToLastPoint && this->values[it->point] > value)
-							it += 3;
-						rotate(token.cards.begin(), token.cards.begin() + 3, it);
-						if (this->values[token.cards[0].point] <= 12 && this->values[token.cards[9].point] + 3 == this->values[token.cards[0].point])
-						{
-							sort(token.cards.begin() + 13, token.cards.end(), [this](const Card a, const Card b) { const Value valueA = this->values[a.point], valueB = this->values[b.point]; return valueA > valueB || (valueA == valueB && a.suit > b.suit); });
-							token.tokenType = TokenType::TripleStraightWithSingles; // 飞机带小翼
-							return true;
-						}
-						else
-							return false;
-					}
 					default:
-						possibleTokens.clear();
 						return false;
 					}
-				else
+				case 3:
+					if (3 == counts[2] && 3 == counts[3])
+						if (3 == counts[4])
+						{
+							rotate(hand.cards.begin() + 3, hand.cards.begin() + 4, hand.cards.end());
+							vector<Card>::iterator cardIt = hand.cards.begin() + 3;
+							const vector<Card>::iterator indexToLastBodyPoint = hand.cards.begin() + 12;
+							const Value value = this->values[hand.cards[0].point];
+							while (cardIt <= indexToLastBodyPoint && this->values[cardIt->point] > value)
+								cardIt += 3;
+							rotate(hand.cards.begin(), hand.cards.begin() + 3, cardIt);
+							if (this->values[hand.cards[0].point] <= 12)
+								if (this->values[hand.cards[12].point] + 4 == this->values[hand.cards[0].point])
+								{
+									vector<Candidate> potentialHands{};
+									char buffers[2][3] = { 0 };
+									this->convertPointToChars(hand.cards[0].point, buffers[0]);
+									this->convertPointToChars(hand.cards[12].point, buffers[1]);
+									potentialHands.emplace_back(hand, (string)"解析为长度为 4 且点数为 " + buffers[0] + " 的飞机带小翼（``Type::TripleStraightWithSingles``），其中小翼包含三张点数为 " + buffers[1] + " 的牌");
+									if (this->values[hand.cards[12].point] < this->values[hand.cards[15].point])
+										rotate(potentialHands.back().hand.cards.begin() + 12, potentialHands.back().hand.cards.begin() + 15, potentialHands.back().hand.cards.end()); // e.g., 9999888777666555 -> 9998887776665559 -> 999888777666 + 9555 | else e.g., 5555999888777666 -> 9998887776665555 -> 999888777666 + 5555
+									potentialHands.back().hand.type = Type::TripleStraightWithSingles; // 飞机带小翼
+									this->convertPointToChars(hand.cards[3].point, buffers[1]);
+									potentialHands.emplace_back(hand, (string)"解析为长度为 4 且点数为 " + buffers[1] + " 的飞机带小翼（``Type::TripleStraightWithSingles``），其中小翼包含三张点数为 " + buffers[0] + " 的牌");
+									rotate(potentialHands.back().hand.cards.begin(), potentialHands.back().hand.cards.begin() + 3, potentialHands.back().hand.cards.end() - 1); // e.g., 8888999777666555 -> 9998887776665558 -> 888777666555 + 9998
+									potentialHands.back().hand.type = Type::TripleStraightWithSingles; // 飞机带小翼
+									if (this->lastHand && hand.player != this->lastHand.player)
+										for (vector<Candidate>::iterator candidateIt = potentialHands.begin(); candidateIt != potentialHands.end();)
+											if (this->coverLastHand(candidateIt->hand))
+												++candidateIt;
+											else
+												candidateIt = potentialHands.erase(candidateIt);
+									switch (potentialHands.size())
+									{
+									case 0:
+										candidates.clear();
+										return false;
+									case 1:
+										hand = move(potentialHands[0].hand);
+										candidates.clear();
+										return true;
+									default:
+										if (candidates.size() == 1)
+										{
+											const vector<Candidate>::iterator candidateIt = find_if(potentialHands.begin(), potentialHands.end(), [&candidates](const Candidate& candidate) { return candidate.hand == candidates[0].hand; });
+											if (candidateIt != potentialHands.end())
+											{
+												hand = candidateIt->hand;
+												candidates.clear();
+												return true;
+											}
+										}
+										candidates = move(potentialHands);
+										return false;
+									}
+								}
+								else if (this->values[hand.cards[9].point] + 3 == this->values[hand.cards[0].point])
+								{
+									rotate(hand.cards.begin() + 12, hand.cards.begin() + 15, hand.cards.end()); // if (this->values[hand.cards[12].point] < this->values[hand.cards[15].point]) | e.g., 8888999777666444 -> 9998887776664448 -> 999888777666 + 8444
+									hand.type = Type::TripleStraightWithSingles; // 飞机带小翼
+									candidates.clear();
+									return true;
+								}
+							candidates.clear();
+							if (this->values[hand.cards[12].point] + 3 == this->values[hand.cards[3].point])
+							{
+								rotate(hand.cards.begin(), hand.cards.begin() + 3, hand.cards.end() - 1); // e.g., 2222999888777666 -> 2229998887776662 -> 999888777666 + 2222
+								hand.type = Type::TripleStraightWithSingles; // 飞机带小翼
+								return true;
+							}
+							else
+								return false;
+						}
+						else
+						{
+							candidates.clear();
+							rotate(hand.cards.begin() + 3, hand.cards.begin() + 4, hand.cards.begin() + 13);
+							vector<Card>::iterator it = hand.cards.begin() + 3;
+							const vector<Card>::iterator indexToLastBodyPoint = hand.cards.begin() + 9;
+							const Value originalValue = this->values[hand.cards[0].point];
+							while (it <= indexToLastBodyPoint && this->values[it->point] > originalValue)
+								it += 3;
+							rotate(hand.cards.begin(), hand.cards.begin() + 3, it);
+							const Value newValue = this->values[hand.cards[0].point];
+							if (newValue <= 12 && this->values[hand.cards[9].point] + 3 == newValue)
+							{
+								sort(hand.cards.begin() + 13, hand.cards.end(), [this](const Card a, const Card b) { const Value valueA = this->values[a.point], valueB = this->values[b.point]; return valueA > valueB || (valueA == valueB && a.suit > b.suit); });
+								hand.type = Type::TripleStraightWithSingles; // 飞机带小翼
+								return true;
+							}
+							else
+								return false;
+						}
+					else
+					{
+						candidates.clear();
+						return false;
+					}
+				default:
+					candidates.clear();
 					return false;
+				}
 			case 3:
 				if (3 == counts[1] && 3 == counts[2] && 3 == counts[3])
 					switch (counts[4])
 					{
-					case 3:
-						if (this->values[token.cards[0].point] <= 12)
-							if (this->values[token.cards[12].point] + 4 == this->values[token.cards[0].point])
+					case 3: // && 1 == counts[4]
+						if (this->values[hand.cards[0].point] <= 12)
+							if (this->values[hand.cards[12].point] + 4 == this->values[hand.cards[0].point])
 							{
-								vector<PossibleToken> potentialTokens{};
+								vector<Candidate> potentialHands{};
 								char buffers[2][3] = { 0 };
-								this->convertPointToChars(token.cards[0].point, buffers[0]);
-								this->convertPointToChars(token.cards[12].point, buffers[1]);
-								if (this->values[token.cards[12].point] < this->values[token.cards[15].point])
-								{
-									rotate(token.cards.begin() + 12, token.cards.begin() + 15, token.cards.end()); // e.g., 999888777666555K -> 999888777666 + K555
-									token.tokenType = TokenType::TripleStraightWithSingles; // 飞机带小翼
-									potentialTokens.push_back(PossibleToken{ token, (string)"解析为长度为 4 且点数为 " + buffers[0] + " 的飞机带小翼（``TokenType::TripleStraightWithSingles``），其中小翼包含三张点数为 " + buffers[1] + " 的牌" });
-									rotate(token.cards.begin() + 12, token.cards.begin() + 13, token.cards.end());
-								}
-								else
-								{
-									token.tokenType = TokenType::TripleStraightWithSingles; // 飞机带小翼
-									potentialTokens.push_back(PossibleToken{ token, (string)"解析为长度为 4 且点数为 " + buffers[0] + " 的飞机带小翼（``TokenType::TripleStraightWithSingles``），其中小翼包含三张点数为 " + buffers[1] + " 的牌" });
-								}
-								rotate(token.cards.begin(), token.cards.begin() + 3, token.cards[0].point < token.cards[15].point ? token.cards.end() : token.cards.end() - 1); // e.g., 999888777666555K -> 888777666555 + K999 | 9998887776665553 -> 888777666555 + 9993
-								this->convertPointToChars(token.cards[0].point, buffers[1]);
-								potentialTokens.push_back(PossibleToken{ token, (string)"解析为长度为 4 且点数为 " + buffers[1] + " 的飞机带小翼（``TokenType::TripleStraightWithSingles``），其中小翼包含三张点数为 " + buffers[0] + " 的牌" });
-								if (this->lastToken && token.player != this->lastToken.player)
-									for (vector<PossibleToken>::iterator it = potentialTokens.begin(); it != potentialTokens.end();)
-										if (this->coverLastToken(it->token))
+								this->convertPointToChars(hand.cards[0].point, buffers[0]);
+								this->convertPointToChars(hand.cards[12].point, buffers[1]);
+								potentialHands.emplace_back(hand, (string)"解析为长度为 4 且点数为 " + buffers[0] + " 的飞机带小翼（``Type::TripleStraightWithSingles``），其中小翼包含三张点数为 " + buffers[1] + " 的牌");
+								if (this->values[hand.cards[12].point] < this->values[hand.cards[15].point])
+									rotate(potentialHands.back().hand.cards.begin() + 12, potentialHands.back().hand.cards.begin() + 15, potentialHands.back().hand.cards.end()); // e.g., 999888777666555K -> 999888777666 + K555
+								potentialHands.back().hand.type = Type::TripleStraightWithSingles; // 飞机带小翼
+								this->convertPointToChars(hand.cards[3].point, buffers[1]);
+								potentialHands.emplace_back(hand, (string)"解析为长度为 4 且点数为 " + buffers[1] + " 的飞机带小翼（``Type::TripleStraightWithSingles``），其中小翼包含三张点数为 " + buffers[0] + " 的牌");
+								rotate(potentialHands.back().hand.cards.begin(), potentialHands.back().hand.cards.begin() + 3, hand.cards[0].point < hand.cards[15].point ? potentialHands.back().hand.cards.end() : potentialHands.back().hand.cards.end() - 1); // e.g., 999888777666555K -> 888777666555 + K999 | 9998887776665553 -> 888777666555 + 9993
+								potentialHands.back().hand.type = Type::TripleStraightWithSingles; // 飞机带小翼
+								if (this->lastHand && hand.player != this->lastHand.player)
+									for (vector<Candidate>::iterator it = potentialHands.begin(); it != potentialHands.end();)
+										if (this->coverLastHand(it->hand))
 											++it;
 										else
-											it = potentialTokens.erase(it);
-								switch (potentialTokens.size())
+											it = potentialHands.erase(it);
+								switch (potentialHands.size())
 								{
 								case 0:
-									possibleTokens.clear();
+									candidates.clear();
 									return false;
 								case 1:
-									token = potentialTokens[0].token;
-									possibleTokens.clear();
+									hand = move(potentialHands[0].hand);
+									candidates.clear();
 									return true;
 								default:
-									if (possibleTokens.size() == 1)
+									if (candidates.size() == 1)
 									{
-										const vector<PossibleToken>::iterator it = find_if(potentialTokens.begin(), potentialTokens.end(), [&possibleTokens](const PossibleToken& possibleToken) { return possibleToken.token == possibleTokens[0].token; });
-										if (it != potentialTokens.end())
+										const vector<Candidate>::iterator it = find_if(potentialHands.begin(), potentialHands.end(), [&candidates](const Candidate& candidate) { return candidate.hand == candidates[0].hand; });
+										if (it != potentialHands.end())
 										{
-											token = it->token;
-											possibleTokens.clear();
+											hand = move(it->hand);
+											candidates.clear();
 											return true;
 										}
 									}
-									possibleTokens = move(potentialTokens);
+									candidates = move(potentialHands);
 									return false;
 								}
 							}
-							else if (this->values[token.cards[9].point] + 3 == this->values[token.cards[0].point])
+							else if (this->values[hand.cards[9].point] + 3 == this->values[hand.cards[0].point])
 							{
-								if (this->values[token.cards[12].point] < this->values[token.cards[15].point])
-									rotate(token.cards.begin() + 12, token.cards.begin() + 15, token.cards.end()); // e.g., AAAKKKQQQJJJ3335 -> AAAKKKQQQJJJ + 5333
-								token.tokenType = TokenType::TripleStraightWithSingles; // 飞机带小翼
-								possibleTokens.clear();
+								if (this->values[hand.cards[12].point] < this->values[hand.cards[15].point])
+									rotate(hand.cards.begin() + 12, hand.cards.begin() + 15, hand.cards.end()); // e.g., AAAKKKQQQJJJ3335 -> AAAKKKQQQJJJ + 5333
+								hand.type = Type::TripleStraightWithSingles; // 飞机带小翼
+								candidates.clear();
 								return true;
 							}
-						possibleTokens.clear();
-						if (this->values[token.cards[12].point] + 3 == this->values[token.cards[3].point])
+						candidates.clear();
+						if (this->values[hand.cards[12].point] + 3 == this->values[hand.cards[3].point])
 						{
-							rotate(token.cards.begin(), token.cards.begin() + 3, this->values[token.cards[0].point] < this->values[token.cards[15].point] ? token.cards.end() : token.cards.end() - 1); // e.g., KKK9998887776662 -> 999888777666 + 2KKK | 222999888777666K -> 999888777666 + 222K
-							token.tokenType = TokenType::TripleStraightWithSingles; // 飞机带小翼
+							rotate(hand.cards.begin(), hand.cards.begin() + 3, this->values[hand.cards[0].point] < this->values[hand.cards[15].point] ? hand.cards.end() : hand.cards.end() - 1); // e.g., KKK9998887776662 -> 999888777666 + 2KKK | 222999888777666K -> 999888777666 + 222K
+							hand.type = Type::TripleStraightWithSingles; // 飞机带小翼
 							return true;
 						}
 						else
 							return false;
 					case 2:
-						if (this->values[token.cards[0].point] <= 12 && this->values[token.cards[9].point] + 3 == this->values[token.cards[0].point])
+					{
+						candidates.clear();
+						const Value value = this->values[hand.cards[0].point];
+						if (value <= 12 && this->values[hand.cards[9].point] + 3 == value)
 						{
-							if (1 == counts[5] && this->values[token.cards[12].point] < this->values[token.cards[14].point]) // && 1 == counts[6]
-								rotate(token.cards.begin() + 12, token.cards.begin() + 14, this->values[token.cards[12].point] < this->values[token.cards[15].point] ? token.cards.end() : token.cards.end() - 1); // e.g., AAAKKKQQQJJJ3375 -> AAAKKKQQQJJJ + 7533 | AAAKKKQQQJJJ5573 -> AAAKKKQQQJJJ + 7553
-							token.tokenType = TokenType::TripleStraightWithSingles; // 飞机带小翼
+							if (1 == counts[5] && this->values[hand.cards[12].point] < this->values[hand.cards[14].point]) // && 1 == counts[6]
+								rotate(hand.cards.begin() + 12, hand.cards.begin() + 14, this->values[hand.cards[12].point] < this->values[hand.cards[15].point] ? hand.cards.end() : hand.cards.end() - 1); // e.g., AAAKKKQQQJJJ3375 -> AAAKKKQQQJJJ + 7533 | AAAKKKQQQJJJ5573 -> AAAKKKQQQJJJ + 7553
+							hand.type = Type::TripleStraightWithSingles; // 飞机带小翼
 							return true;
 						}
 						else
 							return false;
+					}
 					case 1: // && 1 == counts[5] && 1 == counts[6] && 1 == counts[7]
-						if (this->values[token.cards[0].point] <= 12 && this->values[token.cards[9].point] + 3 == this->values[token.cards[0].point])
+					{
+						candidates.clear();
+						const Value value = this->values[hand.cards[0].point];
+						if (value <= 12 && this->values[hand.cards[9].point] + 3 == value)
 						{
-							token.tokenType = TokenType::TripleStraightWithSingles; // 飞机带小翼
+							hand.type = Type::TripleStraightWithSingles; // 飞机带小翼
 							return true;
 						}
 						else
 							return false;
+					}
 					default:
+						candidates.clear();
 						return false;
 					}
 				else
-					return false;
-			case 2:
-				if (2 == counts[1] && 2 == counts[2] && 2 == counts[3] && 2 == counts[4] && 2 == counts[5] && 2 == counts[6] && 2 == counts[7] && this->values[token.cards[0].point] <= 12 && this->values[token.cards[14].point] + 7 == this->values[token.cards[0].point])
 				{
-					token.tokenType = TokenType::PairStraight; // 连对
+					candidates.clear();
+					return false;
+				}
+			case 2:
+				candidates.clear();
+				if (2 == counts[1] && 2 == counts[2] && 2 == counts[3] && 2 == counts[4] && 2 == counts[5] && 2 == counts[6] && 2 == counts[7] && this->values[hand.cards[0].point] <= 12 && this->values[hand.cards[14].point] + 7 == this->values[hand.cards[0].point])
+				{
+					hand.type = Type::PairStraight; // 连对
 					return true;
 				}
 				else
 					return false;
 			default:
+				candidates.clear();
 				return false;
 			}
 		case 18:
+			candidates.clear();
 			switch (counts[0])
 			{
 			case 3:
-				if (3 == counts[1] && 3 == counts[2] && 3 == counts[3] && 3 == counts[4] && 3 == counts[5] && this->values[token.cards[0].point] <= 12 && this->values[token.cards[15].point] + 5 == this->values[token.cards[0].point])
+				if (3 == counts[1] && 3 == counts[2] && 3 == counts[3] && 3 == counts[4] && 3 == counts[5] && this->values[hand.cards[0].point] <= 12 && this->values[hand.cards[15].point] + 5 == this->values[hand.cards[0].point])
 				{
-					token.tokenType = TokenType::TripleStraight; // 飞机（不带翅膀）
+					hand.type = Type::TripleStraight; // 飞机（不带翅膀）
 					return true;
 				}
 				else
 					return false;
 			case 2:
-				if (2 == counts[1] && 2 == counts[2] && 2 == counts[3] && 2 == counts[4] && 2 == counts[5] && 2 == counts[6] && 2 == counts[7] && 2 == counts[8] && this->values[token.cards[0].point] <= 12 && this->values[token.cards[16].point] + 8 == this->values[token.cards[0].point])
+				if (2 == counts[1] && 2 == counts[2] && 2 == counts[3] && 2 == counts[4] && 2 == counts[5] && 2 == counts[6] && 2 == counts[7] && 2 == counts[8] && this->values[hand.cards[0].point] <= 12 && this->values[hand.cards[16].point] + 8 == this->values[hand.cards[0].point])
 				{
-					token.tokenType = TokenType::PairStraight; // 连对
+					hand.type = Type::PairStraight; // 连对
 					return true;
 				}
 				else
@@ -2892,6 +3026,309 @@ protected:
 		case 20:
 			switch (counts[0])
 			{
+			case 4:
+				switch (counts[1])
+				{
+				case 4:
+					switch (counts[2])
+					{
+					case 4:
+						candidates.clear();
+						switch (counts[3])
+						{
+						case 4:
+							switch (counts[4])
+							{
+							case 4:
+							{
+								const Value value = this->values[hand.cards[0].point];
+								if (value <= 12 && this->values[hand.cards[16].point] + 4 == value)
+								{
+									rotate(hand.cards.begin() + 15, hand.cards.begin() + 16, hand.cards.end() - 1);
+									rotate(hand.cards.begin() + 11, hand.cards.begin() + 12, hand.cards.end() - 2);
+									rotate(hand.cards.begin() + 7, hand.cards.begin() + 8, hand.cards.end() - 3);
+									rotate(hand.cards.begin() + 3, hand.cards.begin() + 4, hand.cards.end() - 4);
+									hand.type = Type::TripleStraightWithSingles; // 飞机带小翼
+									return true;
+								}
+								else
+									return false;
+							}
+							case 3:
+							{
+								rotate(hand.cards.begin() + 15, hand.cards.begin() + 16, hand.cards.end() - 1);
+								rotate(hand.cards.begin() + 11, hand.cards.begin() + 12, hand.cards.end() - 2);
+								rotate(hand.cards.begin() + 7, hand.cards.begin() + 8, hand.cards.end() - 3);
+								rotate(hand.cards.begin() + 3, hand.cards.begin() + 4, hand.cards.end() - 4);
+								vector<Card>::iterator it = hand.cards.begin() + 12;
+								const vector<Card>::iterator indexToSecondBodyPoint = hand.cards.begin() + 3;
+								const Value value12 = this->values[hand.cards[12].point];
+								while (it >= indexToSecondBodyPoint && this->values[(it - 3)->point] < value12)
+									it -= 3;
+								rotate(it, hand.cards.begin() + 12, hand.cards.begin() + 15);
+								const Value value0 = this->values[hand.cards[0].point];
+								if (value0 <= 12 && this->values[hand.cards[12].point] + 4 == value0)
+								{
+									const vector<Card>::iterator indexToSecondSidePoint = hand.cards.begin() + 16;
+									const Value value19 = this->values[hand.cards[19].point];
+									for (it = hand.cards.begin() + 19; it >= indexToSecondSidePoint && this->values[(it - 1)->point] < value19; --it);
+									rotate(it, hand.cards.begin() + 19, hand.cards.end());
+									hand.type = Type::TripleStraightWithSingles; // 飞机带小翼
+									return true;
+								}
+								else
+									return false;
+							}
+							default:
+								return false;
+							}
+						case 3:
+							if (3 == counts[4])
+							{
+								rotate(hand.cards.begin() + 11, hand.cards.begin() + 12, hand.cards.end());
+								rotate(hand.cards.begin() + 7, hand.cards.begin() + 8, hand.cards.end() - 1);
+								rotate(hand.cards.begin() + 3, hand.cards.begin() + 4, hand.cards.end() - 2);
+								vector<Card>::iterator it = hand.cards.begin() + 9;
+								const vector<Card>::iterator indexToSecondBodyPoint = hand.cards.begin() + 3;
+								const Value value9 = this->values[hand.cards[9].point], value12 = this->values[hand.cards[12].point];
+								while (it >= indexToSecondBodyPoint && this->values[(it - 3)->point] < value9)
+									it -= 3;
+								rotate(it, hand.cards.begin() + 9, hand.cards.begin() + 12);
+								it += 3;
+								vector<Card>::iterator secondaryIt = hand.cards.begin() + 12;
+								while (secondaryIt > it && this->values[(secondaryIt - 3)->point] < value12)
+									secondaryIt -= 3;
+								rotate(secondaryIt, hand.cards.begin() + 12, hand.cards.begin() + 15);
+								const Value value0 = this->values[hand.cards[0].point];
+								if (value0 <= 12 && this->values[hand.cards[12].point] + 4 == value0)
+								{
+									const Value value15 = this->values[hand.cards[15].point], value16 = this->values[hand.cards[16].point];
+									for (it = hand.cards.begin() + 17; it != hand.cards.end() && this->values[it->point] > value16; ++it);
+									rotate(hand.cards.begin() + 16, hand.cards.begin() + 17, it);
+									--it;
+									for (secondaryIt = hand.cards.begin() + 16; secondaryIt < it && this->values[secondaryIt->point] > value15; ++secondaryIt);
+									rotate(hand.cards.begin() + 15, hand.cards.begin() + 16, secondaryIt);
+									hand.type = Type::TripleStraightWithSingles; // 飞机带小翼
+									return true;
+								}
+								else
+									return false;
+							}
+							else
+								return false;
+						default:
+							return false;
+						}
+					case 3:
+						if (3 == counts[3] && 3 == counts[4])
+							if (3 == counts[5])
+							{
+
+							}
+							else
+							{
+								candidates.clear();
+								rotate(hand.cards.begin() + 7, hand.cards.begin() + 8, hand.cards.end() - 3);
+								rotate(hand.cards.begin() + 3, hand.cards.begin() + 4, hand.cards.end() - 4);
+								vector<Card>::iterator it = hand.cards.begin() + 6;
+								const vector<Card>::iterator indexToLastBodyPoint = hand.cards.begin() + 12;
+								const Value originalValue = this->values[hand.cards[0].point], value3 = this->values[hand.cards[3].point];
+								while (it <= indexToLastBodyPoint && this->values[it->point] > value3)
+									it += 3;
+								rotate(hand.cards.begin() + 3, hand.cards.begin() + 6, it);
+								vector<Card>::iterator secondaryIt = hand.cards.begin() + 3;
+								it -= 3;
+								while (secondaryIt < it && this->values[secondaryIt->point] > originalValue)
+									secondaryIt += 3;
+								rotate(hand.cards.begin(), hand.cards.begin() + 3, secondaryIt);
+								const Value newValue = this->values[hand.cards[0].point];
+								if (newValue <= 12 && this->values[hand.cards[12].point] + 4 == newValue)
+								{
+									sort(hand.cards.begin() + 15, hand.cards.end(), [this](const Card a, const Card b) { const Value valueA = this->values[a.point], valueB = this->values[b.point]; return valueA > valueB || (valueA == valueB && a.suit > b.suit); });
+									hand.type = Type::TripleStraightWithSingles; // 飞机带小翼
+									return true;
+								}
+								else
+									return false;
+							}
+						else
+						{
+							candidates.clear();
+							return false;
+						}
+					default:
+						candidates.clear();
+						return false;
+					}
+				case 3:
+					if (3 == counts[2] && 3 == counts[3] && 3 == counts[4])
+						if (3 == counts[5])
+						{
+							const Value originalValue = this->values[hand.cards[0].point];
+							const bool isValue19Larger = originalValue < this->values[hand.cards[19].point];
+							rotate(hand.cards.begin() + 3, hand.cards.begin() + 4, isValue19Larger ? hand.cards.end() : hand.cards.end() - 1);
+							vector<Card>::iterator it = hand.cards.begin() + 3;
+							const vector<Card>::iterator indexToLastBodyPoint = hand.cards.begin() + 15;
+							while (it <= indexToLastBodyPoint && this->values[it->point] > originalValue)
+								it += 3;
+							rotate(hand.cards.begin(), hand.cards.begin() + 3, it);
+							const Value newValue = this->values[hand.cards[0].point];
+							if (newValue <= 12)
+								if (this->values[hand.cards[15].point] + 5 == newValue)
+								{
+									const Value value15 = this->values[hand.cards[15].point];
+									vector<Candidate> potentialHands{};
+									char buffers[2][3] = { 0 };
+									this->convertPointToChars(hand.cards[0].point, buffers[0]);
+									this->convertPointToChars(hand.cards[15].point, buffers[1]);
+									potentialHands.emplace_back(hand, (string)"解析为长度为 5 且点数为 " + buffers[0] + " 的飞机带小翼（``Type::TripleStraightWithSingles``），其中小翼包含三张点数为 " + buffers[1] + " 的牌");
+									if (value15 < this->values[hand.cards[18].point])
+										rotate(potentialHands.back().hand.cards.begin() + 15, potentialHands.back().hand.cards.begin() + 18, value15 < this->values[hand.cards[19].point] ? potentialHands.back().hand.cards.end() : potentialHands.back().hand.cards.end() - 1);
+									potentialHands.back().hand.type = Type::TripleStraightWithSingles; // 飞机带小翼
+									this->convertPointToChars(hand.cards[3].point, buffers[1]);
+									potentialHands.emplace_back(hand, (string)"解析为长度为 5 且点数为 " + buffers[1] + " 的飞机带小翼（``Type::TripleStraightWithSingles``），其中小翼包含三张点数为 " + buffers[0] + " 的牌");
+									rotate(potentialHands.back().hand.cards.begin(), potentialHands.back().hand.cards.begin() + 3, isValue19Larger ? potentialHands.back().hand.cards.end() - 1 : potentialHands.back().hand.cards.end() - 2);
+									potentialHands.back().hand.type = Type::TripleStraightWithSingles; // 飞机带小翼
+									if (this->lastHand && hand.player != this->lastHand.player)
+										for (vector<Candidate>::iterator candidateIt = potentialHands.begin(); candidateIt != potentialHands.end();)
+											if (this->coverLastHand(candidateIt->hand))
+												++candidateIt;
+											else
+												candidateIt = potentialHands.erase(candidateIt);
+									switch (potentialHands.size())
+									{
+									case 0:
+										candidates.clear();
+										return false;
+									case 1:
+										hand = move(potentialHands[0].hand);
+										candidates.clear();
+										return true;
+									default:
+										if (candidates.size() == 1)
+										{
+											const vector<Candidate>::iterator candidateIt = find_if(potentialHands.begin(), potentialHands.end(), [&candidates](const Candidate& candidate) { return candidate.hand == candidates[0].hand; });
+											if (candidateIt != potentialHands.end())
+											{
+												hand = candidateIt->hand;
+												candidates.clear();
+												return true;
+											}
+										}
+										candidates = move(potentialHands);
+										return false;
+									}
+								}
+								else if (this->values[hand.cards[12].point] + 4 == newValue)
+								{
+									const Value value15 = this->values[hand.cards[15].point];
+									if (value15 < this->values[hand.cards[18].point])
+										rotate(hand.cards.begin() + 15, hand.cards.begin() + 18, value15 < this->values[hand.cards[19].point] ? hand.cards.end() : hand.cards.end() - 1); // e.g., QQQQAAAKKKJJJTTT8883 -> QQQAAAKKKJJJTTT888Q3 -> AAAKKKQQQJJJTTT999Q3 -> AAAKKKQQQJJJTTT + Q9993
+									hand.type = Type::TripleStraightWithSingles; // 飞机带小翼
+									candidates.clear();
+									return true;
+								}
+							candidates.clear();
+							if (this->values[hand.cards[15].point] + 4 == this->values[hand.cards[3].point])
+							{
+								for (it = hand.cards.begin() + 18; it != hand.cards.end() && this->values[it->point] > newValue; ++it);
+								rotate(hand.cards.begin(), hand.cards.begin() + 3, it); // e.g., 6666JJJ9998887775553 -> 666JJJ99988877755563 -> JJJ99988877766655563 -> 999888777666555 + JJJ63
+								hand.type = Type::TripleStraightWithSingles; // 飞机带小翼
+								return true;
+							}
+							else
+								return false;
+						}
+						else
+						{
+							/* Fetch 3333 + 4(2 + 2) + 2 + 2 */
+							const Value originalValue = this->values[hand.cards[0].point], value4 = this->values[hand.cards[4].point];
+							vector<Candidate> potentialHands{};
+							if (2 == counts[5] && 2 == counts[6] && JOKER_POINT != hand.cards[16].point && value4 <= 12 && this->values[hand.cards[13].point] + 3 == value4)
+							{
+								char buffers[2][3] = { 0 };
+								this->convertPointToChars(hand.cards[4].point, buffers[0]);
+								this->convertPointToChars(hand.cards[0].point, buffers[1]);
+								potentialHands.emplace_back(hand, (string)"解析为长度为 4 且点数为 " + buffers[0] + " 的飞机带大翼（``Type::TripleStraightWithPairs``），其中大翼包含两个点数为 " + buffers[1] + " 的对子");
+								rotate(potentialHands.back().hand.cards.begin(), potentialHands[0].hand.cards.begin() + 4, originalValue < this->values[potentialHands.back().hand.cards[16].point] ? (originalValue < this->values[potentialHands.back().hand.cards[18].point] ? potentialHands.back().hand.cards.end() : potentialHands.back().hand.cards.end() - 2) : potentialHands.back().hand.cards.end() - 4);
+								potentialHands.back().hand.type = Type::TripleStraightWithPairs; // 飞机带大翼
+							}
+							
+							/* Fetch 43333... -> 3 * 5 + 1 * 5 */
+							rotate(hand.cards.begin() + 3, hand.cards.begin() + 4, hand.cards.end() - 4);
+							vector<Card>::iterator it = hand.cards.begin() + 3;
+							const vector<Card>::iterator indexToLastBodyPoint = hand.cards.begin() + 12;
+							while (it <= indexToLastBodyPoint && this->values[it->point] > originalValue)
+								it += 3;
+							rotate(hand.cards.begin(), hand.cards.begin() + 3, it);
+							const Value newValue = this->values[hand.cards[0].point];
+							if (newValue <= 12 && this->values[hand.cards[12].point] + 4 == newValue)
+							{
+								sort(hand.cards.begin() + 15, hand.cards.end(), [this](const Card a, const Card b) { const Value valueA = this->values[a.point], valueB = this->values[b.point]; return valueA > valueB || (valueA == valueB && a.suit > b.suit); });
+								if (potentialHands.empty())
+								{
+									hand.type = Type::TripleStraightWithSingles; // 飞机带小翼
+									candidates.clear();
+									return true;
+								}
+								else
+								{
+									char buffer[3] = { 0 };
+									this->convertPointToChars(hand.cards[0].point, buffer);
+									potentialHands.emplace_back(hand, (string)"解析为长度为 5 且点数为 " + buffer + " 的飞机带小翼（``Type::TripleStraightWithSingles``）");
+									potentialHands.back().hand.type = Type::TripleStraightWithSingles; // 飞机带小翼
+									if (this->lastHand && hand.player != this->lastHand.player)
+										for (vector<Candidate>::iterator candidateIt = potentialHands.begin(); candidateIt != potentialHands.end();)
+											if (this->coverLastHand(candidateIt->hand))
+												++candidateIt;
+											else
+												candidateIt = potentialHands.erase(candidateIt);
+									switch (potentialHands.size())
+									{
+									case 0:
+										candidates.clear();
+										return false;
+									case 1:
+										hand = move(potentialHands[0].hand);
+										candidates.clear();
+										return true;
+									default:
+										if (candidates.size() == 1)
+										{
+											const vector<Candidate>::iterator candidateIt = find_if(potentialHands.begin(), potentialHands.end(), [&candidates](const Candidate& candidate) { return candidate.hand == candidates[0].hand; });
+											if (candidateIt != potentialHands.end())
+											{
+												hand = candidateIt->hand;
+												candidates.clear();
+												return true;
+											}
+										}
+										candidates = move(potentialHands);
+										return false;
+									}
+								}
+							}
+							else if (potentialHands.empty())
+							{
+								candidates.clear();
+								return false;
+							}
+							else
+							{
+								hand = move(potentialHands[0].hand);
+								candidates.clear();
+								return true;
+							}
+						}
+					else
+					{
+						candidates.clear();
+						return false;
+					}
+				default:
+					candidates.clear();
+					return false;
+				}
 			case 3:
 				if (3 == counts[1] && 3 == counts[2] && 3 == counts[3])
 					switch (counts[4])
@@ -2900,76 +3337,93 @@ protected:
 						switch (counts[5])
 						{
 						case 3:
-							if (this->values[token.cards[0].point] <= 12)
-								if (this->values[token.cards[15].point] + 5 == this->values[token.cards[0].point])
-									return false;
-								else if (this->values[token.cards[12].point] + 4 == this->values[token.cards[0].point])
-									if (2 == counts[6])
-										if (JOKER_POINT != token.cards[18].point) // 被带的牌不能含有王炸
-										{
-											if (this->values[token.cards[15].point] < this->values[token.cards[18].point])
-												rotate(token.cards.begin() + 15, token.cards.begin() + 18, token.cards.end()); // e.g., KKK...99933355 -> KKK...999 + 55333
-											token.tokenType = TokenType::TripleStraightWithSingles; // 飞机带小翼
-											return true;
-										}
-										else
-											return false;
-									else // if (1 == counts[7])
-									{
-										if (this->values[token.cards[15].point] < this->values[token.cards[18].point])
-											rotate(token.cards.begin() + 15, token.cards.begin() + 18, this->values[token.cards[15].point] < this->values[token.cards[19].point] ? token.cards.end() : token.cards.end() - 1); // e.g., KKK...99933375 -> KKK...999 + 75333 | KKK...99955573 -> KKK...999 + 75553
-										token.tokenType = TokenType::TripleStraightWithSingles; // 飞机带小翼
-										return true;
-									}
-							if (this->values[token.cards[15].point] + 4 == this->values[token.cards[3].point])
-								if (2 == counts[6])
-									if (JOKER_POINT != token.cards[18].point) // 被带的牌不能含有王炸
-									{
-										rotate(token.cards.begin(), token.cards.begin() + 3, this->values[token.cards[0].point] < this->values[token.cards[18].point] ? token.cards.end() : token.cards.end() - 2); // e.g., KKK99988877766655522 -> 999888777666555 + 22KKK | 222999888777666555KK -> 999888777666555 + 222KK
-										token.tokenType = TokenType::TripleStraightWithSingles; // 飞机带小翼
-										return true;
-									}
-									else
-										return false;
-								else // if (1 == counts[6] && 1 == counts[7])
+							if (this->values[hand.cards[0].point] <= 12)
+								if (this->values[hand.cards[15].point] + 5 == this->values[hand.cards[0].point])
 								{
-									rotate(token.cards.begin(), token.cards.begin() + 3, this->values[token.cards[0].point] < this->values[token.cards[18].point] ? (this->values[token.cards[0].point] < this->values[token.cards[19].point] ? token.cards.end() : token.cards.end() - 1) : token.cards.end() - 2); // e.g., JJJ9998887776665552K -> 999888777666555 + 2KJJJ | KKK9998887776665552J -> 999888777666555 + 2KKKJ | 222999888777666555KJ -> 999888777666555 + 222KJ
-									token.tokenType = TokenType::TripleStraightWithSingles; // 飞机带小翼
+									const Value value0 = this->values[hand.cards[0].point], value15 = this->values[hand.cards[15].point];
+									vector<Candidate> potentialHands{};
+									char buffers[2][3] = { 0 };
+									this->convertPointToChars(hand.cards[0].point, buffers[0]);
+									this->convertPointToChars(hand.cards[15].point, buffers[1]);
+									potentialHands.emplace_back(hand, (string)"解析为长度为 5 且点数为 " + buffers[0] + " 的飞机带小翼（``Type::TripleStraightWithSingles``），其中小翼包含三张点数为 " + buffers[1] + " 的牌");
+									if (value15 < this->values[hand.cards[18].point])
+										rotate(potentialHands.back().hand.cards.begin() + 15, potentialHands.back().hand.cards.begin() + 18, value15 < this->values[hand.cards[19].point] ? potentialHands.back().hand.cards.end() : potentialHands.back().hand.cards.end() - 1); // e.g., 999888777666555444KK -> 999888777666555 + KK444 | 999888777666555444K3 -> 999888777666555 + K4443
+									potentialHands.back().hand.type = Type::TripleStraightWithSingles; // 飞机带小翼
+									this->convertPointToChars(hand.cards[3].point, buffers[1]);
+									potentialHands.emplace_back(hand, (string)"解析为长度为 5 且点数为 " + buffers[1] + " 的飞机带小翼（``Type::TripleStraightWithSingles``），其中小翼包含三张点数为 " + buffers[0] + " 的牌");
+									rotate(potentialHands.back().hand.cards.begin(), potentialHands.back().hand.cards.begin() + 3, value0 < this->values[hand.cards[18].point] ? (value0 < this->values[hand.cards[19].point] ? potentialHands.back().hand.cards.end() : potentialHands.back().hand.cards.end() - 1) : potentialHands.back().hand.cards.end() - 2); // e.g., 999888777666555444KK -> 888777666555444 + KK999 | 999888777666555444K3 -> 888777666555444 + K9993 | AAAKKKQQQJJJTTT99973 -> KKKQQQJJJTTT999 + AAA73
+									potentialHands.back().hand.type = Type::TripleStraightWithSingles; // 飞机带小翼
+									if (this->lastHand && hand.player != this->lastHand.player)
+										for (vector<Candidate>::iterator candidateIt = potentialHands.begin(); candidateIt != potentialHands.end();)
+											if (this->coverLastHand(candidateIt->hand))
+												++candidateIt;
+											else
+												candidateIt = potentialHands.erase(candidateIt);
+									switch (potentialHands.size())
+									{
+									case 0:
+										candidates.clear();
+										return false;
+									case 1:
+										hand = move(potentialHands[0].hand);
+										candidates.clear();
+										return true;
+									default:
+										if (candidates.size() == 1)
+										{
+											const vector<Candidate>::iterator candidateIt = find_if(potentialHands.begin(), potentialHands.end(), [&candidates](const Candidate& candidate) { return candidate.hand == candidates[0].hand; });
+											if (candidateIt != potentialHands.end())
+											{
+												hand = candidateIt->hand;
+												candidates.clear();
+												return true;
+											}
+										}
+										candidates = move(potentialHands);
+										return false;
+									}
+								}
+								else if (this->values[hand.cards[12].point] + 4 == this->values[hand.cards[0].point])
+								{
+									const Value value15 = this->values[hand.cards[15].point];
+									if (value15 < this->values[hand.cards[18].point])
+										rotate(hand.cards.begin() + 15, hand.cards.begin() + 18, value15 < this->values[hand.cards[19].point] ? hand.cards.end() : hand.cards.end() - 1); // e.g., KKK...99933355 -> KKK...999 + 55333 | KKK...99944453 -> KKK...999 + 54443
+									hand.type = Type::TripleStraightWithSingles; // 飞机带小翼
+									candidates.clear();
 									return true;
 								}
+							candidates.clear();
+							if (this->values[hand.cards[15].point] + 4 == this->values[hand.cards[3].point])
+							{
+								const Value value0 = this->values[hand.cards[0].point];
+								rotate(hand.cards.begin(), hand.cards.begin() + 3, value0 < this->values[hand.cards[18].point] ? (value0 < this->values[hand.cards[19].point] ? hand.cards.end() : hand.cards.end() - 1) : hand.cards.end() - 2); // e.g., JJJ9998887776665552K -> 999888777666555 + 2KJJJ | KKK9998887776665552J -> 999888777666555 + 2KKKJ | 222999888777666555KJ -> 999888777666555 + 222KJ
+								hand.type = Type::TripleStraightWithSingles; // 飞机带小翼
+								return true;
+							}
 							else
 								return false;
 						case 2:
-							if (this->values[token.cards[0].point] <= 12 && this->values[token.cards[12].point] + 4 == this->values[token.cards[0].point])
-								if (2 == counts[6]) // && 1 == counts[7]
-									if (JOKER_POINT != token.cards[15].point) // && JOKER_POINT != token.cards[17].point | 被带的牌不能含有王炸
-									{
-										if (this->values[token.cards[17].point] < this->values[token.cards[19].point])
-											rotate(token.cards.begin() + (this->values[token.cards[15].point] < this->values[token.cards[19].point] ? 15 : 17), token.cards.begin() + 19, token.cards.end()); // e.g., KKK...99955337 -> KKK...999 + 75533 | KKK...99977335 -> KKK...999 + 77533
-										token.tokenType = TokenType::TripleStraightWithSingles; // 飞机带小翼
-										return true;
-									}
-									else
-										return false;
-								else // if (1 == counts[6] && 1 == counts[7] && 1 == counts[8])
-								{
-									if (this->values[token.cards[15].point] < this->values[token.cards[17].point])
-										rotate(token.cards.begin() + 15, token.cards.begin() + 17, this->values[token.cards[15].point] < this->values[token.cards[18].point] ? (this->values[token.cards[15].point] < this->values[token.cards[19].point] ? token.cards.end() : token.cards.end() - 1) : token.cards.end() - 2); // e.g., KKK...99933765 -> KKK...999 + 76533 | KKK...99944653 -> KKK...99965443 | KKK...99955643 -> KKK...99965543
-									token.tokenType = TokenType::TripleStraightWithSingles; // 飞机带小翼
-									return true;
-								}
+							candidates.clear();
+							if (this->values[hand.cards[0].point] <= 12 && this->values[hand.cards[12].point] + 4 == this->values[hand.cards[0].point])
+							{
+								sort(hand.cards.begin() + 15, hand.cards.end(), [this](const Card a, const Card b) { const Value valueA = this->values[a.point], valueB = this->values[b.point]; return valueA > valueB || (valueA == valueB && a.suit > b.suit); });
+								hand.type = Type::TripleStraightWithSingles; // 飞机带小翼
+								return true;
+							}
 							else
 								return false;
 						case 1: // && 1 == counts[6] && 1 == counts[7] && 1 == counts[8] && 1 == counts[9]
-							token.tokenType = TokenType::TripleStraightWithSingles; // 飞机带小翼
+							hand.type = Type::TripleStraightWithSingles; // 飞机带小翼
+							candidates.clear();
 							return true;
 						default:
+							candidates.clear();
 							return false;
 						}
 					case 2:
-						if (2 == counts[5] && 2 == counts[6] && 2 == counts[7] && this->values[token.cards[0].point] <= 12 && this->values[token.cards[9].point] + 3 == this->values[token.cards[0].point] && JOKER_POINT != token.cards[12].point) // && JOKER_POINT != token.cards[14].point && JOKER_POINT != token.cards[16].point && JOKER_POINT != token.cards[18].point | 被带的牌不能含有王炸
+						if (2 == counts[5] && 2 == counts[6] && 2 == counts[7] && this->values[hand.cards[0].point] <= 12 && this->values[hand.cards[9].point] + 3 == this->values[hand.cards[0].point] && JOKER_POINT != hand.cards[12].point) // && JOKER_POINT != hand.cards[14].point && JOKER_POINT != hand.cards[16].point && JOKER_POINT != hand.cards[18].point | 双王不是对子
 						{
-							token.tokenType = TokenType::TripleStraightWithPairs; // 飞机带大翼
+							hand.type = Type::TripleStraightWithPairs; // 飞机带大翼
 							return true;
 						}
 						else
@@ -2980,9 +3434,9 @@ protected:
 				else
 					return false;
 			case 2:
-				if (2 == counts[1] && 2 == counts[2] && 2 == counts[3] && 2 == counts[4] && 2 == counts[5] && 2 == counts[6] && 2 == counts[7] && 2 == counts[8] && 2 == counts[9] && this->values[token.cards[0].point] <= 12 && this->values[token.cards[18].point] + 9 == this->values[token.cards[0].point])
+				if (2 == counts[1] && 2 == counts[2] && 2 == counts[3] && 2 == counts[4] && 2 == counts[5] && 2 == counts[6] && 2 == counts[7] && 2 == counts[8] && 2 == counts[9] && this->values[hand.cards[0].point] <= 12 && this->values[hand.cards[18].point] + 9 == this->values[hand.cards[0].point])
 				{
-					token.tokenType = TokenType::PairStraight; // 连对
+					hand.type = Type::PairStraight; // 连对
 					return true;
 				}
 				else
@@ -2991,7 +3445,7 @@ protected:
 				return false;
 			}
 		default:
-			possibleTokens.clear();
+			candidates.clear();
 			return false;
 		}
 	}
@@ -3010,11 +3464,11 @@ private:
 	{
 		if (Status::Dealt == this->status && this->records.empty())
 		{
-			this->records.push_back(vector<Token>{});
+			this->records.push_back(vector<Hand>{});
 			uniform_int_distribution<size_t> distribution(0, this->players.size() - 1);
 			this->currentPlayer = (Player)(distribution(this->seed));
 			this->dealer = INVALID_PLAYER;
-			this->lastToken = Token{};
+			this->lastHand = Hand{};
 			this->amounts.clear();
 			return true;
 		}
@@ -3025,12 +3479,13 @@ private:
 	{
 		return !cards.empty();
 	}
-	const bool processToken(Token& token, vector<PossibleToken>& possibleTokens) const override final
+	const bool processHand(Hand& hand, vector<Candidate>& candidates) const override final
 	{
-		possibleTokens.clear();
+		hand.type = Type::Invalid;
+		candidates.clear();
 		Count littleJokerCount = 0, bigJokerCount = 0;
 		vector<Count> counts(14);
-		for (const Card& card : token.cards)
+		for (const Card& card : hand.cards)
 			if (JOKER_POINT == card.point)
 			{
 				switch (card.suit)
@@ -3049,30 +3504,30 @@ private:
 				++counts[card.point];
 			else
 				return false;
-		sort(token.cards.begin(), token.cards.end(), [&counts, this](const Card a, const Card b) { const Count countA = counts[a.point], countB = counts[b.point]; const Value valueA = this->values[a.point], valueB = this->values[b.point]; return countA > countB || (countA == countB && valueA > valueB) || (countA == countB && valueA == valueB && a.suit > b.suit); });
+		sort(hand.cards.begin(), hand.cards.end(), [&counts, this](const Card a, const Card b) { const Count countA = counts[a.point], countB = counts[b.point]; const Value valueA = this->values[a.point], valueB = this->values[b.point]; return countA > countB || (countA == countB && valueA > valueB) || (countA == countB && valueA == valueB && a.suit > b.suit); });
 		sort(counts.begin(), counts.end(), [](const Count a, const Count b) { return a > b; });
 		if (counts[0] > 8)
 			return false;
-		switch (token.cards.size())
+		switch (hand.cards.size())
 		{
 		case 0:
-			token.tokenType = TokenType::Empty; // 要不起
+			hand.type = Type::Empty; // 要不起
 			return true;
 		case 1:
-			token.tokenType = TokenType::Single; // 单牌
+			hand.type = Type::Single; // 单牌
 			return true;
 		case 2:
-			if (2 == counts[0] && (JOKER_POINT != token.cards[0].point || token.cards[0].suit == token.cards[1].suit))
+			if (2 == counts[0] && (JOKER_POINT != hand.cards[0].point || hand.cards[0].suit == hand.cards[1].suit))
 			{
-				token.tokenType = TokenType::Pair; // 对子
+				hand.type = Type::Pair; // 对子
 				return true;
 			}
 			else
 				return false;
 		case 3:
-			if (3 == counts[0] && JOKER_POINT != token.cards[0].point)
+			if (3 == counts[0] && JOKER_POINT != hand.cards[0].point)
 			{
-				token.tokenType = TokenType::Triple; // 三条
+				hand.type = Type::Triple; // 三条
 				return true;
 			}
 			else
@@ -3080,7 +3535,7 @@ private:
 		case 4:
 			if (4 == counts[0])
 			{
-				token.tokenType = JOKER_POINT == token.cards[0].point ? TokenType::QuadrupleJokers : TokenType::Quadruple; // 天王炸弹 | 四条
+				hand.type = JOKER_POINT == hand.cards[0].point ? Type::QuadrupleJokers : Type::Quadruple; // 天王炸弹 | 四条
 				return true;
 			}
 			else
@@ -3089,20 +3544,20 @@ private:
 			switch (counts[0])
 			{
 			case 5:
-				token.tokenType = TokenType::Quintuple; // 五张炸弹
+				hand.type = Type::Quintuple; // 五张炸弹
 				return true;
 			case 3:
-				if (2 == counts[1] && JOKER_POINT != token.cards[0].point && (JOKER_POINT != token.cards[3].point || token.cards[3].suit == token.cards[4].suit))
+				if (2 == counts[1] && JOKER_POINT != hand.cards[0].point && (JOKER_POINT != hand.cards[3].point || hand.cards[3].suit == hand.cards[4].suit))
 				{
-					token.tokenType = TokenType::TripleWithPair; // 三带一对
+					hand.type = Type::TripleWithPair; // 三带一对
 					return true;
 				}
 				else
 					return false;
 			case 1: // && 1 == counts[1] && 1 == counts[2] && 1 == counts[3] && 1 == counts[4]
-				if (this->values[token.cards[0].point] <= 12 && this->values[token.cards[4].point] + 4 == this->values[token.cards[0].point])
+				if (this->values[hand.cards[0].point] <= 12 && this->values[hand.cards[4].point] + 4 == this->values[hand.cards[0].point])
 				{
-					token.tokenType = TokenType::SingleStraight; // 顺子
+					hand.type = Type::SingleStraight; // 顺子
 					return true;
 				}
 				else
@@ -3112,28 +3567,28 @@ private:
 			switch (counts[0])
 			{
 			case 6:
-				token.tokenType = TokenType::Sextuple; // 六张炸弹
+				hand.type = Type::Sextuple; // 六张炸弹
 				return true;
 			case 3:
-				if (3 == counts[1] && this->values[token.cards[0].point] <= 12 && this->values[token.cards[3].point] + 1 == this->values[token.cards[0].point])
+				if (3 == counts[1] && this->values[hand.cards[0].point] <= 12 && this->values[hand.cards[3].point] + 1 == this->values[hand.cards[0].point])
 				{
-					token.tokenType = TokenType::TripleStraight; // 飞机（不带翅膀）
+					hand.type = Type::TripleStraight; // 飞机（不带翅膀）
 					return true;
 				}
 				else
 					return false;
 			case 2:
-				if (2 == counts[1] && 2 == counts[2] && this->values[token.cards[0].point] <= 12 && this->values[token.cards[4].point] + 2 == this->values[token.cards[0].point])
+				if (2 == counts[1] && 2 == counts[2] && this->values[hand.cards[0].point] <= 12 && this->values[hand.cards[4].point] + 2 == this->values[hand.cards[0].point])
 				{
-					token.tokenType = TokenType::PairStraight; // 连对
+					hand.type = Type::PairStraight; // 连对
 					return true;
 				}
 				else
 					return false;
 			case 1: // && 1 == counts[1] && ... && 1 == counts[5]
-				if (this->values[token.cards[0].point] <= 12 && this->values[token.cards[5].point] + 5 == this->values[token.cards[0].point])
+				if (this->values[hand.cards[0].point] <= 12 && this->values[hand.cards[5].point] + 5 == this->values[hand.cards[0].point])
 				{
-					token.tokenType = TokenType::SingleStraight; // 顺子
+					hand.type = Type::SingleStraight; // 顺子
 					return true;
 				}
 				else
@@ -3145,12 +3600,12 @@ private:
 			switch (counts[0])
 			{
 			case 7:
-				token.tokenType = TokenType::Septuple; // 七张炸弹
+				hand.type = Type::Septuple; // 七张炸弹
 				return true;
 			case 1: // && 1 == counts[1] && ... && 1 == counts[6]
-				if (this->values[token.cards[0].point] <= 12 && this->values[token.cards[6].point] + 6 == this->values[token.cards[0].point])
+				if (this->values[hand.cards[0].point] <= 12 && this->values[hand.cards[6].point] + 6 == this->values[hand.cards[0].point])
 				{
-					token.tokenType = TokenType::SingleStraight; // 顺子
+					hand.type = Type::SingleStraight; // 顺子
 					return true;
 				}
 				else
@@ -3162,20 +3617,20 @@ private:
 			switch (counts[0])
 			{
 			case 8:
-				token.tokenType = TokenType::Octuple; // 八张炸弹
+				hand.type = Type::Octuple; // 八张炸弹
 				return true;
 			case 2:
-				if (2 == counts[1] && 2 == counts[2] && 2 == counts[3] && this->values[token.cards[0].point] <= 12 && this->values[token.cards[6].point] + 3 == this->values[token.cards[0].point])
+				if (2 == counts[1] && 2 == counts[2] && 2 == counts[3] && this->values[hand.cards[0].point] <= 12 && this->values[hand.cards[6].point] + 3 == this->values[hand.cards[0].point])
 				{
-					token.tokenType = TokenType::PairStraight; // 连对
+					hand.type = Type::PairStraight; // 连对
 					return true;
 				}
 				else
 					return false;
 			case 1: // && 1 == counts[1] && ... && 1 == counts[7]
-				if (this->values[token.cards[0].point] <= 12 && this->values[token.cards[7].point] + 7 == this->values[token.cards[0].point])
+				if (this->values[hand.cards[0].point] <= 12 && this->values[hand.cards[7].point] + 7 == this->values[hand.cards[0].point])
 				{
-					token.tokenType = TokenType::SingleStraight; // 顺子
+					hand.type = Type::SingleStraight; // 顺子
 					return true;
 				}
 				else
@@ -3187,17 +3642,17 @@ private:
 			switch (counts[0])
 			{
 			case 3:
-				if (3 == counts[1] && 3 == counts[2] && this->values[token.cards[0].point] <= 12 && this->values[token.cards[6].point] + 2 == this->values[token.cards[0].point])
+				if (3 == counts[1] && 3 == counts[2] && this->values[hand.cards[0].point] <= 12 && this->values[hand.cards[6].point] + 2 == this->values[hand.cards[0].point])
 				{
-					token.tokenType = TokenType::TripleStraight; // 飞机（不带翅膀）
+					hand.type = Type::TripleStraight; // 飞机（不带翅膀）
 					return true;
 				}
 				else
 					return false;
 			case 1: // && 1 == counts[1] && ... && 1 == counts[8]
-				if (this->values[token.cards[0].point] <= 12 && this->values[token.cards[8].point] + 8 == this->values[token.cards[0].point])
+				if (this->values[hand.cards[0].point] <= 12 && this->values[hand.cards[8].point] + 8 == this->values[hand.cards[0].point])
 				{
-					token.tokenType = TokenType::SingleStraight; // 顺子
+					hand.type = Type::SingleStraight; // 顺子
 					return true;
 				}
 				else
@@ -3209,25 +3664,25 @@ private:
 			switch (counts[0])
 			{
 			case 3:
-				if (3 == counts[1] && 2 == counts[2] && 2 == counts[3] && this->values[token.cards[0].point] <= 12 && this->values[token.cards[3].point] + 1 == this->values[token.cards[0].point] && (JOKER_POINT != token.cards[6].point || token.cards[6].suit == token.cards[7].suit))
+				if (3 == counts[1] && 2 == counts[2] && 2 == counts[3] && this->values[hand.cards[0].point] <= 12 && this->values[hand.cards[3].point] + 1 == this->values[hand.cards[0].point] && (JOKER_POINT != hand.cards[6].point || hand.cards[6].suit == hand.cards[7].suit))
 				{
-					token.tokenType = TokenType::TripleStraightWithPairs; // 飞机带大翼
+					hand.type = Type::TripleStraightWithPairs; // 飞机带大翼
 					return true;
 				}
 				else
 					return false;
 			case 2:
-				if (2 == counts[1] && 2 == counts[2] && 2 == counts[3] && 2 == counts[4] && this->values[token.cards[0].point] <= 12 && this->values[token.cards[8].point] + 4 == this->values[token.cards[0].point])
+				if (2 == counts[1] && 2 == counts[2] && 2 == counts[3] && 2 == counts[4] && this->values[hand.cards[0].point] <= 12 && this->values[hand.cards[8].point] + 4 == this->values[hand.cards[0].point])
 				{
-					token.tokenType = TokenType::PairStraight; // 连对
+					hand.type = Type::PairStraight; // 连对
 					return true;
 				}
 				else
 					return false;
 			case 1: // && 1 == counts[1] && ... && 1 == counts[9]
-				if (this->values[token.cards[0].point] <= 12 && this->values[token.cards[9].point] + 9 == this->values[token.cards[0].point])
+				if (this->values[hand.cards[0].point] <= 12 && this->values[hand.cards[9].point] + 9 == this->values[hand.cards[0].point])
 				{
-					token.tokenType = TokenType::SingleStraight; // 顺子
+					hand.type = Type::SingleStraight; // 顺子
 					return true;
 				}
 				else
@@ -3236,9 +3691,9 @@ private:
 				return false;
 			}
 		case 11:
-			if (1 == counts[0] && this->values[token.cards[0].point] <= 12 && this->values[token.cards[10].point] + 10 == this->values[token.cards[0].point]) // && 1 == counts[1] && ... && 1 == counts[10]
+			if (1 == counts[0] && this->values[hand.cards[0].point] <= 12 && this->values[hand.cards[10].point] + 10 == this->values[hand.cards[0].point]) // && 1 == counts[1] && ... && 1 == counts[10]
 			{
-				token.tokenType = TokenType::SingleStraight; // 顺子
+				hand.type = Type::SingleStraight; // 顺子
 				return true;
 			}
 			else
@@ -3247,34 +3702,34 @@ private:
 			switch (counts[0])
 			{
 			case 3:
-				if (3 == counts[1] && 3 == counts[2] && 3 == counts[3] && this->values[token.cards[0].point] <= 12 && this->values[token.cards[9].point] + 3 == this->values[token.cards[0].point])
+				if (3 == counts[1] && 3 == counts[2] && 3 == counts[3] && this->values[hand.cards[0].point] <= 12 && this->values[hand.cards[9].point] + 3 == this->values[hand.cards[0].point])
 				{
-					token.tokenType = TokenType::TripleStraight; // 飞机（不带翅膀）
+					hand.type = Type::TripleStraight; // 飞机（不带翅膀）
 					return true;
 				}
 				else
 					return false;
 			case 2:
-				if (2 == counts[1] && 2 == counts[2] && 2 == counts[3] && 2 == counts[4] && 2 == counts[5] && this->values[token.cards[0].point] <= 12 && this->values[token.cards[10].point] + 5 == this->values[token.cards[0].point])
+				if (2 == counts[1] && 2 == counts[2] && 2 == counts[3] && 2 == counts[4] && 2 == counts[5] && this->values[hand.cards[0].point] <= 12 && this->values[hand.cards[10].point] + 5 == this->values[hand.cards[0].point])
 				{
-					token.tokenType = TokenType::PairStraight; // 连对
+					hand.type = Type::PairStraight; // 连对
 					return true;
 				}
 				else
 					return false;
 			case 1: // && 1 == counts[1] && ... && 1 == counts[11]
-				if (this->values[token.cards[0].point] <= 12 && this->values[token.cards[11].point] + 11 == this->values[token.cards[0].point])
+				if (this->values[hand.cards[0].point] <= 12 && this->values[hand.cards[11].point] + 11 == this->values[hand.cards[0].point])
 				{
-					token.tokenType = TokenType::SingleStraight; // 顺子
+					hand.type = Type::SingleStraight; // 顺子
 					return true;
 				}
 				else
 					return false;
 			}
 		case 14:
-			if (2 == counts[0] && 2 == counts[1] && 2 == counts[2] && 2 == counts[3] && 2 == counts[4] && 2 == counts[5] && 2 == counts[6] && this->values[token.cards[0].point] <= 12 && this->values[token.cards[12].point] + 6 == this->values[token.cards[0].point])
+			if (2 == counts[0] && 2 == counts[1] && 2 == counts[2] && 2 == counts[3] && 2 == counts[4] && 2 == counts[5] && 2 == counts[6] && this->values[hand.cards[0].point] <= 12 && this->values[hand.cards[12].point] + 6 == this->values[hand.cards[0].point])
 			{
-				token.tokenType = TokenType::PairStraight; // 连对
+				hand.type = Type::PairStraight; // 连对
 				return true;
 			}
 			else
@@ -3284,17 +3739,17 @@ private:
 				switch (counts[3])
 				{
 				case 3:
-					if (3 == counts[4] && this->values[token.cards[0].point] <= 12 && this->values[token.cards[12].point] + 4 == this->values[token.cards[0].point])
+					if (3 == counts[4] && this->values[hand.cards[0].point] <= 12 && this->values[hand.cards[12].point] + 4 == this->values[hand.cards[0].point])
 					{
-						token.tokenType = TokenType::TripleStraight; // 飞机（不带翅膀）
+						hand.type = Type::TripleStraight; // 飞机（不带翅膀）
 						return true;
 					}
 					else
 						return false;
 				case 2:
-					if (2 == counts[4] && 2 == counts[5] && this->values[token.cards[0].point] <= 12 && this->values[token.cards[6].point] + 2 == this->values[token.cards[0].point] && (JOKER_POINT != token.cards[9].point || token.cards[9].suit == token.cards[10].suit))
+					if (2 == counts[4] && 2 == counts[5] && this->values[hand.cards[0].point] <= 12 && this->values[hand.cards[6].point] + 2 == this->values[hand.cards[0].point] && (JOKER_POINT != hand.cards[9].point || hand.cards[9].suit == hand.cards[10].suit))
 					{
-						token.tokenType = TokenType::TripleStraightWithPairs; // 飞机带大翼
+						hand.type = Type::TripleStraightWithPairs; // 飞机带大翼
 						return true;
 					}
 					else
@@ -3305,9 +3760,9 @@ private:
 			else
 				return false;
 		case 16:
-			if (2 == counts[0] && 2 == counts[1] && 2 == counts[2] && 2 == counts[3] && 2 == counts[4] && 2 == counts[5] && 2 == counts[6] && 2 == counts[7] && this->values[token.cards[0].point] <= 12 && this->values[token.cards[14].point] + 7 == this->values[token.cards[0].point])
+			if (2 == counts[0] && 2 == counts[1] && 2 == counts[2] && 2 == counts[3] && 2 == counts[4] && 2 == counts[5] && 2 == counts[6] && 2 == counts[7] && this->values[hand.cards[0].point] <= 12 && this->values[hand.cards[14].point] + 7 == this->values[hand.cards[0].point])
 			{
-				token.tokenType = TokenType::PairStraight; // 连对
+				hand.type = Type::PairStraight; // 连对
 				return true;
 			}
 			else
@@ -3316,17 +3771,17 @@ private:
 			switch (counts[0])
 			{
 			case 3:
-				if (3 == counts[1] && 3 == counts[2] && 3 == counts[3] && 3 == counts[4] && 3 == counts[5] && this->values[token.cards[0].point] <= 12 && this->values[token.cards[15].point] + 5 == this->values[token.cards[0].point])
+				if (3 == counts[1] && 3 == counts[2] && 3 == counts[3] && 3 == counts[4] && 3 == counts[5] && this->values[hand.cards[0].point] <= 12 && this->values[hand.cards[15].point] + 5 == this->values[hand.cards[0].point])
 				{
-					token.tokenType = TokenType::TripleStraight; // 飞机（不带翅膀）
+					hand.type = Type::TripleStraight; // 飞机（不带翅膀）
 					return true;
 				}
 				else
 					return false;
 			case 2:
-				if (2 == counts[1] && 2 == counts[2] && 2 == counts[3] && 2 == counts[4] && 2 == counts[5] && 2 == counts[6] && 2 == counts[7] && 2 == counts[8] && this->values[token.cards[0].point] <= 12 && this->values[token.cards[16].point] + 8 == this->values[token.cards[0].point])
+				if (2 == counts[1] && 2 == counts[2] && 2 == counts[3] && 2 == counts[4] && 2 == counts[5] && 2 == counts[6] && 2 == counts[7] && 2 == counts[8] && this->values[hand.cards[0].point] <= 12 && this->values[hand.cards[16].point] + 8 == this->values[hand.cards[0].point])
 				{
-					token.tokenType = TokenType::PairStraight; // 连对
+					hand.type = Type::PairStraight; // 连对
 					return true;
 				}
 				else
@@ -3338,17 +3793,17 @@ private:
 			switch (counts[0])
 			{
 			case 3:
-				if (3 == counts[1] && 3 == counts[2] && 3 == counts[3] && 2 == counts[4] && 2 == counts[5] && 2 == counts[6] && 2 == counts[7] && this->values[token.cards[0].point] <= 12 && this->values[token.cards[9].point] + 3 == this->values[token.cards[0].point] && (JOKER_POINT != token.cards[12].point || token.cards[12].suit == token.cards[13].suit))
+				if (3 == counts[1] && 3 == counts[2] && 3 == counts[3] && 2 == counts[4] && 2 == counts[5] && 2 == counts[6] && 2 == counts[7] && this->values[hand.cards[0].point] <= 12 && this->values[hand.cards[9].point] + 3 == this->values[hand.cards[0].point] && (JOKER_POINT != hand.cards[12].point || hand.cards[12].suit == hand.cards[13].suit))
 				{
-					token.tokenType = TokenType::TripleStraightWithPairs; // 飞机带大翼
+					hand.type = Type::TripleStraightWithPairs; // 飞机带大翼
 					return true;
 				}
 				else
 					return false;
 			case 2:
-				if (2 == counts[1] && 2 == counts[2] && 2 == counts[3] && 2 == counts[4] && 2 == counts[5] && 2 == counts[6] && 2 == counts[7] && 2 == counts[8] && 2 == counts[9] && this->values[token.cards[0].point] <= 12 && this->values[token.cards[18].point] + 9 == this->values[token.cards[0].point])
+				if (2 == counts[1] && 2 == counts[2] && 2 == counts[3] && 2 == counts[4] && 2 == counts[5] && 2 == counts[6] && 2 == counts[7] && 2 == counts[8] && 2 == counts[9] && this->values[hand.cards[0].point] <= 12 && this->values[hand.cards[18].point] + 9 == this->values[hand.cards[0].point])
 				{
-					token.tokenType = TokenType::PairStraight; // 连对
+					hand.type = Type::PairStraight; // 连对
 					return true;
 				}
 				else
@@ -3357,9 +3812,9 @@ private:
 				return false;
 			}
 		case 22:
-			if (2 == counts[0] && 2 == counts[1] && 2 == counts[2] && 2 == counts[3] && 2 == counts[4] && 2 == counts[5] && 2 == counts[6] && 2 == counts[7] && 2 == counts[8] && 2 == counts[9] && 2 == counts[10] && this->values[token.cards[0].point] <= 12 && this->values[token.cards[20].point] + 10 == this->values[token.cards[0].point])
+			if (2 == counts[0] && 2 == counts[1] && 2 == counts[2] && 2 == counts[3] && 2 == counts[4] && 2 == counts[5] && 2 == counts[6] && 2 == counts[7] && 2 == counts[8] && 2 == counts[9] && 2 == counts[10] && this->values[hand.cards[0].point] <= 12 && this->values[hand.cards[20].point] + 10 == this->values[hand.cards[0].point])
 			{
-				token.tokenType = TokenType::PairStraight; // 连对
+				hand.type = Type::PairStraight; // 连对
 				return true;
 			}
 			else
@@ -3368,17 +3823,17 @@ private:
 			switch (counts[0])
 			{
 			case 3:
-				if (3 == counts[1] && 3 == counts[2] && 3 == counts[3] && 3 == counts[4] && 3 == counts[5] && 3 == counts[6] && 3 == counts[7] && this->values[token.cards[0].point] <= 12 && this->values[token.cards[21].point] + 7 == this->values[token.cards[0].point])
+				if (3 == counts[1] && 3 == counts[2] && 3 == counts[3] && 3 == counts[4] && 3 == counts[5] && 3 == counts[6] && 3 == counts[7] && this->values[hand.cards[0].point] <= 12 && this->values[hand.cards[21].point] + 7 == this->values[hand.cards[0].point])
 				{
-					token.tokenType = TokenType::TripleStraight; // 飞机（不带翅膀）
+					hand.type = Type::TripleStraight; // 飞机（不带翅膀）
 					return true;
 				}
 				else
 					return false;
 			case 2:
-				if (2 == counts[1] && 2 == counts[2] && 2 == counts[3] && 2 == counts[4] && 2 == counts[5] && 2 == counts[6] && 2 == counts[7] && 2 == counts[8] && 2 == counts[9] && 2 == counts[10] && 2 == counts[11] && this->values[token.cards[0].point] <= 12 && this->values[token.cards[22].point] + 11 == this->values[token.cards[0].point])
+				if (2 == counts[1] && 2 == counts[2] && 2 == counts[3] && 2 == counts[4] && 2 == counts[5] && 2 == counts[6] && 2 == counts[7] && 2 == counts[8] && 2 == counts[9] && 2 == counts[10] && 2 == counts[11] && this->values[hand.cards[0].point] <= 12 && this->values[hand.cards[22].point] + 11 == this->values[hand.cards[0].point])
 				{
-					token.tokenType = TokenType::PairStraight; // 连对
+					hand.type = Type::PairStraight; // 连对
 					return true;
 				}
 				else
@@ -3387,17 +3842,17 @@ private:
 				return false;
 			}
 		case 25:
-			if (3 == counts[0] && 3 == counts[1] && 3 == counts[2] && 3 == counts[3] && 3 == counts[4] && 2 == counts[5] && 2 == counts[6] && 2 == counts[7] && 2 == counts[8] && 2 == counts[9] && this->values[token.cards[0].point] <= 12 && this->values[token.cards[12].point] + 4 == this->values[token.cards[0].point] && (JOKER_POINT != token.cards[15].point || token.cards[15].suit == token.cards[16].suit))
+			if (3 == counts[0] && 3 == counts[1] && 3 == counts[2] && 3 == counts[3] && 3 == counts[4] && 2 == counts[5] && 2 == counts[6] && 2 == counts[7] && 2 == counts[8] && 2 == counts[9] && this->values[hand.cards[0].point] <= 12 && this->values[hand.cards[12].point] + 4 == this->values[hand.cards[0].point] && (JOKER_POINT != hand.cards[15].point || hand.cards[15].suit == hand.cards[16].suit))
 			{
-				token.tokenType = TokenType::TripleStraightWithPairs; // 飞机带大翼
+				hand.type = Type::TripleStraightWithPairs; // 飞机带大翼
 				return true;
 			}
 			else
 				return false;
 		case 27:
-			if (3 == counts[0] && 3 == counts[1] && 3 == counts[2] && 3 == counts[3] && 3 == counts[4] && 3 == counts[5] && 3 == counts[6] && 3 == counts[7] && 3 == counts[8] && this->values[token.cards[0].point] <= 12 && this->values[token.cards[24].point] + 8 == this->values[token.cards[0].point])
+			if (3 == counts[0] && 3 == counts[1] && 3 == counts[2] && 3 == counts[3] && 3 == counts[4] && 3 == counts[5] && 3 == counts[6] && 3 == counts[7] && 3 == counts[8] && this->values[hand.cards[0].point] <= 12 && this->values[hand.cards[24].point] + 8 == this->values[hand.cards[0].point])
 			{
-				token.tokenType = TokenType::TripleStraight; // 飞机（不带翅膀）
+				hand.type = Type::TripleStraight; // 飞机（不带翅膀）
 				return true;
 			}
 			else
@@ -3407,17 +3862,17 @@ private:
 				switch (counts[6])
 				{
 				case 3:
-					if (3 == counts[6] && 3 == counts[7] && 3 == counts[8] && 3 == counts[9] && this->values[token.cards[0].point] <= 12 && this->values[token.cards[27].point] + 9 == this->values[token.cards[0].point])
+					if (3 == counts[6] && 3 == counts[7] && 3 == counts[8] && 3 == counts[9] && this->values[hand.cards[0].point] <= 12 && this->values[hand.cards[27].point] + 9 == this->values[hand.cards[0].point])
 					{
-						token.tokenType = TokenType::TripleStraight; // 飞机（不带翅膀）
+						hand.type = Type::TripleStraight; // 飞机（不带翅膀）
 						return true;
 					}
 					else
 						return false;
 				case 2:
-					if (2 == counts[6] && 2 == counts[7] && 2 == counts[8] && 2 == counts[9] && 2 == counts[10] && 2 == counts[11] && this->values[token.cards[0].point] <= 12 && this->values[token.cards[15].point] + 5 == this->values[token.cards[0].point] && (JOKER_POINT != token.cards[18].point || token.cards[18].suit == token.cards[19].suit))
+					if (2 == counts[6] && 2 == counts[7] && 2 == counts[8] && 2 == counts[9] && 2 == counts[10] && 2 == counts[11] && this->values[hand.cards[0].point] <= 12 && this->values[hand.cards[15].point] + 5 == this->values[hand.cards[0].point] && (JOKER_POINT != hand.cards[18].point || hand.cards[18].suit == hand.cards[19].suit))
 					{
-						token.tokenType = TokenType::TripleStraightWithPairs; // 飞机带大翼
+						hand.type = Type::TripleStraightWithPairs; // 飞机带大翼
 						return true;
 					}
 					else
@@ -3428,9 +3883,9 @@ private:
 			else
 				return false;
 		case 33:
-			if (3 == counts[0] && 3 == counts[1] && 3 == counts[2] && 3 == counts[3] && 3 == counts[4] && 3 == counts[5] && 3 == counts[6] && 3 == counts[7] && 3 == counts[8] && 3 == counts[9] && 3 == counts[10] && this->values[token.cards[0].point] <= 12 && this->values[token.cards[30].point] + 10 == this->values[token.cards[0].point])
+			if (3 == counts[0] && 3 == counts[1] && 3 == counts[2] && 3 == counts[3] && 3 == counts[4] && 3 == counts[5] && 3 == counts[6] && 3 == counts[7] && 3 == counts[8] && 3 == counts[9] && 3 == counts[10] && this->values[hand.cards[0].point] <= 12 && this->values[hand.cards[30].point] + 10 == this->values[hand.cards[0].point])
 			{
-				token.tokenType = TokenType::TripleStraight; // 飞机（不带翅膀）
+				hand.type = Type::TripleStraight; // 飞机（不带翅膀）
 				return true;
 			}
 			else
@@ -3439,18 +3894,18 @@ private:
 			return false;
 		}
 	}
-	virtual const bool processBasis(const Token& token) override final
+	virtual const bool processBasis(const Hand& hand) override final
 	{
 		if (Status::Assigned <= this->status && this->status <= Status::Started && this->amounts.size() == 1)
 		{
-			switch (token.tokenType)
+			switch (hand.type)
 			{
-			case TokenType::Sextuple:
-			case TokenType::Septuple:
+			case Type::Sextuple:
+			case Type::Septuple:
 				this->amounts[0] <<= 1;
 				break;
-			case TokenType::Octuple:
-			case TokenType::QuadrupleJokers:
+			case Type::Octuple:
+			case Type::QuadrupleJokers:
 				this->amounts[0] += this->amounts[0] << 1;
 				break;
 			default:
@@ -3491,9 +3946,9 @@ private:
 				/* Spring and anti-sprint parsing */
 				bool isSpring = true, isAntiSpring = true;
 				{
-					const size_t tokenCount = this->records[1].size();
-					for (size_t innerIdx = 1; innerIdx < tokenCount; ++innerIdx)
-						if (TokenType::Single <= this->records[1][innerIdx].tokenType && this->records[1][innerIdx].tokenType <= TokenType::Octuple && !this->records[1][innerIdx].cards.empty())
+					const size_t handCount = this->records[1].size();
+					for (size_t innerIdx = 1; innerIdx < handCount; ++innerIdx)
+						if (Type::Single <= this->records[1][innerIdx].type && this->records[1][innerIdx].type <= Type::Octuple && !this->records[1][innerIdx].cards.empty())
 							if (this->records[1][innerIdx].player == this->dealer)
 								isAntiSpring = false;
 							else
@@ -3501,9 +3956,9 @@ private:
 				}
 				for (size_t outerIdx = 2; outerIdx < recordCount && (isSpring || isAntiSpring); ++outerIdx)
 				{
-					const size_t tokenCount = this->records[outerIdx].size();
-					for (size_t innerIdx = 0; innerIdx < tokenCount; ++innerIdx)
-						if (TokenType::Single <= this->records[outerIdx][innerIdx].tokenType && this->records[outerIdx][innerIdx].tokenType <= TokenType::Octuple && !this->records[outerIdx][innerIdx].cards.empty())
+					const size_t handCount = this->records[outerIdx].size();
+					for (size_t innerIdx = 0; innerIdx < handCount; ++innerIdx)
+						if (Type::Single <= this->records[outerIdx][innerIdx].type && this->records[outerIdx][innerIdx].type <= Type::Octuple && !this->records[outerIdx][innerIdx].cards.empty())
 							if (this->records[outerIdx][innerIdx].player == this->dealer)
 								isAntiSpring = false;
 							else
@@ -3531,33 +3986,33 @@ private:
 		else
 			return false;
 	}
-	virtual const bool isAbsolutelyLargest(const Token& token) const override final
+	virtual const bool isAbsolutelyLargest(const Hand& hand) const override final
 	{
-		return TokenType::QuadrupleJokers == token.tokenType;
+		return Type::QuadrupleJokers == hand.type;
 	}
-	const bool coverLastToken(const Token& currentToken) const override final
+	const bool coverLastHand(const Hand& currentHand) const override final
 	{
-		if (this->lastToken && TokenType::Single <= this->lastToken.tokenType && this->lastToken.tokenType <= TokenType::Octuple && !this->lastToken.cards.empty() && TokenType::Single <= currentToken.tokenType && currentToken.tokenType <= TokenType::Octuple && !currentToken.cards.empty())
-			switch (this->lastToken.tokenType)
+		if (this->lastHand && Type::Single <= this->lastHand.type && this->lastHand.type <= Type::Octuple && !this->lastHand.cards.empty() && Type::Single <= currentHand.type && currentHand.type <= Type::Octuple && !currentHand.cards.empty())
+			switch (this->lastHand.type)
 			{
-			case TokenType::Single: // 单牌
-			case TokenType::Pair: // 对子
-				return currentToken.tokenType >= TokenType::Quintuple || TokenType::Quadruple == currentToken.tokenType || (currentToken.tokenType == this->lastToken.tokenType && (JOKER_POINT == currentToken.cards[0].point && JOKER_POINT == this->lastToken.cards[0].point ? currentToken.cards[0].suit > this->lastToken.cards[0].suit : this->values[currentToken.cards[0].point] > this->values[this->lastToken.cards[0].point]));
-			case TokenType::SingleStraight: // 顺子
-			case TokenType::PairStraight: // 连对
-			case TokenType::Triple: // 三条
-			case TokenType::TripleWithPair: // 三带一对
-			case TokenType::TripleStraight: // 飞机（不拖不带）
-			case TokenType::TripleStraightWithPairs: // 飞机（带对子）
-				return currentToken.tokenType >= TokenType::Quintuple || TokenType::Quadruple == currentToken.tokenType || (currentToken.tokenType == this->lastToken.tokenType && currentToken.cards.size() == this->lastToken.cards.size() && this->values[currentToken.cards[0].point] > this->values[this->lastToken.cards[0].point]);
-			case TokenType::Quadruple: // 四条炸弹
-				return currentToken.tokenType >= TokenType::Quintuple || (TokenType::Quadruple == currentToken.tokenType && this->values[currentToken.cards[0].point] > this->values[this->lastToken.cards[0].point]);
-			case TokenType::QuadrupleJokers: // 天王炸弹
-			case TokenType::Quintuple: // 五张炸弹
-			case TokenType::Sextuple: // 六张炸弹
-			case TokenType::Septuple: // 七张炸弹
-			case TokenType::Octuple: // 八张炸弹
-				return currentToken.tokenType > this->lastToken.tokenType || (currentToken.tokenType == this->lastToken.tokenType && this->values[currentToken.cards[0].point] > this->values[this->lastToken.cards[0].point]);
+			case Type::Single: // 单牌
+			case Type::Pair: // 对子
+				return currentHand.type >= Type::Quintuple || Type::Quadruple == currentHand.type || (currentHand.type == this->lastHand.type && (JOKER_POINT == currentHand.cards[0].point && JOKER_POINT == this->lastHand.cards[0].point ? currentHand.cards[0].suit > this->lastHand.cards[0].suit : this->values[currentHand.cards[0].point] > this->values[this->lastHand.cards[0].point]));
+			case Type::SingleStraight: // 顺子
+			case Type::PairStraight: // 连对
+			case Type::Triple: // 三条
+			case Type::TripleWithPair: // 三带一对
+			case Type::TripleStraight: // 飞机（不拖不带）
+			case Type::TripleStraightWithPairs: // 飞机（带对子）
+				return currentHand.type >= Type::Quintuple || Type::Quadruple == currentHand.type || (currentHand.type == this->lastHand.type && currentHand.cards.size() == this->lastHand.cards.size() && this->values[currentHand.cards[0].point] > this->values[this->lastHand.cards[0].point]);
+			case Type::Quadruple: // 四条炸弹
+				return currentHand.type >= Type::Quintuple || (Type::Quadruple == currentHand.type && this->values[currentHand.cards[0].point] > this->values[this->lastHand.cards[0].point]);
+			case Type::QuadrupleJokers: // 天王炸弹
+			case Type::Quintuple: // 五张炸弹
+			case Type::Sextuple: // 六张炸弹
+			case Type::Septuple: // 七张炸弹
+			case Type::Octuple: // 八张炸弹
+				return currentHand.type > this->lastHand.type || (currentHand.type == this->lastHand.type && this->values[currentHand.cards[0].point] > this->values[this->lastHand.cards[0].point]);
 			default:
 				return false;
 			}
@@ -3595,16 +4050,16 @@ private:
 			else
 			{
 				string preRoundString{};
-				for (const Token& token : this->records[0])
+				for (const Hand& hand : this->records[0])
 				{
-					snprintf(playerBuffer, 4, "%d", token.player + 1);
-					switch (token.cards.size())
+					snprintf(playerBuffer, 4, "%d", hand.player + 1);
+					switch (hand.cards.size())
 					{
 					case 0:
 						preRoundString += "不叫（玩家 " + (string)playerBuffer + "） -> ";
 						break;
 					case 1:
-						switch (token.cards[0].point)
+						switch (hand.cards[0].point)
 						{
 						case 0:
 							preRoundString += "不叫（玩家 " + (string)playerBuffer + "） -> ";
@@ -3613,9 +4068,9 @@ private:
 						case 2:
 						case 3:
 						{
-							char landlordScoreBuffer[4] = { 0 };
-							snprintf(landlordScoreBuffer, 4, "%d", token.cards[0].point);
-							preRoundString += (string)landlordScoreBuffer + "分（玩家 " + playerBuffer + "） -> ";
+							char scoreBuffer[4] = { 0 };
+							snprintf(scoreBuffer, 4, "%d", hand.cards[0].point);
+							preRoundString += (string)scoreBuffer + "分（玩家 " + playerBuffer + "） -> ";
 							break;
 						}
 						default:
@@ -3652,7 +4107,7 @@ public:
 			this->records.clear();
 			this->currentPlayer = INVALID_PLAYER;
 			this->dealer = INVALID_PLAYER;
-			this->lastToken = Token{};
+			this->lastHand = Hand{};
 			this->amounts.clear();
 			this->status = Status::Initialized;
 			return true;
@@ -3687,29 +4142,29 @@ public:
 		else
 			return false;
 	}
-	const bool setLandlord(const LandlordScore landlordScore) override final
+	const bool setLandlord(const Score score) override final
 	{
-		const Point point = static_cast<Point>(landlordScore);
+		const Point point = static_cast<Point>(score);
 		if (Status::Dealt == this->status && this->records.size() == 1 && 0 <= this->currentPlayer && this->currentPlayer < this->players.size())
 			switch (this->records[0].size())
 			{
 			case 0:
-				switch (landlordScore)
+				switch (score)
 				{
-				case LandlordScore::None:
-					this->records[0].push_back(Token{ this->currentPlayer, vector<Card>{} });
+				case Score::None:
+					this->records[0].push_back(Hand{ this->currentPlayer, vector<Card>{} });
 					this->nextPlayer();
 					return true;
-				case LandlordScore::One:
-				case LandlordScore::Two:
-					this->records[0].push_back(Token{ this->currentPlayer, vector<Card>{ Card{ point } } });
+				case Score::One:
+				case Score::Two:
+					this->records[0].push_back(Hand{ this->currentPlayer, vector<Card>{ Card{ point } } });
 					this->nextPlayer();
-					this->lastToken = this->records[0][0];
+					this->lastHand = this->records[0][0];
 					return true;
-				case LandlordScore::Three:
-					this->records[0].push_back(Token{ this->currentPlayer, vector<Card>{ Card{ point } } });
+				case Score::Three:
+					this->records[0].push_back(Hand{ this->currentPlayer, vector<Card>{ Card{ point } } });
 					this->dealer = this->currentPlayer;
-					this->lastToken = Token{};
+					this->lastHand = Hand{};
 					this->amounts = vector<Amount>{ 3 };
 					this->status = Status::Assigned;
 					return true;
@@ -3718,27 +4173,27 @@ public:
 				}
 			case 1:
 			case 2:
-				switch (landlordScore)
+				switch (score)
 				{
-				case LandlordScore::None:
-					this->records[0].push_back(Token{ this->currentPlayer, vector<Card>{} });
+				case Score::None:
+					this->records[0].push_back(Hand{ this->currentPlayer, vector<Card>{} });
 					this->nextPlayer();
 					return true;
-				case LandlordScore::One:
-				case LandlordScore::Two:
-					if (!this->lastToken || (this->lastToken.cards.size() == 1 && point > this->lastToken.cards[0].point))
+				case Score::One:
+				case Score::Two:
+					if (!this->lastHand || (this->lastHand.cards.size() == 1 && point > this->lastHand.cards[0].point))
 					{
-						this->records[0].push_back(Token{ this->currentPlayer, vector<Card>{ Card{ point } } });
+						this->records[0].push_back(Hand{ this->currentPlayer, vector<Card>{ Card{ point } } });
 						this->nextPlayer();
-						this->lastToken = this->records[0].back();
+						this->lastHand = this->records[0].back();
 						return true;
 					}
 					else
 						return false;
-				case LandlordScore::Three:
-					this->records[0].push_back(Token{ this->currentPlayer, vector<Card>{ Card{ point } } });
+				case Score::Three:
+					this->records[0].push_back(Hand{ this->currentPlayer, vector<Card>{ Card{ point } } });
 					this->dealer = this->currentPlayer;
-					this->lastToken = Token{};
+					this->lastHand = Hand{};
 					this->amounts = vector<Amount>{ 3 };
 					this->status = Status::Assigned;
 					return true;
@@ -3746,42 +4201,42 @@ public:
 					return false;
 				}
 			case 3:
-				switch (landlordScore)
+				switch (score)
 				{
-				case LandlordScore::None:
-					if (this->lastToken)
+				case Score::None:
+					if (this->lastHand)
 					{
-						if (this->lastToken.cards.size() == 1)
+						if (this->lastHand.cards.size() == 1)
 						{
-							this->currentPlayer = this->lastToken.player;
-							this->amounts = vector<Amount>{ this->lastToken.cards[0].point };
+							this->currentPlayer = this->lastHand.player;
+							this->amounts = vector<Amount>{ this->lastHand.cards[0].point };
 						}
 						else
 							return false;
 					}
 					else
 						this->currentPlayer = this->records[0][0].player;
-					this->records[0].push_back(Token{ this->currentPlayer, vector<Card>{} });
+					this->records[0].push_back(Hand{ this->currentPlayer, vector<Card>{} });
 					break;
-				case LandlordScore::One:
-				case LandlordScore::Two:
-					if (!this->lastToken || (this->lastToken.cards.size() == 1 && point > this->lastToken.cards[0].point))
+				case Score::One:
+				case Score::Two:
+					if (!this->lastHand || (this->lastHand.cards.size() == 1 && point > this->lastHand.cards[0].point))
 					{
-						this->records[0].push_back(Token{ this->currentPlayer, vector<Card>{ Card{ point } } });
-						this->amounts = vector<Amount>{ this->lastToken.cards[0].point };
+						this->records[0].push_back(Hand{ this->currentPlayer, vector<Card>{ Card{ point } } });
+						this->amounts = vector<Amount>{ this->lastHand.cards[0].point };
 						break;
 					}
 					else
 						return false;
-				case LandlordScore::Three:
-					this->records[0].push_back(Token{ this->currentPlayer, vector<Card>{ Card{ point } } });
+				case Score::Three:
+					this->records[0].push_back(Hand{ this->currentPlayer, vector<Card>{ Card{ point } } });
 					this->amounts = vector<Amount>{ 3 };
 					break;
 				default:
 					return false;
 				}
 				this->dealer = this->currentPlayer;
-				this->lastToken = Token{};
+				this->lastHand = Hand{};
 				this->status = Status::Assigned;
 				return true;
 			default:
@@ -3799,33 +4254,34 @@ public:
 class BigTwo : public PokerGame /* Previous: Landlords4P | Next: ThreeTwoOne */
 {
 private:
-	const bool processToken(Token& token, vector<PossibleToken>& possibleTokens) const override final
+	const bool processHand(Hand& hand, vector<Candidate>& candidates) const override final
 	{
-		possibleTokens.clear();
+		hand.type = Type::Invalid;
+		candidates.clear();
 		vector<Count> counts(14);
-		for (const Card& card : token.cards)
+		for (const Card& card : hand.cards)
 			if (this->values[card.point])
 				++counts[card.point];
 			else
 				return false;
-		sort(token.cards.begin(), token.cards.end(), [&counts, this](const Card a, const Card b) { const Count countA = counts[a.point], countB = counts[b.point]; const Value valueA = this->values[a.point], valueB = this->values[b.point]; return countA > countB || (countA == countB && valueA > valueB) || (countA == countB && valueA == valueB && a.suit > b.suit); });
-		if (adjacent_find(token.cards.begin(), token.cards.end()) != token.cards.end())
+		sort(hand.cards.begin(), hand.cards.end(), [&counts, this](const Card a, const Card b) { const Count countA = counts[a.point], countB = counts[b.point]; const Value valueA = this->values[a.point], valueB = this->values[b.point]; return countA > countB || (countA == countB && valueA > valueB) || (countA == countB && valueA == valueB && a.suit > b.suit); });
+		if (adjacent_find(hand.cards.begin(), hand.cards.end()) != hand.cards.end())
 			return false;
 		sort(counts.begin(), counts.end(), [](const Count a, const Count b) { return a > b; });
 		if (counts[0] > 4)
 			return false;
-		switch (token.cards.size())
+		switch (hand.cards.size())
 		{
 		case 0:
-			token.tokenType = TokenType::Empty;
+			hand.type = Type::Empty;
 			return true;
 		case 1:
-			token.tokenType = TokenType::Single;
+			hand.type = Type::Single;
 			return true;
 		case 2:
 			if (2 == counts[0])
 			{
-				token.tokenType = TokenType::Pair;
+				hand.type = Type::Pair;
 				return true;
 			}
 			else
@@ -3833,7 +4289,7 @@ private:
 		case 3:
 			if (3 == counts[0])
 			{
-				token.tokenType = TokenType::Triple;
+				hand.type = Type::Triple;
 				return true;
 			}
 			else
@@ -3842,23 +4298,23 @@ private:
 			switch (counts[0])
 			{
 			case 4: // && 1 == counts[1]
-				token.tokenType = TokenType::QuadrupleWithSingle;
+				hand.type = Type::QuadrupleWithSingle;
 				return true;
 			case 3:
 				if (2 == counts[1])
 				{
-					token.tokenType = TokenType::TripleWithPair;
+					hand.type = Type::TripleWithPair;
 					return true;
 				}
 				else
 					return false;
 			case 1: // && 1 == counts[1] && 1 == counts[2] && 1 == counts[3] && 1 == counts[4]
 			{
-				const bool isSingleStraight = this->judgeStraight(token.cards, 1, 2, false), isFlush = token.cards[0].suit == token.cards[1].suit && token.cards[1].suit == token.cards[2].suit && token.cards[2].suit == token.cards[3].suit && token.cards[3].suit == token.cards[4].suit;
+				const bool isSingleStraight = this->judgeStraight(hand.cards, 1, 2, false), isFlush = hand.cards[0].suit == hand.cards[1].suit && hand.cards[1].suit == hand.cards[2].suit && hand.cards[2].suit == hand.cards[3].suit && hand.cards[3].suit == hand.cards[4].suit;
 				if (isSingleStraight)
-					token.tokenType = isFlush ? TokenType::SingleFlushStraight : TokenType::SingleStraight;
+					hand.type = isFlush ? Type::SingleFlushStraight : Type::SingleStraight;
 				else if (isFlush)
-					token.tokenType = TokenType::SingleFlush;
+					hand.type = Type::SingleFlush;
 				else
 					return false;
 				return true;
@@ -3928,28 +4384,28 @@ private:
 		else
 			return false;
 	}
-	virtual const bool isAbsolutelyLargest(const Token& token) const override final
+	virtual const bool isAbsolutelyLargest(const Hand& hand) const override final
 	{
-		return (TokenType::Single == token.tokenType || TokenType::Pair == token.tokenType || TokenType::Triple == token.tokenType || TokenType::Quadruple == token.tokenType || TokenType::SingleFlushStraight == token.tokenType) && (!token.cards.empty() && Card { 2, Suit::Spade } == token.cards[0]);
+		return (Type::Single == hand.type || Type::Pair == hand.type || Type::Triple == hand.type || Type::Quadruple == hand.type || Type::SingleFlushStraight == hand.type) && (!hand.cards.empty() && Card { 2, Suit::Spade } == hand.cards[0]);
 	}
-	const bool coverLastToken(const Token& currentToken) const override final
+	const bool coverLastHand(const Hand& currentHand) const override final
 	{
-		if (this->lastToken && TokenType::Single <= this->lastToken.tokenType && this->lastToken.tokenType <= TokenType::QuadrupleWithSingle && !this->lastToken.cards.empty() && TokenType::Single <= currentToken.tokenType && currentToken.tokenType <= TokenType::QuadrupleWithSingle && !currentToken.cards.empty())
-			switch (this->lastToken.tokenType)
+		if (this->lastHand && Type::Single <= this->lastHand.type && this->lastHand.type <= Type::QuadrupleWithSingle && !this->lastHand.cards.empty() && Type::Single <= currentHand.type && currentHand.type <= Type::QuadrupleWithSingle && !currentHand.cards.empty())
+			switch (this->lastHand.type)
 			{
-			case TokenType::Single: // 单牌
-			case TokenType::SingleFlushStraight: // 一条龙|同花顺（长度只能为 5）
-			case TokenType::Pair: // 对子
-			case TokenType::Triple: // 三条
-				return currentToken.tokenType == this->lastToken.tokenType && (this->values[currentToken.cards[0].point] > this->values[this->lastToken.cards[0].point] || (currentToken.cards[0].point == this->lastToken.cards[0].point && currentToken.cards[0].suit > this->lastToken.cards[0].suit));
-			case TokenType::SingleStraight: // 顺子（长度只能为 5）：可被一条龙|同花顺、金刚、葫芦/俘虏/副路、同花以及比自己大的顺子盖过
-				return TokenType::SingleFlushStraight == currentToken.tokenType || TokenType::QuadrupleWithSingle == currentToken.tokenType || TokenType::TripleWithPair == currentToken.tokenType || TokenType::SingleFlush == currentToken.tokenType || (TokenType::SingleStraight == currentToken.tokenType && (this->values[currentToken.cards[0].point] > this->values[this->lastToken.cards[0].point] || (currentToken.cards[0].point == this->lastToken.cards[0].point && currentToken.cards[0].suit > this->lastToken.cards[0].suit)));
-			case TokenType::SingleFlush: // 同花（长度只能为 5）：可被一条龙|同花顺、金刚、葫芦/俘虏/副路以及比自己大的同花盖过
-				return TokenType::SingleFlushStraight == currentToken.tokenType || TokenType::QuadrupleWithSingle == currentToken.tokenType || TokenType::TripleWithPair == currentToken.tokenType || (TokenType::SingleFlush == currentToken.tokenType && (this->values[currentToken.cards[0].point] > this->values[this->lastToken.cards[0].point] || (currentToken.cards[0].point == this->lastToken.cards[0].point && currentToken.cards[0].suit > this->lastToken.cards[0].suit)));
-			case TokenType::TripleWithPair: // 葫芦/俘虏/副路：可被一条龙|同花顺、金刚、以及比自己大的葫芦/俘虏/副路盖过
-				return TokenType::SingleFlushStraight == currentToken.tokenType || TokenType::QuadrupleWithSingle == currentToken.tokenType || (TokenType::TripleWithPair == currentToken.tokenType && (this->values[currentToken.cards[0].point] > this->values[this->lastToken.cards[0].point] || (currentToken.cards[0].point == this->lastToken.cards[0].point && currentToken.cards[0].suit > this->lastToken.cards[0].suit)));
-			case TokenType::QuadrupleWithSingle: // 金刚：可被一条龙|同花顺和比自己大的金刚盖过
-				return TokenType::SingleFlushStraight == currentToken.tokenType || (TokenType::QuadrupleWithSingle == currentToken.tokenType && (this->values[currentToken.cards[0].point] > this->values[this->lastToken.cards[0].point] || (currentToken.cards[0].point == this->lastToken.cards[0].point && currentToken.cards[0].suit > this->lastToken.cards[0].suit)));
+			case Type::Single: // 单牌
+			case Type::SingleFlushStraight: // 一条龙|同花顺（长度只能为 5）
+			case Type::Pair: // 对子
+			case Type::Triple: // 三条
+				return currentHand.type == this->lastHand.type && (this->values[currentHand.cards[0].point] > this->values[this->lastHand.cards[0].point] || (currentHand.cards[0].point == this->lastHand.cards[0].point && currentHand.cards[0].suit > this->lastHand.cards[0].suit));
+			case Type::SingleStraight: // 顺子（长度只能为 5）：可被一条龙|同花顺、金刚、葫芦/俘虏/副路、同花以及比自己大的顺子盖过
+				return Type::SingleFlushStraight == currentHand.type || Type::QuadrupleWithSingle == currentHand.type || Type::TripleWithPair == currentHand.type || Type::SingleFlush == currentHand.type || (Type::SingleStraight == currentHand.type && (this->values[currentHand.cards[0].point] > this->values[this->lastHand.cards[0].point] || (currentHand.cards[0].point == this->lastHand.cards[0].point && currentHand.cards[0].suit > this->lastHand.cards[0].suit)));
+			case Type::SingleFlush: // 同花（长度只能为 5）：可被一条龙|同花顺、金刚、葫芦/俘虏/副路以及比自己大的同花盖过
+				return Type::SingleFlushStraight == currentHand.type || Type::QuadrupleWithSingle == currentHand.type || Type::TripleWithPair == currentHand.type || (Type::SingleFlush == currentHand.type && (this->values[currentHand.cards[0].point] > this->values[this->lastHand.cards[0].point] || (currentHand.cards[0].point == this->lastHand.cards[0].point && currentHand.cards[0].suit > this->lastHand.cards[0].suit)));
+			case Type::TripleWithPair: // 葫芦/俘虏/副路：可被一条龙|同花顺、金刚、以及比自己大的葫芦/俘虏/副路盖过
+				return Type::SingleFlushStraight == currentHand.type || Type::QuadrupleWithSingle == currentHand.type || (Type::TripleWithPair == currentHand.type && (this->values[currentHand.cards[0].point] > this->values[this->lastHand.cards[0].point] || (currentHand.cards[0].point == this->lastHand.cards[0].point && currentHand.cards[0].suit > this->lastHand.cards[0].suit)));
+			case Type::QuadrupleWithSingle: // 金刚：可被一条龙|同花顺和比自己大的金刚盖过
+				return Type::SingleFlushStraight == currentHand.type || (Type::QuadrupleWithSingle == currentHand.type && (this->values[currentHand.cards[0].point] > this->values[this->lastHand.cards[0].point] || (currentHand.cards[0].point == this->lastHand.cards[0].point && currentHand.cards[0].suit > this->lastHand.cards[0].suit)));
 			default:
 				return false;
 			}
@@ -3994,7 +4450,7 @@ public:
 			this->records.clear();
 			this->currentPlayer = INVALID_PLAYER;
 			this->dealer = INVALID_PLAYER;
-			this->lastToken = Token{};
+			this->lastHand = Hand{};
 			this->amounts.clear();
 			this->status = Status::Initialized;
 			return true;
@@ -4037,39 +4493,40 @@ public:
 class ThreeTwoOne : public PokerGame /* Previous: BigTwo | Next: Wuguapi */
 {
 private:
-	const bool processToken(Token& token, vector<PossibleToken>& possibleTokens) const override final
+	const bool processHand(Hand& hand, vector<Candidate>& candidates) const override final
 	{
+		hand.type = Type::Invalid;
 		vector<Count> counts(14);
-		for (const Card& card : token.cards)
+		for (const Card& card : hand.cards)
 			if (this->values[card.point])
 				++counts[card.point];
 			else
 			{
-				possibleTokens.clear();
+				candidates.clear();
 				return false;
 			}
-		sort(token.cards.begin(), token.cards.end(), [&counts, this](const Card a, const Card b) { const Count countA = counts[a.point], countB = counts[b.point]; const Value valueA = this->values[a.point], valueB = this->values[b.point]; return countA > countB || (countA == countB && valueA > valueB) || (countA == countB && valueA == valueB && a.suit > b.suit); });
-		if (adjacent_find(token.cards.begin(), token.cards.end()) != token.cards.end())
+		sort(hand.cards.begin(), hand.cards.end(), [&counts, this](const Card a, const Card b) { const Count countA = counts[a.point], countB = counts[b.point]; const Value valueA = this->values[a.point], valueB = this->values[b.point]; return countA > countB || (countA == countB && valueA > valueB) || (countA == countB && valueA == valueB && a.suit > b.suit); });
+		if (adjacent_find(hand.cards.begin(), hand.cards.end()) != hand.cards.end())
 		{
-			possibleTokens.clear();
+			candidates.clear();
 			return false;
 		}
 		sort(counts.begin(), counts.end(), [](const Count a, const Count b) { return a > b; });
 		if (counts[0] > 4)
 		{
-			possibleTokens.clear();
+			candidates.clear();
 			return false;
 		}
-		const size_t cardCount = token.cards.size();
+		const size_t cardCount = hand.cards.size();
 		if (6 == cardCount)
 			switch (counts[0])
 			{
 			case 4:
-				possibleTokens.clear();
+				candidates.clear();
 				if (2 == counts[1])
 				{
-					rotate(token.cards.begin() + 3, token.cards.begin() + 4, token.cards.end());
-					token.tokenType = TokenType::TripleWithPairSingle; // 三两一
+					rotate(hand.cards.begin() + 3, hand.cards.begin() + 4, hand.cards.end());
+					hand.type = Type::TripleWithPairSingle; // 三两一
 					return true;
 				}
 				else
@@ -4079,100 +4536,101 @@ private:
 				{
 				case 3:
 				{
-					vector<PossibleToken> potentialTokens{};
+					vector<Candidate> potentialHands{};
 					char buffers[2][3] = { { 0 } };
-					snprintf(buffers[0], 3, "%d", token.cards[0].point);
-					snprintf(buffers[1], 3, "%d", token.cards[3].point);
-					if (this->values[token.cards[3].point] + 1 == this->values[token.cards[0].point])
+					snprintf(buffers[0], 3, "%d", hand.cards[0].point);
+					snprintf(buffers[1], 3, "%d", hand.cards[3].point);
+					if (this->values[hand.cards[3].point] + 1 == this->values[hand.cards[0].point])
 					{
-						token.tokenType = TokenType::TripleStraight; // 三顺
-						potentialTokens.push_back(PossibleToken{ token, (string)"解析为不拖不带、长度为 2 且点数为 " + buffers[0] + " 的三顺（``TokenType::TripleStraight``）" });
+						potentialHands.emplace_back(hand, (string)"解析为不拖不带、长度为 2 且点数为 " + buffers[0] + " 的三顺（``Type::TripleStraight``）");
+						potentialHands.back().hand.type = Type::TripleStraight; // 三顺
 					}
-					token.tokenType = TokenType::TripleWithPairSingle;
-					potentialTokens.push_back(PossibleToken{ token, (string)"解析为三条 " + buffers[0] + " 的三两一，两为一对 " + buffers[1] + "，一为一张 " + buffers[1] + "（``TokenType::TripleWithPairSingle``）" });
-					rotate(token.cards.begin(), token.cards.begin() + 3, token.cards.end());
-					potentialTokens.push_back(PossibleToken{ token, (string)"解析为三条 " + buffers[1] + " 的三两一，两为一对 " + buffers[0] + "，一为一张 " + buffers[0] + "（``TokenType::TripleWithPairSingle``）" });
-					if (3 == token.cards[0].point && 2 == token.cards[3].point)
+					potentialHands.emplace_back(hand, (string)"解析为三条 " + buffers[0] + " 的三两一，两为一对 " + buffers[1] + "，一为一张 " + buffers[1] + "（``Type::TripleWithPairSingle``）");
+					potentialHands.back().hand.type = Type::TripleWithPairSingle; // 三两一
+					rotate(hand.cards.begin(), hand.cards.begin() + 3, hand.cards.end());
+					potentialHands.emplace_back(hand, (string)"解析为三条 " + buffers[1] + " 的三两一，两为一对 " + buffers[0] + "，一为一张 " + buffers[0] + "（``Type::TripleWithPairSingle``）");
+					potentialHands.back().hand.type = Type::TripleWithPairSingle; // 三两一
+					if (3 == hand.cards[0].point && 2 == hand.cards[3].point)
 					{
-						token.tokenType = TokenType::TripleStraight; // 三顺
-						potentialTokens.push_back(PossibleToken{ token, (string)"解析为不拖不带、长度为 2 且点数为 " + buffers[1] + " 的三顺（``TokenType::TripleStraight``）" });
+						potentialHands.emplace_back(hand, (string)"解析为不拖不带、长度为 2 且点数为 " + buffers[1] + " 的三顺（``Type::TripleStraight``）");
+						potentialHands.back().hand.type = Type::TripleStraight; // 三顺
 					}
-					if (this->lastToken && token.player != this->lastToken.player)
-						for (vector<PossibleToken>::iterator it = potentialTokens.begin(); it != potentialTokens.end();)
-							if (this->coverLastToken(it->token))
+					if (this->lastHand && hand.player != this->lastHand.player)
+						for (vector<Candidate>::iterator it = potentialHands.begin(); it != potentialHands.end();)
+							if (this->coverLastHand(it->hand))
 								++it;
 							else
-								it = potentialTokens.erase(it);
-					switch (potentialTokens.size())
+								it = potentialHands.erase(it);
+					switch (potentialHands.size())
 					{
 					case 0:
-						possibleTokens.clear();
+						candidates.clear();
 						return false;
 					case 1:
-						token = potentialTokens[0].token;
-						possibleTokens.clear();
+						hand = move(potentialHands[0].hand);
+						candidates.clear();
 						return true;
 					default:
-						if (possibleTokens.size() == 1)
+						if (candidates.size() == 1)
 						{
-							const vector<PossibleToken>::iterator it = find_if(potentialTokens.begin(), potentialTokens.end(), [&possibleTokens](const PossibleToken& possibleToken) { return possibleToken.token == possibleTokens[0].token; });
-							if (it != potentialTokens.end())
+							const vector<Candidate>::iterator it = find_if(potentialHands.begin(), potentialHands.end(), [&candidates](const Candidate& candidate) { return candidate.hand == candidates[0].hand; });
+							if (it != potentialHands.end())
 							{
-								token = it->token;
-								possibleTokens.clear();
+								hand = move(it->hand);
+								candidates.clear();
 								return true;
 							}
 						}
-						possibleTokens = move(potentialTokens);
+						candidates = move(potentialHands);
 						return false;
 					}
 				}
 				case 2: // && 1 == counts[2]
 				{
-					token.tokenType = TokenType::TripleWithPairSingle; // 三两一
-					possibleTokens.clear();
+					hand.type = Type::TripleWithPairSingle; // 三两一
+					candidates.clear();
 					return true;
 				}
 				default:
 					return false;
 				}
 			case 2:
-				if (this->judgeStraight(token.cards, 2, 3, true))
+				if (this->judgeStraight(hand.cards, 2, 3, true))
 				{
-					token.tokenType = TokenType::PairStraight; // 连对
-					possibleTokens.clear();
+					hand.type = Type::PairStraight; // 连对
+					candidates.clear();
 					return true;
 				}
 				else
 					return false;
 			case 1:
-				if (this->judgeStraight(token.cards, 1, 3, true))
+				if (this->judgeStraight(hand.cards, 1, 3, true))
 				{
-					token.tokenType = TokenType::SingleStraight; // 顺子
-					possibleTokens.clear();
+					hand.type = Type::SingleStraight; // 顺子
+					candidates.clear();
 					return true;
 				}
 				else
 					return false;
 			default:
-				possibleTokens.clear();
+				candidates.clear();
 				return false;
 			}
 		else
 		{
-			possibleTokens.clear();
+			candidates.clear();
 			switch (cardCount)
 			{
 			case 0:
-				token.tokenType = TokenType::Empty; // 要不起
+				hand.type = Type::Empty; // 要不起
 				return true;
 			case 1:
-				token.tokenType = TokenType::Single; // 单牌
+				hand.type = Type::Single; // 单牌
 				return true;
 			case 2:
 				if (2 == counts[0])
 				{
-					token.tokenType = TokenType::Pair; // 对子
+					hand.type = Type::Pair; // 对子
 					return true;
 				}
 				else
@@ -4181,12 +4639,12 @@ private:
 				switch (counts[0])
 				{
 				case 3:
-					token.tokenType = TokenType::Triple; // 三条
+					hand.type = Type::Triple; // 三条
 					return true;
 				case 1:
-					if (this->judgeStraight(token.cards, 1, 3, true) == 1)
+					if (this->judgeStraight(hand.cards, 1, 3, true) == 1)
 					{
-						token.tokenType = TokenType::SingleStraight; // 顺子
+						hand.type = Type::SingleStraight; // 顺子
 						return true;
 					}
 					else
@@ -4198,20 +4656,20 @@ private:
 				switch (counts[0])
 				{
 				case 4:
-					token.tokenType = TokenType::Quadruple; // 四条
+					hand.type = Type::Quadruple; // 四条
 					return true;
 				case 2:
-					if (2 == counts[1] && this->judgeStraight(token.cards, 2, 3, true))
+					if (2 == counts[1] && this->judgeStraight(hand.cards, 2, 3, true))
 					{
-						token.tokenType = TokenType::PairStraight; // 连对
+						hand.type = Type::PairStraight; // 连对
 						return true;
 					}
 					else
 						return false;
 				case 1: // && 1 == counts[1] && 1 == counts[2] && 1 == counts[3]
-					if (this->judgeStraight(token.cards, 1, 3, true))
+					if (this->judgeStraight(hand.cards, 1, 3, true))
 					{
-						token.tokenType = TokenType::SingleStraight; // 顺子
+						hand.type = Type::SingleStraight; // 顺子
 						return true;
 					}
 					else
@@ -4223,20 +4681,20 @@ private:
 				switch (counts[0])
 				{
 				case 4: // && 1 == counts[1]
-					token.tokenType = TokenType::QuadrupleWithSingle; // 四夹一
+					hand.type = Type::QuadrupleWithSingle; // 四夹一
 					return true;
 				case 3:
 					if (2 == counts[1])
 					{
-						token.tokenType = TokenType::TripleWithPair; // 三两不一
+						hand.type = Type::TripleWithPair; // 三两不一
 						return true;
 					}
 					else
 						return false;
 				case 1: // && 1 == counts[2] && 1 == counts[3] && 1 == counts[4]
-					if (this->judgeStraight(token.cards, 1, 3, true))
+					if (this->judgeStraight(hand.cards, 1, 3, true))
 					{
-						token.tokenType = TokenType::SingleStraight; // 顺子
+						hand.type = Type::SingleStraight; // 顺子
 						return true;
 					}
 					else
@@ -4250,13 +4708,13 @@ private:
 				case 4:
 					if (3 == counts[1])
 					{
-						vector<Card> bodyCards(token.cards);
+						vector<Card> bodyCards(hand.cards);
 						bodyCards.erase(bodyCards.begin() + 3);
 						if (this->judgeStraight(bodyCards, 3, 3, true))
 						{
-							bodyCards.push_back(token.cards[3]);
-							token.cards = move(bodyCards);
-							token.tokenType = TokenType::TripleStraightWithSingle; // 三顺夹一
+							bodyCards.push_back(hand.cards[3]);
+							hand.cards = move(bodyCards);
+							hand.type = Type::TripleStraightWithSingle; // 三顺夹一
 							return true;
 						}
 						else
@@ -4269,12 +4727,12 @@ private:
 					{
 					case 3: // && 1 == counts[2]
 					{
-						vector<Card> bodyCards(token.cards.begin(), token.cards.end() - 1);
+						vector<Card> bodyCards(hand.cards.begin(), hand.cards.end() - 1);
 						if (this->judgeStraight(bodyCards, 3, 3, true))
 						{
-							bodyCards.push_back(token.cards.back());
-							token.cards = bodyCards;
-							token.tokenType = TokenType::TripleStraightWithSingle; // 三顺夹一
+							bodyCards.push_back(hand.cards.back());
+							hand.cards = bodyCards;
+							hand.type = Type::TripleStraightWithSingle; // 三顺夹一
 							return true;
 						}
 						else
@@ -4283,13 +4741,13 @@ private:
 					case 2:
 						if (2 == counts[2])
 						{
-							vector<Card> bodyCards(token.cards);
+							vector<Card> bodyCards(hand.cards);
 							bodyCards.erase(bodyCards.begin() + 2);
 							if (this->judgeStraight(bodyCards, 2, 3, true))
 							{
-								bodyCards.push_back(token.cards[2]);
-								token.cards = move(bodyCards);
-								token.tokenType = TokenType::PairStraightWithSingle; // 连对夹一
+								bodyCards.push_back(hand.cards[2]);
+								hand.cards = move(bodyCards);
+								hand.type = Type::PairStraightWithSingle; // 连对夹一
 								return true;
 							}
 							else
@@ -4303,21 +4761,21 @@ private:
 				case 2:
 					if (2 == counts[1] && 2 == counts[2]) // && 1 == counts[3]
 					{
-						vector<Card> bodyCards(token.cards.begin(), token.cards.end() - 1);
+						vector<Card> bodyCards(hand.cards.begin(), hand.cards.end() - 1);
 						if (this->judgeStraight(bodyCards, 2, 3, true))
 						{
-							bodyCards.push_back(token.cards.back());
-							token.cards = bodyCards;
-							token.tokenType = TokenType::PairStraightWithSingle; // 连对夹一
+							bodyCards.push_back(hand.cards.back());
+							hand.cards = bodyCards;
+							hand.type = Type::PairStraightWithSingle; // 连对夹一
 							return true;
 						}
 						else
 							return false;
 					}
 				case 1:
-					if (this->judgeStraight(token.cards, 1, 3, true))
+					if (this->judgeStraight(hand.cards, 1, 3, true))
 					{
-						token.tokenType = TokenType::SingleStraight; // 顺子
+						hand.type = Type::SingleStraight; // 顺子
 						return true;
 					}
 					else
@@ -4326,16 +4784,16 @@ private:
 					return false;
 				}
 			case 8:
-				switch (this->judgeStraight(token.cards, 3, true))
+				switch (this->judgeStraight(hand.cards, 3, true))
 				{
 				case 1:
-					token.tokenType = TokenType::SingleStraight; // 顺子
+					hand.type = Type::SingleStraight; // 顺子
 					return true;
 				case 2:
-					token.tokenType = TokenType::PairStraight; // 连对
+					hand.type = Type::PairStraight; // 连对
 					return true;
 				case 4:
-					token.tokenType = TokenType::QuadrupleStraight; // 四顺
+					hand.type = Type::QuadrupleStraight; // 四顺
 					return true;
 				default:
 					return false;
@@ -4346,12 +4804,12 @@ private:
 				case 4:
 					if (4 == counts[1]) // && 1 == counts[2]
 					{
-						vector<Card> bodyCards(token.cards.begin(), token.cards.end() - 1);
+						vector<Card> bodyCards(hand.cards.begin(), hand.cards.end() - 1);
 						if (this->judgeStraight(bodyCards, 4, 3, true))
 						{
-							bodyCards.push_back(token.cards.back());
-							token.cards = move(bodyCards);
-							token.tokenType = TokenType::QuadrupleStraightWithSingle; // 四顺夹一
+							bodyCards.push_back(hand.cards.back());
+							hand.cards = move(bodyCards);
+							hand.type = Type::QuadrupleStraightWithSingle; // 四顺夹一
 							return true;
 						}
 						else
@@ -4363,21 +4821,21 @@ private:
 					switch (counts[1])
 					{
 					case 3:
-						if (3 == counts[2] && this->judgeStraight(token.cards, 3, true))
+						if (3 == counts[2] && this->judgeStraight(hand.cards, 3, true))
 						{
-							token.tokenType = TokenType::TripleStraight; // 三顺
+							hand.type = Type::TripleStraight; // 三顺
 							return true;
 						}
 					case 2:
 						if (2 == counts[2] && 2 == counts[3])
 						{
-							vector<Card> bodyCards(token.cards);
+							vector<Card> bodyCards(hand.cards);
 							bodyCards.erase(bodyCards.begin() + 2);
 							if (this->judgeStraight(bodyCards, 2, 3, true))
 							{
-								bodyCards.push_back(token.cards[2]);
-								token.cards = move(bodyCards);
-								token.tokenType = TokenType::PairStraightWithSingle; // 连对夹一
+								bodyCards.push_back(hand.cards[2]);
+								hand.cards = move(bodyCards);
+								hand.type = Type::PairStraightWithSingle; // 连对夹一
 								return true;
 							}
 							else
@@ -4391,12 +4849,12 @@ private:
 				case 2:
 					if (2 == counts[1] && 2 == counts[2] && 2 == counts[3]) // && 1 == counts[4]
 					{
-						vector<Card> bodyCards(token.cards.begin(), token.cards.end() - 1);
+						vector<Card> bodyCards(hand.cards.begin(), hand.cards.end() - 1);
 						if (this->judgeStraight(bodyCards, 2, 3, true))
 						{
-							bodyCards.push_back(token.cards.back());
-							token.cards = move(bodyCards);
-							token.tokenType = TokenType::PairStraightWithSingle; // 连对夹一
+							bodyCards.push_back(hand.cards.back());
+							hand.cards = move(bodyCards);
+							hand.type = Type::PairStraightWithSingle; // 连对夹一
 							return true;
 						}
 						else
@@ -4405,9 +4863,9 @@ private:
 					else
 						return false;
 				case 1: // && 1 == counts[1] && ... && 1 == counts[8]
-					if (this->judgeStraight(token.cards, 1, 3, true))
+					if (this->judgeStraight(hand.cards, 1, 3, true))
 					{
-						token.tokenType = TokenType::SingleStraight; // 顺子
+						hand.type = Type::SingleStraight; // 顺子
 						return true;
 					}
 					else
@@ -4421,13 +4879,13 @@ private:
 				case 4:
 					if (3 == counts[1] && 3 == counts[2])
 					{
-						vector<Card> bodyCards(token.cards);
+						vector<Card> bodyCards(hand.cards);
 						bodyCards.erase(bodyCards.begin() + 3);
 						if (this->judgeStraight(bodyCards, 3, 3, true))
 						{
-							bodyCards.push_back(token.cards[3]);
-							token.cards = move(bodyCards);
-							token.tokenType = TokenType::TripleStraightWithSingle; // 三顺夹一
+							bodyCards.push_back(hand.cards[3]);
+							hand.cards = move(bodyCards);
+							hand.type = Type::TripleStraightWithSingle; // 三顺夹一
 							return true;
 						}
 						else
@@ -4438,12 +4896,12 @@ private:
 				case 3:
 					if (3 == counts[1] && 3 == counts[2]) // && 1 == counts[3]
 					{
-						vector<Card> bodyCards(token.cards.begin(), token.cards.end() - 1);
+						vector<Card> bodyCards(hand.cards.begin(), hand.cards.end() - 1);
 						if (this->judgeStraight(bodyCards, 3, 3, true))
 						{
-							bodyCards.push_back(token.cards.back());
-							token.cards = move(bodyCards);
-							token.tokenType = TokenType::TripleStraightWithSingle; // 三顺夹一
+							bodyCards.push_back(hand.cards.back());
+							hand.cards = move(bodyCards);
+							hand.type = Type::TripleStraightWithSingle; // 三顺夹一
 							return true;
 						}
 						else
@@ -4454,12 +4912,12 @@ private:
 				case 2:
 					if (2 == counts[1] && 2 == counts[2] && 2 == counts[3] && 2 == counts[4])
 					{
-						vector<Card> bodyCards(token.cards.begin(), token.cards.end() - 1);
+						vector<Card> bodyCards(hand.cards.begin(), hand.cards.end() - 1);
 						if (this->judgeStraight(bodyCards, 2, 3, true))
 						{
-							bodyCards.push_back(token.cards.back());
-							token.cards = move(bodyCards);
-							token.tokenType = TokenType::PairStraight; // 连对
+							bodyCards.push_back(hand.cards.back());
+							hand.cards = move(bodyCards);
+							hand.type = Type::PairStraight; // 连对
 							return true;
 						}
 						else
@@ -4468,9 +4926,9 @@ private:
 					else
 						return false;
 				case 1: // && 1 == counts[1] && ... && 1 == counts[9]
-					if (this->judgeStraight(token.cards, 1, 3, true))
+					if (this->judgeStraight(hand.cards, 1, 3, true))
 					{
-						token.tokenType = TokenType::SingleStraight; // 顺子
+						hand.type = Type::SingleStraight; // 顺子
 						return true;
 					}
 					else
@@ -4484,13 +4942,13 @@ private:
 				case 3:
 					if (2 == counts[1] && 2 == counts[2] && 2 == counts[3] && 2 == counts[4])
 					{
-						vector<Card> bodyCards(token.cards);
+						vector<Card> bodyCards(hand.cards);
 						bodyCards.erase(bodyCards.begin() + 2);
 						if (this->judgeStraight(bodyCards, 2, 3, true))
 						{
-							bodyCards.push_back(token.cards[2]);
-							token.cards = move(bodyCards);
-							token.tokenType = TokenType::PairStraightWithSingle; // 连对夹一
+							bodyCards.push_back(hand.cards[2]);
+							hand.cards = move(bodyCards);
+							hand.type = Type::PairStraightWithSingle; // 连对夹一
 							return true;
 						}
 						else
@@ -4501,12 +4959,12 @@ private:
 				case 2:
 					if (2 == counts[1] && 2 == counts[2] && 2 == counts[3] && 2 == counts[4]) // && 1 == counts[5]
 					{
-						vector<Card> bodyCards(token.cards.begin(), token.cards.end() - 1);
+						vector<Card> bodyCards(hand.cards.begin(), hand.cards.end() - 1);
 						if (this->judgeStraight(bodyCards, 2, 3, true))
 						{
-							bodyCards.push_back(token.cards.back());
-							token.cards = move(bodyCards);
-							token.tokenType = TokenType::PairStraightWithSingle; // 连对夹一
+							bodyCards.push_back(hand.cards.back());
+							hand.cards = move(bodyCards);
+							hand.type = Type::PairStraightWithSingle; // 连对夹一
 							return true;
 						}
 						else
@@ -4515,9 +4973,9 @@ private:
 					else
 						return false;
 				case 1:
-					if (this->judgeStraight(token.cards, 1, 3, true))
+					if (this->judgeStraight(hand.cards, 1, 3, true))
 					{
-						token.tokenType = TokenType::SingleStraight; // 顺子
+						hand.type = Type::SingleStraight; // 顺子
 						return true;
 					}
 					else
@@ -4526,19 +4984,19 @@ private:
 					return false;
 				}
 			case 12:
-				switch (this->judgeStraight(token.cards, 3, true))
+				switch (this->judgeStraight(hand.cards, 3, true))
 				{
 				case 1:
-					token.tokenType = TokenType::SingleStraight; // 顺子
+					hand.type = Type::SingleStraight; // 顺子
 					return true;
 				case 2:
-					token.tokenType = TokenType::PairStraight; // 连对
+					hand.type = Type::PairStraight; // 连对
 					return true;
 				case 3:
-					token.tokenType = TokenType::TripleStraight; // 三顺
+					hand.type = Type::TripleStraight; // 三顺
 					return true;
 				case 4:
-					token.tokenType = TokenType::QuadrupleStraight; // 四顺
+					hand.type = Type::QuadrupleStraight; // 四顺
 					return true;
 				default:
 					return false;
@@ -4549,13 +5007,13 @@ private:
 				case 4:
 					if (3 == counts[1] && 3 == counts[2] && 3 == counts[3])
 					{
-						vector<Card> bodyCards(token.cards);
+						vector<Card> bodyCards(hand.cards);
 						bodyCards.erase(bodyCards.begin() + 3);
 						if (this->judgeStraight(bodyCards, 3, 3, true))
 						{
-							bodyCards.push_back(token.cards[3]);
-							token.cards = move(bodyCards);
-							token.tokenType = TokenType::TripleStraightWithSingle; // 三顺夹一
+							bodyCards.push_back(hand.cards[3]);
+							hand.cards = move(bodyCards);
+							hand.type = Type::TripleStraightWithSingle; // 三顺夹一
 							return true;
 						}
 						else
@@ -4569,12 +5027,12 @@ private:
 					case 3:
 						if (3 == counts[2] && 3 == counts[3]) // && 1 == counts[4]
 						{
-							vector<Card> bodyCards(token.cards.begin(), token.cards.end() - 1);
+							vector<Card> bodyCards(hand.cards.begin(), hand.cards.end() - 1);
 							if (this->judgeStraight(bodyCards, 3, 3, true))
 							{
-								bodyCards.push_back(token.cards.back());
-								token.cards = move(bodyCards);
-								token.tokenType = TokenType::TripleStraightWithSingle; // 三顺夹一
+								bodyCards.push_back(hand.cards.back());
+								hand.cards = move(bodyCards);
+								hand.type = Type::TripleStraightWithSingle; // 三顺夹一
 								return true;
 							}
 							else
@@ -4585,13 +5043,13 @@ private:
 					case 2:
 						if (2 == counts[2] && 2 == counts[3] && 2 == counts[4] && 2 == counts[5])
 						{
-							vector<Card> bodyCards(token.cards);
+							vector<Card> bodyCards(hand.cards);
 							bodyCards.erase(bodyCards.begin() + 2);
 							if (this->judgeStraight(bodyCards, 2, 3, true))
 							{
-								bodyCards.push_back(token.cards[2]);
-								token.cards = move(bodyCards);
-								token.tokenType = TokenType::PairStraightWithSingle; // 连对夹一
+								bodyCards.push_back(hand.cards[2]);
+								hand.cards = move(bodyCards);
+								hand.type = Type::PairStraightWithSingle; // 连对夹一
 								return true;
 							}
 							else
@@ -4605,12 +5063,12 @@ private:
 				case 2:
 					if (2 == counts[1] && 2 == counts[2] && 2 == counts[3] && 2 == counts[4] && 2 == counts[5]) // && 1 == counts[6]
 					{
-						vector<Card> bodyCards(token.cards.begin(), token.cards.end() - 1);
+						vector<Card> bodyCards(hand.cards.begin(), hand.cards.end() - 1);
 						if (2 == this->judgeStraight(bodyCards, 3, true))
 						{
-							bodyCards.push_back(token.cards.back());
-							token.cards = move(bodyCards);
-							token.tokenType = TokenType::PairStraightWithSingle; // 连对夹一
+							bodyCards.push_back(hand.cards.back());
+							hand.cards = move(bodyCards);
+							hand.type = Type::PairStraightWithSingle; // 连对夹一
 							return true;
 						}
 						else
@@ -4619,9 +5077,9 @@ private:
 					else
 						return false;
 				case 1:
-					if (this->judgeStraight(token.cards, 1, 3, true))
+					if (this->judgeStraight(hand.cards, 1, 3, true))
 					{
-						token.tokenType = TokenType::SingleStraight; // 顺子
+						hand.type = Type::SingleStraight; // 顺子
 						return true;
 					}
 					else
@@ -4704,14 +5162,14 @@ private:
 		else
 			return false;
 	}
-	virtual const bool isAbsolutelyLargest(const Token& token) const override final
+	virtual const bool isAbsolutelyLargest(const Hand& hand) const override final
 	{
-		return TokenType::Single <= token.tokenType && token.tokenType <= TokenType::QuadrupleStraightWithSingle && !token.cards.empty() && 2 == token.cards[0].point;
+		return Type::Single <= hand.type && hand.type <= Type::QuadrupleStraightWithSingle && !hand.cards.empty() && 2 == hand.cards[0].point;
 	}
-	const bool coverLastToken(const Token& currentToken) const override final
+	const bool coverLastHand(const Hand& currentHand) const override final
 	{
-		if (this->lastToken && TokenType::Single <= this->lastToken.tokenType && this->lastToken.tokenType <= TokenType::QuadrupleStraightWithSingle && !this->lastToken.cards.empty() && TokenType::Single <= currentToken.tokenType && currentToken.tokenType <= TokenType::QuadrupleStraightWithSingle && !currentToken.cards.empty())
-			return (currentToken.tokenType == this->lastToken.tokenType || (TokenType::TripleWithPairSingle == this->lastToken.tokenType && TokenType::TripleStraight == currentToken.tokenType)) && currentToken.cards.size() == this->lastToken.cards.size() && this->values[currentToken.cards[0].point] > this->values[this->lastToken.cards[0].point];
+		if (this->lastHand && Type::Single <= this->lastHand.type && this->lastHand.type <= Type::QuadrupleStraightWithSingle && !this->lastHand.cards.empty() && Type::Single <= currentHand.type && currentHand.type <= Type::QuadrupleStraightWithSingle && !currentHand.cards.empty())
+			return (currentHand.type == this->lastHand.type || (Type::TripleWithPairSingle == this->lastHand.type && Type::TripleStraight == currentHand.type)) && currentHand.cards.size() == this->lastHand.cards.size() && this->values[currentHand.cards[0].point] > this->values[this->lastHand.cards[0].point];
 		else
 			return false;
 	}
@@ -4753,7 +5211,7 @@ public:
 			this->records.clear();
 			this->currentPlayer = INVALID_PLAYER;
 			this->dealer = INVALID_PLAYER;
-			this->lastToken = Token{};
+			this->lastHand = Hand{};
 			this->amounts.clear();
 			this->status = Status::Initialized;
 			return true;
@@ -4794,11 +5252,11 @@ public:
 		else
 		{
 			bool flags[4] = { true, true, true, true };
-			for (const Token& token : this->records.back())
-				if (token.player >= 4)
+			for (const Hand& hand : this->records.back())
+				if (hand.player >= 4)
 					return false;
-				else if (TokenType::Empty == token.tokenType)
-					flags[token.player] = false;
+				else if (Type::Empty == hand.type)
+					flags[hand.player] = false;
 			Player offsetPlayer = this->currentPlayer;
 			for (Count count = 0; count < 4; ++count)
 			{
@@ -4821,12 +5279,13 @@ public:
 class Wuguapi : public PokerGame /* Previous: ThreeTwoOne | Next: Qiguiwueryi */
 {
 private:
-	const bool processToken(Token& token, vector<PossibleToken>& possibleTokens) const override final
+	const bool processHand(Hand& hand, vector<Candidate>& candidates) const override final
 	{
-		possibleTokens.clear();
+		hand.type = Type::Invalid;
+		candidates.clear();
 		bool littleJoker = false, bigJoker = false;
 		vector<Count> counts(14);
-		for (const Card& card : token.cards)
+		for (const Card& card : hand.cards)
 			if (JOKER_POINT == card.point)
 				switch (card.suit)
 				{
@@ -4847,24 +5306,24 @@ private:
 				++counts[card.point];
 			else
 				return false;
-		sort(token.cards.begin(), token.cards.end(), [&counts, this](const Card a, const Card b) { const Count countA = counts[a.point], countB = counts[b.point]; const Value valueA = this->values[a.point], valueB = this->values[b.point]; return countA > countB || (countA == countB && valueA > valueB) || (countA == countB && valueA == valueB && a.suit > b.suit); });
-		if (adjacent_find(token.cards.begin(), token.cards.end()) != token.cards.end())
+		sort(hand.cards.begin(), hand.cards.end(), [&counts, this](const Card a, const Card b) { const Count countA = counts[a.point], countB = counts[b.point]; const Value valueA = this->values[a.point], valueB = this->values[b.point]; return countA > countB || (countA == countB && valueA > valueB) || (countA == countB && valueA == valueB && a.suit > b.suit); });
+		if (adjacent_find(hand.cards.begin(), hand.cards.end()) != hand.cards.end())
 			return false;
 		sort(counts.begin(), counts.end(), [](const Count a, const Count b) { return a > b; });
 		if (counts[0] > 4)
 			return false;
-		switch (token.cards.size())
+		switch (hand.cards.size())
 		{
 		case 0:
-			token.tokenType = TokenType::Empty;
+			hand.type = Type::Empty;
 			return true;
 		case 1:
-			token.tokenType = TokenType::Single;
+			hand.type = Type::Single;
 			return true;
 		case 2:
 			if (2 == counts[0])
 			{
-				token.tokenType = JOKER_POINT == token.cards[0].point ? TokenType::PairJokers : TokenType::Pair;
+				hand.type = JOKER_POINT == hand.cards[0].point ? Type::PairJokers : Type::Pair;
 				return true;
 			}
 			else
@@ -4873,16 +5332,16 @@ private:
 			switch (counts[0])
 			{
 			case 3:
-				token.tokenType = TokenType::Triple;
+				hand.type = Type::Triple;
 				return true;
 			case 1:
 				if (1 == counts[1]) // && 1 == counts[2]
 				{
-					const bool isSingleStraight = this->judgeStraight(token.cards, 1, 2, false), isFlush = token.cards[0].suit == token.cards[1].suit && token.cards[1].suit == token.cards[2].suit;
+					const bool isSingleStraight = this->judgeStraight(hand.cards, 1, 2, false), isFlush = hand.cards[0].suit == hand.cards[1].suit && hand.cards[1].suit == hand.cards[2].suit;
 					if (isSingleStraight)
-						token.tokenType = isFlush ? TokenType::SingleFlushStraight : TokenType::SingleStraight;
+						hand.type = isFlush ? Type::SingleFlushStraight : Type::SingleStraight;
 					else if (isFlush)
-						token.tokenType = TokenType::SingleFlush;
+						hand.type = Type::SingleFlush;
 					else
 						return false;
 					return true;
@@ -4896,16 +5355,16 @@ private:
 			switch (counts[0])
 			{
 			case 4:
-				token.tokenType = TokenType::Quadruple;
+				hand.type = Type::Quadruple;
 				return true;
 			case 1:
 				if (1 == counts[1]) // && 1 == counts[2] && 1 == counts[3]
 				{
-					const bool isSingleStraight = this->judgeStraight(token.cards, 1, 2, false), isFlush = token.cards[0].suit == token.cards[1].suit && token.cards[1].suit == token.cards[2].suit && token.cards[2] == token.cards[3];
+					const bool isSingleStraight = this->judgeStraight(hand.cards, 1, 2, false), isFlush = hand.cards[0].suit == hand.cards[1].suit && hand.cards[1].suit == hand.cards[2].suit && hand.cards[2] == hand.cards[3];
 					if (isSingleStraight)
-						token.tokenType = isFlush ? TokenType::SingleFlushStraight : TokenType::SingleStraight;
+						hand.type = isFlush ? Type::SingleFlushStraight : Type::SingleStraight;
 					else if (isFlush)
-						token.tokenType = TokenType::SingleFlush;
+						hand.type = Type::SingleFlush;
 					else
 						return false;
 					return true;
@@ -4919,12 +5378,12 @@ private:
 			switch (counts[0])
 			{
 			case 4: // && 1 == counts[1]
-				token.tokenType = TokenType::QuadrupleWithSingle;
+				hand.type = Type::QuadrupleWithSingle;
 				return true;
 			case 3:
 				if (2 == counts[1])
 				{
-					token.tokenType = TokenType::TripleWithPair;
+					hand.type = Type::TripleWithPair;
 					return true;
 				}
 				else
@@ -4933,11 +5392,11 @@ private:
 			case 1:
 				if (1 == counts[1]) // && 1 == counts[2] && 1 == counts[3]
 				{
-					const bool isSingleStraight = this->judgeStraight(token.cards, 1, 2, false), isFlush = token.cards[0].suit == token.cards[1].suit && token.cards[1].suit == token.cards[2].suit && token.cards[2] == token.cards[3] && token.cards[3] == token.cards[4];
+					const bool isSingleStraight = this->judgeStraight(hand.cards, 1, 2, false), isFlush = hand.cards[0].suit == hand.cards[1].suit && hand.cards[1].suit == hand.cards[2].suit && hand.cards[2] == hand.cards[3] && hand.cards[3] == hand.cards[4];
 					if (isSingleStraight)
-						token.tokenType = isFlush ? TokenType::SingleFlushStraight : TokenType::SingleStraight;
+						hand.type = isFlush ? Type::SingleFlushStraight : Type::SingleStraight;
 					else if (isFlush)
-						token.tokenType = TokenType::SingleFlush;
+						hand.type = Type::SingleFlush;
 					else
 						return false;
 					return true;
@@ -4980,55 +5439,55 @@ private:
 		else
 			return false;
 	}
-	virtual const bool isAbsolutelyLargest(const Token& token) const override final
+	virtual const bool isAbsolutelyLargest(const Hand& hand) const override final
 	{
-		return ((TokenType::Single == token.tokenType || TokenType::PairJokers == token.tokenType) && Card { JOKER_POINT, Suit::Red } == token.cards[0]) || (TokenType::SingleFlushStraight == token.tokenType && Card{ 5, Suit::Spade } == token.cards[0]);
+		return ((Type::Single == hand.type || Type::PairJokers == hand.type) && Card { JOKER_POINT, Suit::Red } == hand.cards[0]) || (Type::SingleFlushStraight == hand.type && Card{ 5, Suit::Spade } == hand.cards[0]);
 	}
-	const bool coverLastToken(const Token& currentToken) const override final
+	const bool coverLastHand(const Hand& currentHand) const override final
 	{
-		if (this->lastToken && TokenType::Single <= this->lastToken.tokenType && this->lastToken.tokenType <= TokenType::QuadrupleWithSingle && !this->lastToken.cards.empty() && TokenType::Single <= currentToken.tokenType && currentToken.tokenType <= TokenType::QuadrupleWithSingle && !currentToken.cards.empty())
-			switch (this->lastToken.tokenType)
+		if (this->lastHand && Type::Single <= this->lastHand.type && this->lastHand.type <= Type::QuadrupleWithSingle && !this->lastHand.cards.empty() && Type::Single <= currentHand.type && currentHand.type <= Type::QuadrupleWithSingle && !currentHand.cards.empty())
+			switch (this->lastHand.type)
 			{
-			case TokenType::Single: // 单牌
-				return currentToken.tokenType == this->lastToken.tokenType && (this->values[currentToken.cards[0].point] > this->values[this->lastToken.cards[0].point] || (currentToken.cards[0].point == this->lastToken.cards[0].point && currentToken.cards[0].suit > this->lastToken.cards[0].suit));
-			case TokenType::SingleStraight: // 顺子
-				switch (this->lastToken.cards.size())
+			case Type::Single: // 单牌
+				return currentHand.type == this->lastHand.type && (this->values[currentHand.cards[0].point] > this->values[this->lastHand.cards[0].point] || (currentHand.cards[0].point == this->lastHand.cards[0].point && currentHand.cards[0].suit > this->lastHand.cards[0].suit));
+			case Type::SingleStraight: // 顺子
+				switch (this->lastHand.cards.size())
 				{
 				case 3: // 可被一条龙|同花顺、三条、同花以及比自己大的顺子盖过
-					return currentToken.cards.size() == this->lastToken.cards.size() && (TokenType::SingleFlushStraight == currentToken.tokenType || TokenType::Triple == currentToken.tokenType || TokenType::SingleFlush == currentToken.tokenType || (TokenType::SingleStraight == currentToken.tokenType && (this->values[currentToken.cards[0].point] > this->values[this->lastToken.cards[0].point] || (currentToken.cards[0].point == this->lastToken.cards[0].point && currentToken.cards[0].suit > this->lastToken.cards[0].suit))));
+					return currentHand.cards.size() == this->lastHand.cards.size() && (Type::SingleFlushStraight == currentHand.type || Type::Triple == currentHand.type || Type::SingleFlush == currentHand.type || (Type::SingleStraight == currentHand.type && (this->values[currentHand.cards[0].point] > this->values[this->lastHand.cards[0].point] || (currentHand.cards[0].point == this->lastHand.cards[0].point && currentHand.cards[0].suit > this->lastHand.cards[0].suit))));
 				case 4: // 可被一条龙|同花顺、四条、同花以及比自己大的顺子盖过
-					return currentToken.cards.size() == this->lastToken.cards.size() && (TokenType::SingleFlushStraight == currentToken.tokenType || TokenType::Quadruple == currentToken.tokenType || TokenType::SingleFlush == currentToken.tokenType || (TokenType::SingleStraight == currentToken.tokenType && (this->values[currentToken.cards[0].point] > this->values[this->lastToken.cards[0].point] || (currentToken.cards[0].point == this->lastToken.cards[0].point && currentToken.cards[0].suit > this->lastToken.cards[0].suit))));
+					return currentHand.cards.size() == this->lastHand.cards.size() && (Type::SingleFlushStraight == currentHand.type || Type::Quadruple == currentHand.type || Type::SingleFlush == currentHand.type || (Type::SingleStraight == currentHand.type && (this->values[currentHand.cards[0].point] > this->values[this->lastHand.cards[0].point] || (currentHand.cards[0].point == this->lastHand.cards[0].point && currentHand.cards[0].suit > this->lastHand.cards[0].suit))));
 				case 5: // 可被一条龙|同花顺、金刚、葫芦/俘虏/副路、同花以及比自己大的顺子盖过
-					return currentToken.cards.size() == this->lastToken.cards.size() && (TokenType::SingleFlushStraight == currentToken.tokenType || TokenType::QuadrupleWithSingle == currentToken.tokenType || TokenType::TripleWithPair == currentToken.tokenType || TokenType::SingleFlush == currentToken.tokenType || (TokenType::SingleStraight == currentToken.tokenType && (this->values[currentToken.cards[0].point] > this->values[this->lastToken.cards[0].point] || (currentToken.cards[0].point == this->lastToken.cards[0].point && currentToken.cards[0].suit > this->lastToken.cards[0].suit))));
+					return currentHand.cards.size() == this->lastHand.cards.size() && (Type::SingleFlushStraight == currentHand.type || Type::QuadrupleWithSingle == currentHand.type || Type::TripleWithPair == currentHand.type || Type::SingleFlush == currentHand.type || (Type::SingleStraight == currentHand.type && (this->values[currentHand.cards[0].point] > this->values[this->lastHand.cards[0].point] || (currentHand.cards[0].point == this->lastHand.cards[0].point && currentHand.cards[0].suit > this->lastHand.cards[0].suit))));
 				default:
 					return false;
 				}
-			case TokenType::SingleFlush: // 同花
-				switch (this->lastToken.cards.size())
+			case Type::SingleFlush: // 同花
+				switch (this->lastHand.cards.size())
 				{
 				case 3: // 可被一条龙|同花顺、三条、以及比自己大的同花盖过
-					return currentToken.cards.size() == this->lastToken.cards.size() && (TokenType::SingleFlushStraight == currentToken.tokenType || TokenType::Triple == currentToken.tokenType || (TokenType::SingleFlush == currentToken.tokenType && (this->values[currentToken.cards[0].point] > this->values[this->lastToken.cards[0].point] || (currentToken.cards[0].point == this->lastToken.cards[0].point && currentToken.cards[0].suit > this->lastToken.cards[0].suit))));
+					return currentHand.cards.size() == this->lastHand.cards.size() && (Type::SingleFlushStraight == currentHand.type || Type::Triple == currentHand.type || (Type::SingleFlush == currentHand.type && (this->values[currentHand.cards[0].point] > this->values[this->lastHand.cards[0].point] || (currentHand.cards[0].point == this->lastHand.cards[0].point && currentHand.cards[0].suit > this->lastHand.cards[0].suit))));
 				case 4: // 可被一条龙|同花顺、四条、以及比自己大的同花盖过
-					return currentToken.cards.size() == this->lastToken.cards.size() && (TokenType::SingleFlushStraight == currentToken.tokenType || TokenType::Quadruple == currentToken.tokenType || (TokenType::SingleFlush == currentToken.tokenType && (this->values[currentToken.cards[0].point] > this->values[this->lastToken.cards[0].point] || (currentToken.cards[0].point == this->lastToken.cards[0].point && currentToken.cards[0].suit > this->lastToken.cards[0].suit))));
+					return currentHand.cards.size() == this->lastHand.cards.size() && (Type::SingleFlushStraight == currentHand.type || Type::Quadruple == currentHand.type || (Type::SingleFlush == currentHand.type && (this->values[currentHand.cards[0].point] > this->values[this->lastHand.cards[0].point] || (currentHand.cards[0].point == this->lastHand.cards[0].point && currentHand.cards[0].suit > this->lastHand.cards[0].suit))));
 				case 5: // 可被一条龙|同花顺、金刚、葫芦/俘虏/副路、以及比自己大的同花盖过
-					return currentToken.cards.size() == this->lastToken.cards.size() && (TokenType::SingleFlushStraight == currentToken.tokenType || TokenType::QuadrupleWithSingle == currentToken.tokenType || TokenType::TripleWithPair == currentToken.tokenType || (TokenType::SingleFlush == currentToken.tokenType && (this->values[currentToken.cards[0].point] > this->values[this->lastToken.cards[0].point] || (currentToken.cards[0].point == this->lastToken.cards[0].point && currentToken.cards[0].suit > this->lastToken.cards[0].suit))));
+					return currentHand.cards.size() == this->lastHand.cards.size() && (Type::SingleFlushStraight == currentHand.type || Type::QuadrupleWithSingle == currentHand.type || Type::TripleWithPair == currentHand.type || (Type::SingleFlush == currentHand.type && (this->values[currentHand.cards[0].point] > this->values[this->lastHand.cards[0].point] || (currentHand.cards[0].point == this->lastHand.cards[0].point && currentHand.cards[0].suit > this->lastHand.cards[0].suit))));
 				default:
 					return false;
 				}
-			case TokenType::SingleFlushStraight: // 一条龙|同花顺
-				return currentToken.tokenType == this->lastToken.tokenType && currentToken.cards.size() == this->lastToken.cards.size() && (this->values[currentToken.cards[0].point] > this->values[this->lastToken.cards[0].point] || (currentToken.cards[0].point == this->lastToken.cards[0].point && currentToken.cards[0].suit > this->lastToken.cards[0].suit));
-			case TokenType::Pair: // 对子
-				return TokenType::PairJokers == currentToken.tokenType || (currentToken.tokenType == this->lastToken.tokenType && (this->values[currentToken.cards[0].point] > this->values[this->lastToken.cards[0].point] || (currentToken.cards[0].point == this->lastToken.cards[0].point && currentToken.cards[0].suit > this->lastToken.cards[0].suit)));
-			case TokenType::PairJokers: // 对鬼
+			case Type::SingleFlushStraight: // 一条龙|同花顺
+				return currentHand.type == this->lastHand.type && currentHand.cards.size() == this->lastHand.cards.size() && (this->values[currentHand.cards[0].point] > this->values[this->lastHand.cards[0].point] || (currentHand.cards[0].point == this->lastHand.cards[0].point && currentHand.cards[0].suit > this->lastHand.cards[0].suit));
+			case Type::Pair: // 对子
+				return Type::PairJokers == currentHand.type || (currentHand.type == this->lastHand.type && (this->values[currentHand.cards[0].point] > this->values[this->lastHand.cards[0].point] || (currentHand.cards[0].point == this->lastHand.cards[0].point && currentHand.cards[0].suit > this->lastHand.cards[0].suit)));
+			case Type::PairJokers: // 对鬼
 				return false;
-			case TokenType::Triple: // 三条：可被一条龙|同花顺和比自己大的三条盖过
-				return (TokenType::SingleFlushStraight == currentToken.tokenType && currentToken.cards.size() == 3) || (TokenType::Triple == currentToken.tokenType && (this->values[currentToken.cards[0].point] > this->values[this->lastToken.cards[0].point] || (currentToken.cards[0].point == this->lastToken.cards[0].point && currentToken.cards[0].suit > this->lastToken.cards[0].suit)));
-			case TokenType::TripleWithPair: // 葫芦/俘虏/副路：可被一条龙|同花顺、金刚、以及比自己大的葫芦/俘虏/副路盖过
-				return TokenType::SingleFlushStraight == currentToken.tokenType || TokenType::QuadrupleWithSingle == currentToken.tokenType || (TokenType::TripleWithPair == currentToken.tokenType && (this->values[currentToken.cards[0].point] > this->values[this->lastToken.cards[0].point] || (currentToken.cards[0].point == this->lastToken.cards[0].point && currentToken.cards[0].suit > this->lastToken.cards[0].suit)));
-			case TokenType::Quadruple: // 四条：可被一条龙|同花顺和比自己大的四条盖过
-				return (TokenType::SingleFlushStraight == currentToken.tokenType && currentToken.cards.size() == 4) || (TokenType::Quadruple == currentToken.tokenType && (this->values[currentToken.cards[0].point] > this->values[this->lastToken.cards[0].point] || (currentToken.cards[0].point == this->lastToken.cards[0].point && currentToken.cards[0].suit > this->lastToken.cards[0].suit)));
-			case TokenType::QuadrupleWithSingle: // 金刚：可被一条龙|同花顺和比自己大的金刚盖过
-				return TokenType::SingleFlushStraight == currentToken.tokenType || (TokenType::QuadrupleWithSingle == currentToken.tokenType && (this->values[currentToken.cards[0].point] > this->values[this->lastToken.cards[0].point] || (currentToken.cards[0].point == this->lastToken.cards[0].point && currentToken.cards[0].suit > this->lastToken.cards[0].suit)));
+			case Type::Triple: // 三条：可被一条龙|同花顺和比自己大的三条盖过
+				return (Type::SingleFlushStraight == currentHand.type && currentHand.cards.size() == 3) || (Type::Triple == currentHand.type && (this->values[currentHand.cards[0].point] > this->values[this->lastHand.cards[0].point] || (currentHand.cards[0].point == this->lastHand.cards[0].point && currentHand.cards[0].suit > this->lastHand.cards[0].suit)));
+			case Type::TripleWithPair: // 葫芦/俘虏/副路：可被一条龙|同花顺、金刚、以及比自己大的葫芦/俘虏/副路盖过
+				return Type::SingleFlushStraight == currentHand.type || Type::QuadrupleWithSingle == currentHand.type || (Type::TripleWithPair == currentHand.type && (this->values[currentHand.cards[0].point] > this->values[this->lastHand.cards[0].point] || (currentHand.cards[0].point == this->lastHand.cards[0].point && currentHand.cards[0].suit > this->lastHand.cards[0].suit)));
+			case Type::Quadruple: // 四条：可被一条龙|同花顺和比自己大的四条盖过
+				return (Type::SingleFlushStraight == currentHand.type && currentHand.cards.size() == 4) || (Type::Quadruple == currentHand.type && (this->values[currentHand.cards[0].point] > this->values[this->lastHand.cards[0].point] || (currentHand.cards[0].point == this->lastHand.cards[0].point && currentHand.cards[0].suit > this->lastHand.cards[0].suit)));
+			case Type::QuadrupleWithSingle: // 金刚：可被一条龙|同花顺和比自己大的金刚盖过
+				return Type::SingleFlushStraight == currentHand.type || (Type::QuadrupleWithSingle == currentHand.type && (this->values[currentHand.cards[0].point] > this->values[this->lastHand.cards[0].point] || (currentHand.cards[0].point == this->lastHand.cards[0].point && currentHand.cards[0].suit > this->lastHand.cards[0].suit)));
 			default:
 				return false;
 			}
@@ -5043,11 +5502,11 @@ private:
 		{
 			string preRoundString{};
 			char playerBuffer[4] = { 0 };
-			for (const Token& token : this->records[0])
-				if (token.cards.size() == 1)
+			for (const Hand& hand : this->records[0])
+				if (hand.cards.size() == 1)
 				{
-					snprintf(playerBuffer, 4, "%d", token.player + 1);
-					preRoundString += (string)token.cards[0] + "（玩家 " + playerBuffer + "） > ";
+					snprintf(playerBuffer, 4, "%d", hand.player + 1);
+					preRoundString += (string)hand.cards[0] + "（玩家 " + playerBuffer + "） > ";
 				}
 				else
 					return "预备回合信息检验异常。";
@@ -5077,7 +5536,7 @@ public:
 			this->records.clear();
 			this->currentPlayer = INVALID_PLAYER;
 			this->dealer = INVALID_PLAYER;
-			this->lastToken = Token{};
+			this->lastHand = Hand{};
 			this->amounts.clear();
 			this->status = Status::Initialized;
 			return true;
@@ -5120,12 +5579,13 @@ public:
 class Qiguiwueryi : public PokerGame /* Previous: ThreeTwoOne | Next: Qiguiwuersan */
 {
 private:
-	const bool processToken(Token& token, vector<PossibleToken>& possibleTokens) const override final
+	const bool processHand(Hand& hand, vector<Candidate>& candidates) const override final
 	{
-		possibleTokens.clear();
+		hand.type = Type::Invalid;
+		candidates.clear();
 		bool littleJoker = false, bigJoker = false;
 		vector<Count> counts(14);
-		for (const Card& card : token.cards)
+		for (const Card& card : hand.cards)
 			if (JOKER_POINT == card.point)
 				switch (card.suit)
 				{
@@ -5146,24 +5606,24 @@ private:
 				++counts[card.point];
 			else
 				return false;
-		sort(token.cards.begin(), token.cards.end(), [&counts, this](const Card a, const Card b) { const Count countA = counts[a.point], countB = counts[b.point]; const Value valueA = this->values[a.point], valueB = this->values[b.point]; return countA > countB || (countA == countB && valueA > valueB) || (countA == countB && valueA == valueB && a.suit > b.suit); });
-		if (adjacent_find(token.cards.begin(), token.cards.end()) != token.cards.end())
+		sort(hand.cards.begin(), hand.cards.end(), [&counts, this](const Card a, const Card b) { const Count countA = counts[a.point], countB = counts[b.point]; const Value valueA = this->values[a.point], valueB = this->values[b.point]; return countA > countB || (countA == countB && valueA > valueB) || (countA == countB && valueA == valueB && a.suit > b.suit); });
+		if (adjacent_find(hand.cards.begin(), hand.cards.end()) != hand.cards.end())
 			return false;
 		sort(counts.begin(), counts.end(), [](const Count a, const Count b) { return a > b; });
 		if (counts[0] > 4)
 			return false;
-		switch (token.cards.size())
+		switch (hand.cards.size())
 		{
 		case 0:
-			token.tokenType = TokenType::Empty;
+			hand.type = Type::Empty;
 			return true;
 		case 1:
-			token.tokenType = TokenType::Single;
+			hand.type = Type::Single;
 			return true;
 		case 2:
 			if (2 == counts[0])
 			{
-				token.tokenType = JOKER_POINT == token.cards[0].point ? TokenType::PairJokers : TokenType::Pair;
+				hand.type = JOKER_POINT == hand.cards[0].point ? Type::PairJokers : Type::Pair;
 				return true;
 			}
 			else
@@ -5171,7 +5631,7 @@ private:
 		case 3:
 			if (3 == counts[0])
 			{
-				token.tokenType = TokenType::Triple;
+				hand.type = Type::Triple;
 				return true;
 			}
 			else
@@ -5179,7 +5639,7 @@ private:
 		case 4:
 			if (4 == counts[0])
 			{
-				token.tokenType = TokenType::Quadruple;
+				hand.type = Type::Quadruple;
 				return true;
 			}
 			else
@@ -5217,22 +5677,22 @@ private:
 		else
 			return false;
 	}
-	virtual const bool isAbsolutelyLargest(const Token& token) const override final
+	virtual const bool isAbsolutelyLargest(const Hand& hand) const override final
 	{
-		return (TokenType::Single == token.tokenType || TokenType::Pair == token.tokenType || TokenType::Triple == token.tokenType || TokenType::Quadruple == token.tokenType) && (!token.cards.empty() && Card { 7, Suit::Spade } == token.cards[0]);
+		return (Type::Single == hand.type || Type::Pair == hand.type || Type::Triple == hand.type || Type::Quadruple == hand.type) && (!hand.cards.empty() && Card { 7, Suit::Spade } == hand.cards[0]);
 	}
-	const bool coverLastToken(const Token& currentToken) const override final
+	const bool coverLastHand(const Hand& currentHand) const override final
 	{
-		if (this->lastToken && TokenType::Single <= this->lastToken.tokenType && this->lastToken.tokenType <= TokenType::Quadruple && !this->lastToken.cards.empty() && TokenType::Single <= currentToken.tokenType && currentToken.tokenType <= TokenType::Quadruple && !currentToken.cards.empty())
-			switch (this->lastToken.tokenType)
+		if (this->lastHand && Type::Single <= this->lastHand.type && this->lastHand.type <= Type::Quadruple && !this->lastHand.cards.empty() && Type::Single <= currentHand.type && currentHand.type <= Type::Quadruple && !currentHand.cards.empty())
+			switch (this->lastHand.type)
 			{
-			case TokenType::Single:
-			case TokenType::Triple:
-			case TokenType::Quadruple:
-				return currentToken.tokenType == this->lastToken.tokenType && (this->values[currentToken.cards[0].point] > this->values[this->lastToken.cards[0].point] || (currentToken.cards[0].point == this->lastToken.cards[0].point && currentToken.cards[0].suit > this->lastToken.cards[0].suit));
-			case TokenType::Pair:
-			case TokenType::PairJokers:
-				return (TokenType::Pair == currentToken.tokenType || TokenType::PairJokers == currentToken.tokenType) && (this->values[currentToken.cards[0].point] > this->values[this->lastToken.cards[0].point] || (currentToken.cards[0].point == this->lastToken.cards[0].point && currentToken.cards[0].suit > this->lastToken.cards[0].suit));
+			case Type::Single:
+			case Type::Triple:
+			case Type::Quadruple:
+				return currentHand.type == this->lastHand.type && (this->values[currentHand.cards[0].point] > this->values[this->lastHand.cards[0].point] || (currentHand.cards[0].point == this->lastHand.cards[0].point && currentHand.cards[0].suit > this->lastHand.cards[0].suit));
+			case Type::Pair:
+			case Type::PairJokers:
+				return (Type::Pair == currentHand.type || Type::PairJokers == currentHand.type) && (this->values[currentHand.cards[0].point] > this->values[this->lastHand.cards[0].point] || (currentHand.cards[0].point == this->lastHand.cards[0].point && currentHand.cards[0].suit > this->lastHand.cards[0].suit));
 			default:
 				return false;
 			}
@@ -5247,11 +5707,11 @@ private:
 		{
 			string preRoundString{};
 			char playerBuffer[4] = { 0 };
-			for (const Token& token : this->records[0])
-				if (token.cards.size() == 1)
+			for (const Hand& hand : this->records[0])
+				if (hand.cards.size() == 1)
 				{
-					snprintf(playerBuffer, 4, "%d", token.player + 1);
-					preRoundString += (string)token.cards[0] + "（玩家 " + playerBuffer + "） > ";
+					snprintf(playerBuffer, 4, "%d", hand.player + 1);
+					preRoundString += (string)hand.cards[0] + "（玩家 " + playerBuffer + "） > ";
 				}
 				else
 					return "预备回合信息检验异常。";
@@ -5286,7 +5746,7 @@ public:
 			this->records.clear();
 			this->currentPlayer = INVALID_PLAYER;
 			this->dealer = INVALID_PLAYER;
-			this->lastToken = Token{};
+			this->lastHand = Hand{};
 			this->amounts.clear();
 			this->status = Status::Initialized;
 			return true;
@@ -5354,7 +5814,7 @@ public:
 			this->records.clear();
 			this->currentPlayer = INVALID_PLAYER;
 			this->dealer = INVALID_PLAYER;
-			this->lastToken = Token{};
+			this->lastHand = Hand{};
 			this->amounts.clear();
 			this->status = Status::Initialized;
 			return true;
@@ -5711,9 +6171,9 @@ private:
 		Count retryCount = 0;
 		for (;;)
 		{
-			LandlordScore currentHighestLandlordScore = LandlordScore::None;
+			Score currentHighestScore = Score::None;
 			vector<string> scoreDescriptions{ "不叫", "3分", "2分", "1分" };
-			for (Count count = 1; count <= 4 && currentHighestLandlordScore < LandlordScore::Three;)
+			for (Count count = 1; count <= 4 && currentHighestScore < Score::Three;)
 			{
 				this->pokerGame->getCurrentPlayer(player);
 				this->clearScreen();
@@ -5725,34 +6185,34 @@ private:
 				else if (!buffer.empty())
 				{
 					const char scoreChar = buffer.at(0) - '0';
-					LandlordScore landlordScore = LandlordScore::None;
+					Score score = Score::None;
 					switch (scoreChar)
 					{
 					case 1:
-						landlordScore = LandlordScore::One;
+						score = Score::One;
 						break;
 					case 2:
-						landlordScore = LandlordScore::Two;
+						score = Score::Two;
 						break;
 					case 3:
-						landlordScore = LandlordScore::Three;
+						score = Score::Three;
 						break;
 					default:
 						break;
 					}
-					if (this->pokerGame->setLandlord(landlordScore))
+					if (this->pokerGame->setLandlord(score))
 					{
-						if (landlordScore > currentHighestLandlordScore)
+						if (score > currentHighestScore)
 						{
-							for (Count removalCount = static_cast<Count>(landlordScore) - static_cast<Count>(currentHighestLandlordScore); removalCount > 0; --removalCount)
+							for (Count removalCount = static_cast<Count>(score) - static_cast<Count>(currentHighestScore); removalCount > 0; --removalCount)
 								scoreDescriptions.pop_back();
-							currentHighestLandlordScore = landlordScore;
+							currentHighestScore = score;
 						}
 						++count;
 					}
 				}
 			}
-			if (currentHighestLandlordScore >= LandlordScore::One || retryCount >= 2)
+			if (currentHighestScore >= Score::One || retryCount >= 2)
 				break;
 			else
 			{
@@ -5777,12 +6237,12 @@ private:
 		}
 		return;
 	}
-	const bool selectTokenType(vector<PossibleToken>& possibleTokens, Action& action) const
+	const bool selectType(vector<Candidate>& candidates, Action& action) const
 	{
 		cout << "当前牌组存在二义性，在当前环境中，所有可能的牌型列举如下：" << endl;
-		const size_t length = possibleTokens.size();
+		const size_t length = candidates.size();
 		for (size_t idx = 0; idx < length; ++idx)
-			cout << "\t" << (idx + 1) << " = " << possibleTokens[idx].description << endl;
+			cout << "\t" << (idx + 1) << " = " << candidates[idx].description << endl;
 		for (;;)
 		{
 			cout << endl << "请选择一种牌型以继续（输入“/”并按下回车键将重新选择要出的牌）：";
@@ -5795,7 +6255,7 @@ private:
 				const unsigned long int choice = strtoul(buffer.c_str(), nullptr, 0) - 1;
 				if (0 <= choice && choice < length)
 				{
-					possibleTokens = vector<PossibleToken>{ possibleTokens[choice] };
+					candidates = vector<Candidate>{ candidates[choice] };
 					return true;
 				}
 			}
@@ -5816,17 +6276,21 @@ private:
 				return false;
 			else
 			{
-				vector<PossibleToken> possibleTokens{};
-				if (this->pokerGame->start(buffer, possibleTokens))
+				vector<Candidate> candidates{};
+				if (this->pokerGame->start(buffer, candidates))
 					return true;
-				else if (!possibleTokens.empty())
-					if (this->selectTokenType(possibleTokens, action))
-					{
-						if (this->pokerGame->start(possibleTokens[0].token.cards, possibleTokens))
-							return true;
-					}
-					else if (action != Action::None)
-						return false;
+				else if (candidates.empty())
+				{
+					cout << "无法使用所选牌组开牌，请重新选择要出的牌。" << endl;
+					this_thread::sleep_for(chrono::seconds(TIME_FOR_SLEEP));
+				}
+				else if (this->selectType(candidates, action))
+				{
+					if (this->pokerGame->start(candidates[0].hand.cards, candidates))
+						return true;
+				}
+				else if (action != Action::None)
+					return false;
 			}
 		}
 	}
@@ -5847,17 +6311,21 @@ private:
 					return false;
 				else
 				{
-					vector<PossibleToken> possibleTokens{};
-					if (this->pokerGame->play(buffer, possibleTokens))
+					vector<Candidate> candidates{};
+					if (this->pokerGame->play(buffer, candidates))
 						break;
-					else if (!possibleTokens.empty())
-						if (this->selectTokenType(possibleTokens, action))
-						{
-							if (this->pokerGame->play(possibleTokens[0].token.cards, possibleTokens))
-								break;
-						}
-						else if (action != Action::None)
-							return false;
+					else if (candidates.empty())
+					{
+						cout << "无法使用所选牌组开牌，请重新选择要出的牌。" << endl;
+						this_thread::sleep_for(chrono::seconds(TIME_FOR_SLEEP));
+					}
+					else if (this->selectType(candidates, action))
+					{
+						if (this->pokerGame->play(candidates[0].hand.cards, candidates))
+							break;
+					}
+					else if (action != Action::None)
+						return false;
 				}
 			}
 			this->pokerGame->getCurrentPlayer(player);

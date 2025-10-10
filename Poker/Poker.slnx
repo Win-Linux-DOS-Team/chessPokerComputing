@@ -1,0 +1,7 @@
+<Solution>
+  <Configurations>
+    <Platform Name="x64" />
+    <Platform Name="x86" />
+  </Configurations>
+  <Project Path="Poker/Poker.vcxproj" Id="b33ad01e-629f-4057-8788-5eec8c39a535" />
+</Solution>

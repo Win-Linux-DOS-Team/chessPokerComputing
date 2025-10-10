@@ -1,0 +1,423 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<DEFECTS>
+  <DEFECT>
+    <SFA>
+      <FILEPATH>E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\</FILEPATH>
+      <FILENAME>Poker.cpp</FILENAME>
+      <LINE>572</LINE>
+      <COLUMN>9</COLUMN>
+    </SFA>
+    <DEFECTCODE>26819</DEFECTCODE>
+    <DESCRIPTION>switch 标签之间的尾随 fallthrough (es.78)。</DESCRIPTION>
+    <FUNCTION>Poker::description2cards</FUNCTION>
+    <DECORATED>?description2cards@Poker@@MEBA?B_NAEBV?$basic_string@DU?$char_traits@D@std@@V?$allocator@D@2@@std@@AEAV?$vector@UCard@@V?$allocator@UCard@@@std@@@3@@Z</DECORATED>
+    <FUNCLINE>512</FUNCLINE>
+    <PATH></PATH>
+  </DEFECT>
+  <DEFECT>
+    <SFA>
+      <FILEPATH>E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\</FILEPATH>
+      <FILENAME>Poker.cpp</FILENAME>
+      <LINE>1383</LINE>
+      <COLUMN>8</COLUMN>
+    </SFA>
+    <DEFECTCODE>26819</DEFECTCODE>
+    <DESCRIPTION>switch 标签之间的尾随 fallthrough (es.78)。</DESCRIPTION>
+    <FUNCTION>Landlords::computeAmounts</FUNCTION>
+    <DECORATED>?computeAmounts@Landlords@@EEAA?B_NEI@Z</DECORATED>
+    <FUNCLINE>1298</FUNCLINE>
+    <PATH></PATH>
+  </DEFECT>
+  <DEFECT>
+    <SFA>
+      <FILEPATH>E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\</FILEPATH>
+      <FILENAME>Poker.cpp</FILENAME>
+      <LINE>1351</LINE>
+      <COLUMN>10</COLUMN>
+    </SFA>
+    <DEFECTCODE>26819</DEFECTCODE>
+    <DESCRIPTION>switch 标签之间的尾随 fallthrough (es.78)。</DESCRIPTION>
+    <FUNCTION>Landlords::computeAmounts</FUNCTION>
+    <DECORATED>?computeAmounts@Landlords@@EEAA?B_NEI@Z</DECORATED>
+    <FUNCLINE>1298</FUNCLINE>
+    <PATH></PATH>
+  </DEFECT>
+  <DEFECT>
+    <SFA>
+      <FILEPATH>E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\</FILEPATH>
+      <FILENAME>Poker.cpp</FILENAME>
+      <LINE>1353</LINE>
+      <COLUMN>10</COLUMN>
+    </SFA>
+    <DEFECTCODE>26819</DEFECTCODE>
+    <DESCRIPTION>switch 标签之间的尾随 fallthrough (es.78)。</DESCRIPTION>
+    <FUNCTION>Landlords::computeAmounts</FUNCTION>
+    <DECORATED>?computeAmounts@Landlords@@EEAA?B_NEI@Z</DECORATED>
+    <FUNCLINE>1298</FUNCLINE>
+    <PATH></PATH>
+  </DEFECT>
+  <DEFECT>
+    <SFA>
+      <FILEPATH>E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\</FILEPATH>
+      <FILENAME>Poker.cpp</FILENAME>
+      <LINE>1355</LINE>
+      <COLUMN>10</COLUMN>
+    </SFA>
+    <DEFECTCODE>26819</DEFECTCODE>
+    <DESCRIPTION>switch 标签之间的尾随 fallthrough (es.78)。</DESCRIPTION>
+    <FUNCTION>Landlords::computeAmounts</FUNCTION>
+    <DECORATED>?computeAmounts@Landlords@@EEAA?B_NEI@Z</DECORATED>
+    <FUNCLINE>1298</FUNCLINE>
+    <PATH></PATH>
+  </DEFECT>
+  <DEFECT>
+    <SFA>
+      <FILEPATH>E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\</FILEPATH>
+      <FILENAME>Poker.cpp</FILENAME>
+      <LINE>1357</LINE>
+      <COLUMN>10</COLUMN>
+    </SFA>
+    <DEFECTCODE>26819</DEFECTCODE>
+    <DESCRIPTION>switch 标签之间的尾随 fallthrough (es.78)。</DESCRIPTION>
+    <FUNCTION>Landlords::computeAmounts</FUNCTION>
+    <DECORATED>?computeAmounts@Landlords@@EEAA?B_NEI@Z</DECORATED>
+    <FUNCLINE>1298</FUNCLINE>
+    <PATH></PATH>
+  </DEFECT>
+  <DEFECT>
+    <SFA>
+      <FILEPATH>E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\</FILEPATH>
+      <FILENAME>Poker.cpp</FILENAME>
+      <LINE>1470</LINE>
+      <COLUMN>15</COLUMN>
+    </SFA>
+    <DEFECTCODE>26819</DEFECTCODE>
+    <DESCRIPTION>switch 标签之间的尾随 fallthrough (es.78)。</DESCRIPTION>
+    <FUNCTION>Landlords::processHand</FUNCTION>
+    <DECORATED>?processHand@Landlords@@MEBA?B_NAEAUHand@@AEAV?$vector@UCandidate@@V?$allocator@UCandidate@@@std@@@std@@@Z</DECORATED>
+    <FUNCLINE>1455</FUNCLINE>
+    <PATH></PATH>
+  </DEFECT>
+  <DEFECT>
+    <SFA>
+      <FILEPATH>E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\</FILEPATH>
+      <FILENAME>Poker.cpp</FILENAME>
+      <LINE>1476</LINE>
+      <COLUMN>12</COLUMN>
+    </SFA>
+    <DEFECTCODE>26819</DEFECTCODE>
+    <DESCRIPTION>switch 标签之间的尾随 fallthrough (es.78)。</DESCRIPTION>
+    <FUNCTION>Landlords::processHand</FUNCTION>
+    <DECORATED>?processHand@Landlords@@MEBA?B_NAEAUHand@@AEAV?$vector@UCandidate@@V?$allocator@UCandidate@@@std@@@std@@@Z</DECORATED>
+    <FUNCLINE>1455</FUNCLINE>
+    <PATH></PATH>
+  </DEFECT>
+  <DEFECT>
+    <SFA>
+      <FILEPATH>E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\</FILEPATH>
+      <FILENAME>Poker.cpp</FILENAME>
+      <LINE>1544</LINE>
+      <COLUMN>7</COLUMN>
+    </SFA>
+    <DEFECTCODE>26819</DEFECTCODE>
+    <DESCRIPTION>switch 标签之间的尾随 fallthrough (es.78)。</DESCRIPTION>
+    <FUNCTION>Landlords::processHand</FUNCTION>
+    <DECORATED>?processHand@Landlords@@MEBA?B_NAEAUHand@@AEAV?$vector@UCandidate@@V?$allocator@UCandidate@@@std@@@std@@@Z</DECORATED>
+    <FUNCLINE>1455</FUNCLINE>
+    <PATH></PATH>
+  </DEFECT>
+  <DEFECT>
+    <SFA>
+      <FILEPATH>E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\</FILEPATH>
+      <FILENAME>Poker.cpp</FILENAME>
+      <LINE>2181</LINE>
+      <COLUMN>15</COLUMN>
+    </SFA>
+    <DEFECTCODE>26819</DEFECTCODE>
+    <DESCRIPTION>switch 标签之间的尾随 fallthrough (es.78)。</DESCRIPTION>
+    <FUNCTION>LandlordsX::processHand</FUNCTION>
+    <DECORATED>?processHand@LandlordsX@@MEBA?B_NAEAUHand@@AEAV?$vector@UCandidate@@V?$allocator@UCandidate@@@std@@@std@@@Z</DECORATED>
+    <FUNCLINE>2164</FUNCLINE>
+    <PATH></PATH>
+  </DEFECT>
+  <DEFECT>
+    <SFA>
+      <FILEPATH>E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\</FILEPATH>
+      <FILENAME>Poker.cpp</FILENAME>
+      <LINE>2190</LINE>
+      <COLUMN>21</COLUMN>
+    </SFA>
+    <DEFECTCODE>26819</DEFECTCODE>
+    <DESCRIPTION>switch 标签之间的尾随 fallthrough (es.78)。</DESCRIPTION>
+    <FUNCTION>LandlordsX::processHand</FUNCTION>
+    <DECORATED>?processHand@LandlordsX@@MEBA?B_NAEAUHand@@AEAV?$vector@UCandidate@@V?$allocator@UCandidate@@@std@@@std@@@Z</DECORATED>
+    <FUNCLINE>2164</FUNCLINE>
+    <PATH></PATH>
+  </DEFECT>
+  <DEFECT>
+    <SFA>
+      <FILEPATH>E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\</FILEPATH>
+      <FILENAME>Poker.cpp</FILENAME>
+      <LINE>2260</LINE>
+      <COLUMN>7</COLUMN>
+    </SFA>
+    <DEFECTCODE>26819</DEFECTCODE>
+    <DESCRIPTION>switch 标签之间的尾随 fallthrough (es.78)。</DESCRIPTION>
+    <FUNCTION>LandlordsX::processHand</FUNCTION>
+    <DECORATED>?processHand@LandlordsX@@MEBA?B_NAEAUHand@@AEAV?$vector@UCandidate@@V?$allocator@UCandidate@@@std@@@std@@@Z</DECORATED>
+    <FUNCLINE>2164</FUNCLINE>
+    <PATH></PATH>
+  </DEFECT>
+  <DEFECT>
+    <SFA>
+      <FILEPATH>E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\</FILEPATH>
+      <FILENAME>Poker.cpp</FILENAME>
+      <LINE>2281</LINE>
+      <COLUMN>7</COLUMN>
+    </SFA>
+    <DEFECTCODE>26819</DEFECTCODE>
+    <DESCRIPTION>switch 标签之间的尾随 fallthrough (es.78)。</DESCRIPTION>
+    <FUNCTION>LandlordsX::processHand</FUNCTION>
+    <DECORATED>?processHand@LandlordsX@@MEBA?B_NAEAUHand@@AEAV?$vector@UCandidate@@V?$allocator@UCandidate@@@std@@@std@@@Z</DECORATED>
+    <FUNCLINE>2164</FUNCLINE>
+    <PATH></PATH>
+  </DEFECT>
+  <DEFECT>
+    <SFA>
+      <FILEPATH>E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\</FILEPATH>
+      <FILENAME>Poker.cpp</FILENAME>
+      <LINE>3160</LINE>
+      <COLUMN>22</COLUMN>
+    </SFA>
+    <DEFECTCODE>26819</DEFECTCODE>
+    <DESCRIPTION>switch 标签之间的尾随 fallthrough (es.78)。</DESCRIPTION>
+    <FUNCTION>LandlordsX::processHand</FUNCTION>
+    <DECORATED>?processHand@LandlordsX@@MEBA?B_NAEAUHand@@AEAV?$vector@UCandidate@@V?$allocator@UCandidate@@@std@@@std@@@Z</DECORATED>
+    <FUNCLINE>2164</FUNCLINE>
+    <PATH></PATH>
+  </DEFECT>
+  <DEFECT>
+    <SFA>
+      <FILEPATH>E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\</FILEPATH>
+      <FILENAME>Poker.cpp</FILENAME>
+      <LINE>3496</LINE>
+      <COLUMN>15</COLUMN>
+    </SFA>
+    <DEFECTCODE>26819</DEFECTCODE>
+    <DESCRIPTION>switch 标签之间的尾随 fallthrough (es.78)。</DESCRIPTION>
+    <FUNCTION>Landlords4P::processHand</FUNCTION>
+    <DECORATED>?processHand@Landlords4P@@EEBA?B_NAEAUHand@@AEAV?$vector@UCandidate@@V?$allocator@UCandidate@@@std@@@std@@@Z</DECORATED>
+    <FUNCLINE>3482</FUNCLINE>
+    <PATH></PATH>
+  </DEFECT>
+  <DEFECT>
+    <SFA>
+      <FILEPATH>E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\</FILEPATH>
+      <FILENAME>Poker.cpp</FILENAME>
+      <LINE>3500</LINE>
+      <COLUMN>12</COLUMN>
+    </SFA>
+    <DEFECTCODE>26819</DEFECTCODE>
+    <DESCRIPTION>switch 标签之间的尾随 fallthrough (es.78)。</DESCRIPTION>
+    <FUNCTION>Landlords4P::processHand</FUNCTION>
+    <DECORATED>?processHand@Landlords4P@@EEBA?B_NAEAUHand@@AEAV?$vector@UCandidate@@V?$allocator@UCandidate@@@std@@@std@@@Z</DECORATED>
+    <FUNCLINE>3482</FUNCLINE>
+    <PATH></PATH>
+  </DEFECT>
+  <DEFECT>
+    <SFA>
+      <FILEPATH>E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\</FILEPATH>
+      <FILENAME>Poker.cpp</FILENAME>
+      <LINE>3566</LINE>
+      <COLUMN>7</COLUMN>
+    </SFA>
+    <DEFECTCODE>26819</DEFECTCODE>
+    <DESCRIPTION>switch 标签之间的尾随 fallthrough (es.78)。</DESCRIPTION>
+    <FUNCTION>Landlords4P::processHand</FUNCTION>
+    <DECORATED>?processHand@Landlords4P@@EEBA?B_NAEAUHand@@AEAV?$vector@UCandidate@@V?$allocator@UCandidate@@@std@@@std@@@Z</DECORATED>
+    <FUNCLINE>3482</FUNCLINE>
+    <PATH></PATH>
+  </DEFECT>
+  <DEFECT>
+    <SFA>
+      <FILEPATH>E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\</FILEPATH>
+      <FILENAME>Poker.cpp</FILENAME>
+      <LINE>3729</LINE>
+      <COLUMN>7</COLUMN>
+    </SFA>
+    <DEFECTCODE>26819</DEFECTCODE>
+    <DESCRIPTION>switch 标签之间的尾随 fallthrough (es.78)。</DESCRIPTION>
+    <FUNCTION>Landlords4P::processHand</FUNCTION>
+    <DECORATED>?processHand@Landlords4P@@EEBA?B_NAEAUHand@@AEAV?$vector@UCandidate@@V?$allocator@UCandidate@@@std@@@std@@@Z</DECORATED>
+    <FUNCLINE>3482</FUNCLINE>
+    <PATH></PATH>
+  </DEFECT>
+  <DEFECT>
+    <SFA>
+      <FILEPATH>E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\</FILEPATH>
+      <FILENAME>Poker.cpp</FILENAME>
+      <LINE>3981</LINE>
+      <COLUMN>8</COLUMN>
+    </SFA>
+    <DEFECTCODE>26819</DEFECTCODE>
+    <DESCRIPTION>switch 标签之间的尾随 fallthrough (es.78)。</DESCRIPTION>
+    <FUNCTION>Landlords4P::computeAmounts</FUNCTION>
+    <DECORATED>?computeAmounts@Landlords4P@@EEAA?B_NXZ</DECORATED>
+    <FUNCLINE>3919</FUNCLINE>
+    <PATH></PATH>
+  </DEFECT>
+  <DEFECT>
+    <SFA>
+      <FILEPATH>E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\</FILEPATH>
+      <FILENAME>Poker.cpp</FILENAME>
+      <LINE>4379</LINE>
+      <COLUMN>8</COLUMN>
+    </SFA>
+    <DEFECTCODE>26819</DEFECTCODE>
+    <DESCRIPTION>switch 标签之间的尾随 fallthrough (es.78)。</DESCRIPTION>
+    <FUNCTION>BigTwo::computeAmounts</FUNCTION>
+    <DECORATED>?computeAmounts@BigTwo@@EEAA?B_NXZ</DECORATED>
+    <FUNCLINE>4329</FUNCLINE>
+    <PATH></PATH>
+  </DEFECT>
+  <DEFECT>
+    <SFA>
+      <FILEPATH>E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\</FILEPATH>
+      <FILENAME>Poker.cpp</FILENAME>
+      <LINE>4829</LINE>
+      <COLUMN>10</COLUMN>
+    </SFA>
+    <DEFECTCODE>26819</DEFECTCODE>
+    <DESCRIPTION>switch 标签之间的尾随 fallthrough (es.78)。</DESCRIPTION>
+    <FUNCTION>ThreeTwoOne::processHand</FUNCTION>
+    <DECORATED>?processHand@ThreeTwoOne@@EEBA?B_NAEAUHand@@AEAV?$vector@UCandidate@@V?$allocator@UCandidate@@@std@@@std@@@Z</DECORATED>
+    <FUNCLINE>4496</FUNCLINE>
+    <PATH></PATH>
+  </DEFECT>
+  <DEFECT>
+    <SFA>
+      <FILEPATH>E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\</FILEPATH>
+      <FILENAME>Poker.cpp</FILENAME>
+      <LINE>4775</LINE>
+      <COLUMN>9</COLUMN>
+    </SFA>
+    <DEFECTCODE>26819</DEFECTCODE>
+    <DESCRIPTION>switch 标签之间的尾随 fallthrough (es.78)。</DESCRIPTION>
+    <FUNCTION>ThreeTwoOne::processHand</FUNCTION>
+    <DECORATED>?processHand@ThreeTwoOne@@EEBA?B_NAEAUHand@@AEAV?$vector@UCandidate@@V?$allocator@UCandidate@@@std@@@std@@@Z</DECORATED>
+    <FUNCLINE>4496</FUNCLINE>
+    <PATH></PATH>
+  </DEFECT>
+  <DEFECT>
+    <SFA>
+      <FILEPATH>E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\</FILEPATH>
+      <FILENAME>Poker.cpp</FILENAME>
+      <LINE>5156</LINE>
+      <COLUMN>8</COLUMN>
+    </SFA>
+    <DEFECTCODE>26819</DEFECTCODE>
+    <DESCRIPTION>switch 标签之间的尾随 fallthrough (es.78)。</DESCRIPTION>
+    <FUNCTION>ThreeTwoOne::computeAmounts</FUNCTION>
+    <DECORATED>?computeAmounts@ThreeTwoOne@@EEAA?B_NXZ</DECORATED>
+    <FUNCLINE>5095</FUNCLINE>
+    <PATH></PATH>
+  </DEFECT>
+  <DEFECT>
+    <SFA>
+      <FILEPATH>E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\</FILEPATH>
+      <FILENAME>Poker.cpp</FILENAME>
+      <LINE>5297</LINE>
+      <COLUMN>15</COLUMN>
+    </SFA>
+    <DEFECTCODE>26819</DEFECTCODE>
+    <DESCRIPTION>switch 标签之间的尾随 fallthrough (es.78)。</DESCRIPTION>
+    <FUNCTION>Wuguapi::processHand</FUNCTION>
+    <DECORATED>?processHand@Wuguapi@@EEBA?B_NAEAUHand@@AEAV?$vector@UCandidate@@V?$allocator@UCandidate@@@std@@@std@@@Z</DECORATED>
+    <FUNCLINE>5282</FUNCLINE>
+    <PATH></PATH>
+  </DEFECT>
+  <DEFECT>
+    <SFA>
+      <FILEPATH>E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\</FILEPATH>
+      <FILENAME>Poker.cpp</FILENAME>
+      <LINE>5303</LINE>
+      <COLUMN>12</COLUMN>
+    </SFA>
+    <DEFECTCODE>26819</DEFECTCODE>
+    <DESCRIPTION>switch 标签之间的尾随 fallthrough (es.78)。</DESCRIPTION>
+    <FUNCTION>Wuguapi::processHand</FUNCTION>
+    <DECORATED>?processHand@Wuguapi@@EEBA?B_NAEAUHand@@AEAV?$vector@UCandidate@@V?$allocator@UCandidate@@@std@@@std@@@Z</DECORATED>
+    <FUNCLINE>5282</FUNCLINE>
+    <PATH></PATH>
+  </DEFECT>
+  <DEFECT>
+    <SFA>
+      <FILEPATH>E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\</FILEPATH>
+      <FILENAME>Poker.cpp</FILENAME>
+      <LINE>5597</LINE>
+      <COLUMN>15</COLUMN>
+    </SFA>
+    <DEFECTCODE>26819</DEFECTCODE>
+    <DESCRIPTION>switch 标签之间的尾随 fallthrough (es.78)。</DESCRIPTION>
+    <FUNCTION>Qiguiwueryi::processHand</FUNCTION>
+    <DECORATED>?processHand@Qiguiwueryi@@EEBA?B_NAEAUHand@@AEAV?$vector@UCandidate@@V?$allocator@UCandidate@@@std@@@std@@@Z</DECORATED>
+    <FUNCLINE>5582</FUNCLINE>
+    <PATH></PATH>
+  </DEFECT>
+  <DEFECT>
+    <SFA>
+      <FILEPATH>E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\</FILEPATH>
+      <FILENAME>Poker.cpp</FILENAME>
+      <LINE>5603</LINE>
+      <COLUMN>12</COLUMN>
+    </SFA>
+    <DEFECTCODE>26819</DEFECTCODE>
+    <DESCRIPTION>switch 标签之间的尾随 fallthrough (es.78)。</DESCRIPTION>
+    <FUNCTION>Qiguiwueryi::processHand</FUNCTION>
+    <DECORATED>?processHand@Qiguiwueryi@@EEBA?B_NAEAUHand@@AEAV?$vector@UCandidate@@V?$allocator@UCandidate@@@std@@@std@@@Z</DECORATED>
+    <FUNCLINE>5582</FUNCLINE>
+    <PATH></PATH>
+  </DEFECT>
+  <DEFECT>
+    <SFA>
+      <FILEPATH>E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\</FILEPATH>
+      <FILENAME>Poker.cpp</FILENAME>
+      <LINE>6460</LINE>
+      <COLUMN>18</COLUMN>
+    </SFA>
+    <DEFECTCODE>26819</DEFECTCODE>
+    <DESCRIPTION>switch 标签之间的尾随 fallthrough (es.78)。</DESCRIPTION>
+    <FUNCTION>Interaction::interact</FUNCTION>
+    <DECORATED>?interact@Interaction@@QEAA?B_NXZ</DECORATED>
+    <FUNCLINE>6397</FUNCLINE>
+    <PATH></PATH>
+  </DEFECT>
+  <DEFECT>
+    <SFA>
+      <FILEPATH>E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\</FILEPATH>
+      <FILENAME>Poker.cpp</FILENAME>
+      <LINE>6474</LINE>
+      <COLUMN>18</COLUMN>
+    </SFA>
+    <DEFECTCODE>26819</DEFECTCODE>
+    <DESCRIPTION>switch 标签之间的尾随 fallthrough (es.78)。</DESCRIPTION>
+    <FUNCTION>Interaction::interact</FUNCTION>
+    <DECORATED>?interact@Interaction@@QEAA?B_NXZ</DECORATED>
+    <FUNCLINE>6397</FUNCLINE>
+    <PATH></PATH>
+  </DEFECT>
+  <DEFECT>
+    <SFA>
+      <FILEPATH>E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\</FILEPATH>
+      <FILENAME>Poker.cpp</FILENAME>
+      <LINE>6488</LINE>
+      <COLUMN>18</COLUMN>
+    </SFA>
+    <DEFECTCODE>26819</DEFECTCODE>
+    <DESCRIPTION>switch 标签之间的尾随 fallthrough (es.78)。</DESCRIPTION>
+    <FUNCTION>Interaction::interact</FUNCTION>
+    <DECORATED>?interact@Interaction@@QEAA?B_NXZ</DECORATED>
+    <FUNCLINE>6397</FUNCLINE>
+    <PATH></PATH>
+  </DEFECT>
+</DEFECTS>

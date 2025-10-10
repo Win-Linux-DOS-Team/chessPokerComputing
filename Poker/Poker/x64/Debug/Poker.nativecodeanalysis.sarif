@@ -1,0 +1,911 @@
+{
+  "version": "2.1.0",
+  "$schema": "https://schemastore.azurewebsites.net/schemas/json/sarif-2.1.0-rtm.5.json",
+  "runs": [
+    {
+      "results": [
+        {
+          "ruleId": "C26819",
+          "message": {
+            "text": "switch 标签之间的尾随 fallthrough (es.78)。"
+          },
+          "analysisTarget": {
+            "uri": "file:///e:/星空/win linux dos团队/chesspokercomputing/poker/poker/poker.cpp"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "file:///E:/星空/Win Linux DOS团队/chessPokerComputing/Poker/Poker/Poker.cpp"
+                },
+                "region": {
+                  "startLine": 572,
+                  "startColumn": 10
+                }
+              },
+              "logicalLocations": [
+                {
+                  "fullyQualifiedName": "Poker::description2cards",
+                  "decoratedName": "?description2cards@Poker@@MEBA?B_NAEBV?$basic_string@DU?$char_traits@D@std@@V?$allocator@D@2@@std@@AEAV?$vector@UCard@@V?$allocator@UCard@@@std@@@3@@Z",
+                  "kind": "function"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "ruleId": "C26819",
+          "message": {
+            "text": "switch 标签之间的尾随 fallthrough (es.78)。"
+          },
+          "analysisTarget": {
+            "uri": "file:///e:/星空/win linux dos团队/chesspokercomputing/poker/poker/poker.cpp"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "file:///E:/星空/Win Linux DOS团队/chessPokerComputing/Poker/Poker/Poker.cpp"
+                },
+                "region": {
+                  "startLine": 1383,
+                  "startColumn": 9
+                }
+              },
+              "logicalLocations": [
+                {
+                  "fullyQualifiedName": "Landlords::computeAmounts",
+                  "decoratedName": "?computeAmounts@Landlords@@EEAA?B_NEI@Z",
+                  "kind": "function"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "ruleId": "C26819",
+          "message": {
+            "text": "switch 标签之间的尾随 fallthrough (es.78)。"
+          },
+          "analysisTarget": {
+            "uri": "file:///e:/星空/win linux dos团队/chesspokercomputing/poker/poker/poker.cpp"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "file:///E:/星空/Win Linux DOS团队/chessPokerComputing/Poker/Poker/Poker.cpp"
+                },
+                "region": {
+                  "startLine": 1351,
+                  "startColumn": 11
+                }
+              },
+              "logicalLocations": [
+                {
+                  "fullyQualifiedName": "Landlords::computeAmounts",
+                  "decoratedName": "?computeAmounts@Landlords@@EEAA?B_NEI@Z",
+                  "kind": "function"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "ruleId": "C26819",
+          "message": {
+            "text": "switch 标签之间的尾随 fallthrough (es.78)。"
+          },
+          "analysisTarget": {
+            "uri": "file:///e:/星空/win linux dos团队/chesspokercomputing/poker/poker/poker.cpp"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "file:///E:/星空/Win Linux DOS团队/chessPokerComputing/Poker/Poker/Poker.cpp"
+                },
+                "region": {
+                  "startLine": 1353,
+                  "startColumn": 11
+                }
+              },
+              "logicalLocations": [
+                {
+                  "fullyQualifiedName": "Landlords::computeAmounts",
+                  "decoratedName": "?computeAmounts@Landlords@@EEAA?B_NEI@Z",
+                  "kind": "function"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "ruleId": "C26819",
+          "message": {
+            "text": "switch 标签之间的尾随 fallthrough (es.78)。"
+          },
+          "analysisTarget": {
+            "uri": "file:///e:/星空/win linux dos团队/chesspokercomputing/poker/poker/poker.cpp"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "file:///E:/星空/Win Linux DOS团队/chessPokerComputing/Poker/Poker/Poker.cpp"
+                },
+                "region": {
+                  "startLine": 1355,
+                  "startColumn": 11
+                }
+              },
+              "logicalLocations": [
+                {
+                  "fullyQualifiedName": "Landlords::computeAmounts",
+                  "decoratedName": "?computeAmounts@Landlords@@EEAA?B_NEI@Z",
+                  "kind": "function"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "ruleId": "C26819",
+          "message": {
+            "text": "switch 标签之间的尾随 fallthrough (es.78)。"
+          },
+          "analysisTarget": {
+            "uri": "file:///e:/星空/win linux dos团队/chesspokercomputing/poker/poker/poker.cpp"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "file:///E:/星空/Win Linux DOS团队/chessPokerComputing/Poker/Poker/Poker.cpp"
+                },
+                "region": {
+                  "startLine": 1357,
+                  "startColumn": 11
+                }
+              },
+              "logicalLocations": [
+                {
+                  "fullyQualifiedName": "Landlords::computeAmounts",
+                  "decoratedName": "?computeAmounts@Landlords@@EEAA?B_NEI@Z",
+                  "kind": "function"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "ruleId": "C26819",
+          "message": {
+            "text": "switch 标签之间的尾随 fallthrough (es.78)。"
+          },
+          "analysisTarget": {
+            "uri": "file:///e:/星空/win linux dos团队/chesspokercomputing/poker/poker/poker.cpp"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "file:///E:/星空/Win Linux DOS团队/chessPokerComputing/Poker/Poker/Poker.cpp"
+                },
+                "region": {
+                  "startLine": 1470,
+                  "startColumn": 16
+                }
+              },
+              "logicalLocations": [
+                {
+                  "fullyQualifiedName": "Landlords::processHand",
+                  "decoratedName": "?processHand@Landlords@@MEBA?B_NAEAUHand@@AEAV?$vector@UCandidate@@V?$allocator@UCandidate@@@std@@@std@@@Z",
+                  "kind": "function"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "ruleId": "C26819",
+          "message": {
+            "text": "switch 标签之间的尾随 fallthrough (es.78)。"
+          },
+          "analysisTarget": {
+            "uri": "file:///e:/星空/win linux dos团队/chesspokercomputing/poker/poker/poker.cpp"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "file:///E:/星空/Win Linux DOS团队/chessPokerComputing/Poker/Poker/Poker.cpp"
+                },
+                "region": {
+                  "startLine": 1476,
+                  "startColumn": 13
+                }
+              },
+              "logicalLocations": [
+                {
+                  "fullyQualifiedName": "Landlords::processHand",
+                  "decoratedName": "?processHand@Landlords@@MEBA?B_NAEAUHand@@AEAV?$vector@UCandidate@@V?$allocator@UCandidate@@@std@@@std@@@Z",
+                  "kind": "function"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "ruleId": "C26819",
+          "message": {
+            "text": "switch 标签之间的尾随 fallthrough (es.78)。"
+          },
+          "analysisTarget": {
+            "uri": "file:///e:/星空/win linux dos团队/chesspokercomputing/poker/poker/poker.cpp"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "file:///E:/星空/Win Linux DOS团队/chessPokerComputing/Poker/Poker/Poker.cpp"
+                },
+                "region": {
+                  "startLine": 1544,
+                  "startColumn": 8
+                }
+              },
+              "logicalLocations": [
+                {
+                  "fullyQualifiedName": "Landlords::processHand",
+                  "decoratedName": "?processHand@Landlords@@MEBA?B_NAEAUHand@@AEAV?$vector@UCandidate@@V?$allocator@UCandidate@@@std@@@std@@@Z",
+                  "kind": "function"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "ruleId": "C26819",
+          "message": {
+            "text": "switch 标签之间的尾随 fallthrough (es.78)。"
+          },
+          "analysisTarget": {
+            "uri": "file:///e:/星空/win linux dos团队/chesspokercomputing/poker/poker/poker.cpp"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "file:///E:/星空/Win Linux DOS团队/chessPokerComputing/Poker/Poker/Poker.cpp"
+                },
+                "region": {
+                  "startLine": 2181,
+                  "startColumn": 16
+                }
+              },
+              "logicalLocations": [
+                {
+                  "fullyQualifiedName": "LandlordsX::processHand",
+                  "decoratedName": "?processHand@LandlordsX@@MEBA?B_NAEAUHand@@AEAV?$vector@UCandidate@@V?$allocator@UCandidate@@@std@@@std@@@Z",
+                  "kind": "function"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "ruleId": "C26819",
+          "message": {
+            "text": "switch 标签之间的尾随 fallthrough (es.78)。"
+          },
+          "analysisTarget": {
+            "uri": "file:///e:/星空/win linux dos团队/chesspokercomputing/poker/poker/poker.cpp"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "file:///E:/星空/Win Linux DOS团队/chessPokerComputing/Poker/Poker/Poker.cpp"
+                },
+                "region": {
+                  "startLine": 2190,
+                  "startColumn": 6,
+                  "endLine": 2190,
+                  "endColumn": 22
+                }
+              },
+              "logicalLocations": [
+                {
+                  "fullyQualifiedName": "LandlordsX::processHand",
+                  "decoratedName": "?processHand@LandlordsX@@MEBA?B_NAEAUHand@@AEAV?$vector@UCandidate@@V?$allocator@UCandidate@@@std@@@std@@@Z",
+                  "kind": "function"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "ruleId": "C26819",
+          "message": {
+            "text": "switch 标签之间的尾随 fallthrough (es.78)。"
+          },
+          "analysisTarget": {
+            "uri": "file:///e:/星空/win linux dos团队/chesspokercomputing/poker/poker/poker.cpp"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "file:///E:/星空/Win Linux DOS团队/chessPokerComputing/Poker/Poker/Poker.cpp"
+                },
+                "region": {
+                  "startLine": 2260,
+                  "startColumn": 8
+                }
+              },
+              "logicalLocations": [
+                {
+                  "fullyQualifiedName": "LandlordsX::processHand",
+                  "decoratedName": "?processHand@LandlordsX@@MEBA?B_NAEAUHand@@AEAV?$vector@UCandidate@@V?$allocator@UCandidate@@@std@@@std@@@Z",
+                  "kind": "function"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "ruleId": "C26819",
+          "message": {
+            "text": "switch 标签之间的尾随 fallthrough (es.78)。"
+          },
+          "analysisTarget": {
+            "uri": "file:///e:/星空/win linux dos团队/chesspokercomputing/poker/poker/poker.cpp"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "file:///E:/星空/Win Linux DOS团队/chessPokerComputing/Poker/Poker/Poker.cpp"
+                },
+                "region": {
+                  "startLine": 2281,
+                  "startColumn": 8
+                }
+              },
+              "logicalLocations": [
+                {
+                  "fullyQualifiedName": "LandlordsX::processHand",
+                  "decoratedName": "?processHand@LandlordsX@@MEBA?B_NAEAUHand@@AEAV?$vector@UCandidate@@V?$allocator@UCandidate@@@std@@@std@@@Z",
+                  "kind": "function"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "ruleId": "C26819",
+          "message": {
+            "text": "switch 标签之间的尾随 fallthrough (es.78)。"
+          },
+          "analysisTarget": {
+            "uri": "file:///e:/星空/win linux dos团队/chesspokercomputing/poker/poker/poker.cpp"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "file:///E:/星空/Win Linux DOS团队/chessPokerComputing/Poker/Poker/Poker.cpp"
+                },
+                "region": {
+                  "startLine": 3160,
+                  "startColumn": 7,
+                  "endLine": 3160,
+                  "endColumn": 23
+                }
+              },
+              "logicalLocations": [
+                {
+                  "fullyQualifiedName": "LandlordsX::processHand",
+                  "decoratedName": "?processHand@LandlordsX@@MEBA?B_NAEAUHand@@AEAV?$vector@UCandidate@@V?$allocator@UCandidate@@@std@@@std@@@Z",
+                  "kind": "function"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "ruleId": "C26819",
+          "message": {
+            "text": "switch 标签之间的尾随 fallthrough (es.78)。"
+          },
+          "analysisTarget": {
+            "uri": "file:///e:/星空/win linux dos团队/chesspokercomputing/poker/poker/poker.cpp"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "file:///E:/星空/Win Linux DOS团队/chessPokerComputing/Poker/Poker/Poker.cpp"
+                },
+                "region": {
+                  "startLine": 3496,
+                  "startColumn": 16
+                }
+              },
+              "logicalLocations": [
+                {
+                  "fullyQualifiedName": "Landlords4P::processHand",
+                  "decoratedName": "?processHand@Landlords4P@@EEBA?B_NAEAUHand@@AEAV?$vector@UCandidate@@V?$allocator@UCandidate@@@std@@@std@@@Z",
+                  "kind": "function"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "ruleId": "C26819",
+          "message": {
+            "text": "switch 标签之间的尾随 fallthrough (es.78)。"
+          },
+          "analysisTarget": {
+            "uri": "file:///e:/星空/win linux dos团队/chesspokercomputing/poker/poker/poker.cpp"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "file:///E:/星空/Win Linux DOS团队/chessPokerComputing/Poker/Poker/Poker.cpp"
+                },
+                "region": {
+                  "startLine": 3500,
+                  "startColumn": 13
+                }
+              },
+              "logicalLocations": [
+                {
+                  "fullyQualifiedName": "Landlords4P::processHand",
+                  "decoratedName": "?processHand@Landlords4P@@EEBA?B_NAEAUHand@@AEAV?$vector@UCandidate@@V?$allocator@UCandidate@@@std@@@std@@@Z",
+                  "kind": "function"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "ruleId": "C26819",
+          "message": {
+            "text": "switch 标签之间的尾随 fallthrough (es.78)。"
+          },
+          "analysisTarget": {
+            "uri": "file:///e:/星空/win linux dos团队/chesspokercomputing/poker/poker/poker.cpp"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "file:///E:/星空/Win Linux DOS团队/chessPokerComputing/Poker/Poker/Poker.cpp"
+                },
+                "region": {
+                  "startLine": 3566,
+                  "startColumn": 8
+                }
+              },
+              "logicalLocations": [
+                {
+                  "fullyQualifiedName": "Landlords4P::processHand",
+                  "decoratedName": "?processHand@Landlords4P@@EEBA?B_NAEAUHand@@AEAV?$vector@UCandidate@@V?$allocator@UCandidate@@@std@@@std@@@Z",
+                  "kind": "function"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "ruleId": "C26819",
+          "message": {
+            "text": "switch 标签之间的尾随 fallthrough (es.78)。"
+          },
+          "analysisTarget": {
+            "uri": "file:///e:/星空/win linux dos团队/chesspokercomputing/poker/poker/poker.cpp"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "file:///E:/星空/Win Linux DOS团队/chessPokerComputing/Poker/Poker/Poker.cpp"
+                },
+                "region": {
+                  "startLine": 3729,
+                  "startColumn": 8
+                }
+              },
+              "logicalLocations": [
+                {
+                  "fullyQualifiedName": "Landlords4P::processHand",
+                  "decoratedName": "?processHand@Landlords4P@@EEBA?B_NAEAUHand@@AEAV?$vector@UCandidate@@V?$allocator@UCandidate@@@std@@@std@@@Z",
+                  "kind": "function"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "ruleId": "C26819",
+          "message": {
+            "text": "switch 标签之间的尾随 fallthrough (es.78)。"
+          },
+          "analysisTarget": {
+            "uri": "file:///e:/星空/win linux dos团队/chesspokercomputing/poker/poker/poker.cpp"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "file:///E:/星空/Win Linux DOS团队/chessPokerComputing/Poker/Poker/Poker.cpp"
+                },
+                "region": {
+                  "startLine": 3981,
+                  "startColumn": 9
+                }
+              },
+              "logicalLocations": [
+                {
+                  "fullyQualifiedName": "Landlords4P::computeAmounts",
+                  "decoratedName": "?computeAmounts@Landlords4P@@EEAA?B_NXZ",
+                  "kind": "function"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "ruleId": "C26819",
+          "message": {
+            "text": "switch 标签之间的尾随 fallthrough (es.78)。"
+          },
+          "analysisTarget": {
+            "uri": "file:///e:/星空/win linux dos团队/chesspokercomputing/poker/poker/poker.cpp"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "file:///E:/星空/Win Linux DOS团队/chessPokerComputing/Poker/Poker/Poker.cpp"
+                },
+                "region": {
+                  "startLine": 4379,
+                  "startColumn": 9
+                }
+              },
+              "logicalLocations": [
+                {
+                  "fullyQualifiedName": "BigTwo::computeAmounts",
+                  "decoratedName": "?computeAmounts@BigTwo@@EEAA?B_NXZ",
+                  "kind": "function"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "ruleId": "C26819",
+          "message": {
+            "text": "switch 标签之间的尾随 fallthrough (es.78)。"
+          },
+          "analysisTarget": {
+            "uri": "file:///e:/星空/win linux dos团队/chesspokercomputing/poker/poker/poker.cpp"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "file:///E:/星空/Win Linux DOS团队/chessPokerComputing/Poker/Poker/Poker.cpp"
+                },
+                "region": {
+                  "startLine": 4829,
+                  "startColumn": 11
+                }
+              },
+              "logicalLocations": [
+                {
+                  "fullyQualifiedName": "ThreeTwoOne::processHand",
+                  "decoratedName": "?processHand@ThreeTwoOne@@EEBA?B_NAEAUHand@@AEAV?$vector@UCandidate@@V?$allocator@UCandidate@@@std@@@std@@@Z",
+                  "kind": "function"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "ruleId": "C26819",
+          "message": {
+            "text": "switch 标签之间的尾随 fallthrough (es.78)。"
+          },
+          "analysisTarget": {
+            "uri": "file:///e:/星空/win linux dos团队/chesspokercomputing/poker/poker/poker.cpp"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "file:///E:/星空/Win Linux DOS团队/chessPokerComputing/Poker/Poker/Poker.cpp"
+                },
+                "region": {
+                  "startLine": 4775,
+                  "startColumn": 10
+                }
+              },
+              "logicalLocations": [
+                {
+                  "fullyQualifiedName": "ThreeTwoOne::processHand",
+                  "decoratedName": "?processHand@ThreeTwoOne@@EEBA?B_NAEAUHand@@AEAV?$vector@UCandidate@@V?$allocator@UCandidate@@@std@@@std@@@Z",
+                  "kind": "function"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "ruleId": "C26819",
+          "message": {
+            "text": "switch 标签之间的尾随 fallthrough (es.78)。"
+          },
+          "analysisTarget": {
+            "uri": "file:///e:/星空/win linux dos团队/chesspokercomputing/poker/poker/poker.cpp"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "file:///E:/星空/Win Linux DOS团队/chessPokerComputing/Poker/Poker/Poker.cpp"
+                },
+                "region": {
+                  "startLine": 5156,
+                  "startColumn": 9
+                }
+              },
+              "logicalLocations": [
+                {
+                  "fullyQualifiedName": "ThreeTwoOne::computeAmounts",
+                  "decoratedName": "?computeAmounts@ThreeTwoOne@@EEAA?B_NXZ",
+                  "kind": "function"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "ruleId": "C26819",
+          "message": {
+            "text": "switch 标签之间的尾随 fallthrough (es.78)。"
+          },
+          "analysisTarget": {
+            "uri": "file:///e:/星空/win linux dos团队/chesspokercomputing/poker/poker/poker.cpp"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "file:///E:/星空/Win Linux DOS团队/chessPokerComputing/Poker/Poker/Poker.cpp"
+                },
+                "region": {
+                  "startLine": 5297,
+                  "startColumn": 16
+                }
+              },
+              "logicalLocations": [
+                {
+                  "fullyQualifiedName": "Wuguapi::processHand",
+                  "decoratedName": "?processHand@Wuguapi@@EEBA?B_NAEAUHand@@AEAV?$vector@UCandidate@@V?$allocator@UCandidate@@@std@@@std@@@Z",
+                  "kind": "function"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "ruleId": "C26819",
+          "message": {
+            "text": "switch 标签之间的尾随 fallthrough (es.78)。"
+          },
+          "analysisTarget": {
+            "uri": "file:///e:/星空/win linux dos团队/chesspokercomputing/poker/poker/poker.cpp"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "file:///E:/星空/Win Linux DOS团队/chessPokerComputing/Poker/Poker/Poker.cpp"
+                },
+                "region": {
+                  "startLine": 5303,
+                  "startColumn": 13
+                }
+              },
+              "logicalLocations": [
+                {
+                  "fullyQualifiedName": "Wuguapi::processHand",
+                  "decoratedName": "?processHand@Wuguapi@@EEBA?B_NAEAUHand@@AEAV?$vector@UCandidate@@V?$allocator@UCandidate@@@std@@@std@@@Z",
+                  "kind": "function"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "ruleId": "C26819",
+          "message": {
+            "text": "switch 标签之间的尾随 fallthrough (es.78)。"
+          },
+          "analysisTarget": {
+            "uri": "file:///e:/星空/win linux dos团队/chesspokercomputing/poker/poker/poker.cpp"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "file:///E:/星空/Win Linux DOS团队/chessPokerComputing/Poker/Poker/Poker.cpp"
+                },
+                "region": {
+                  "startLine": 5597,
+                  "startColumn": 16
+                }
+              },
+              "logicalLocations": [
+                {
+                  "fullyQualifiedName": "Qiguiwueryi::processHand",
+                  "decoratedName": "?processHand@Qiguiwueryi@@EEBA?B_NAEAUHand@@AEAV?$vector@UCandidate@@V?$allocator@UCandidate@@@std@@@std@@@Z",
+                  "kind": "function"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "ruleId": "C26819",
+          "message": {
+            "text": "switch 标签之间的尾随 fallthrough (es.78)。"
+          },
+          "analysisTarget": {
+            "uri": "file:///e:/星空/win linux dos团队/chesspokercomputing/poker/poker/poker.cpp"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "file:///E:/星空/Win Linux DOS团队/chessPokerComputing/Poker/Poker/Poker.cpp"
+                },
+                "region": {
+                  "startLine": 5603,
+                  "startColumn": 13
+                }
+              },
+              "logicalLocations": [
+                {
+                  "fullyQualifiedName": "Qiguiwueryi::processHand",
+                  "decoratedName": "?processHand@Qiguiwueryi@@EEBA?B_NAEAUHand@@AEAV?$vector@UCandidate@@V?$allocator@UCandidate@@@std@@@std@@@Z",
+                  "kind": "function"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "ruleId": "C26819",
+          "message": {
+            "text": "switch 标签之间的尾随 fallthrough (es.78)。"
+          },
+          "analysisTarget": {
+            "uri": "file:///e:/星空/win linux dos团队/chesspokercomputing/poker/poker/poker.cpp"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "file:///E:/星空/Win Linux DOS团队/chessPokerComputing/Poker/Poker/Poker.cpp"
+                },
+                "region": {
+                  "startLine": 6460,
+                  "startColumn": 19
+                }
+              },
+              "logicalLocations": [
+                {
+                  "fullyQualifiedName": "Interaction::interact",
+                  "decoratedName": "?interact@Interaction@@QEAA?B_NXZ",
+                  "kind": "function"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "ruleId": "C26819",
+          "message": {
+            "text": "switch 标签之间的尾随 fallthrough (es.78)。"
+          },
+          "analysisTarget": {
+            "uri": "file:///e:/星空/win linux dos团队/chesspokercomputing/poker/poker/poker.cpp"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "file:///E:/星空/Win Linux DOS团队/chessPokerComputing/Poker/Poker/Poker.cpp"
+                },
+                "region": {
+                  "startLine": 6474,
+                  "startColumn": 19
+                }
+              },
+              "logicalLocations": [
+                {
+                  "fullyQualifiedName": "Interaction::interact",
+                  "decoratedName": "?interact@Interaction@@QEAA?B_NXZ",
+                  "kind": "function"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "ruleId": "C26819",
+          "message": {
+            "text": "switch 标签之间的尾随 fallthrough (es.78)。"
+          },
+          "analysisTarget": {
+            "uri": "file:///e:/星空/win linux dos团队/chesspokercomputing/poker/poker/poker.cpp"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "file:///E:/星空/Win Linux DOS团队/chessPokerComputing/Poker/Poker/Poker.cpp"
+                },
+                "region": {
+                  "startLine": 6488,
+                  "startColumn": 19
+                }
+              },
+              "logicalLocations": [
+                {
+                  "fullyQualifiedName": "Interaction::interact",
+                  "decoratedName": "?interact@Interaction@@QEAA?B_NXZ",
+                  "kind": "function"
+                }
+              ]
+            }
+          ]
+        }
+      ],
+      "tool": {
+        "driver": {
+          "name": "PREfast",
+          "fullName": "MSVC Code Analysis",
+          "version": "14.50.35615.0",
+          "informationUri": "https://aka.ms/cpp/ca"
+        }
+      },
+      "invocations": [
+        {
+          "executionSuccessful": true
+        }
+      ],
+      "artifacts": [
+        {
+          "location": {
+            "uri": "file:///e:/星空/win linux dos团队/chesspokercomputing/poker/poker/poker.cpp"
+          },
+          "roles": [
+            "analysisTarget",
+            "resultFile"
+          ],
+          "hashes": {
+            "sha-256": "270200e56d32c317c4f320d6e00bcd071950869422881b3b621a1e0570d3e078"
+          }
+        }
+      ]
+    }
+  ]
+}
