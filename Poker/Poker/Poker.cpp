@@ -302,15 +302,15 @@ protected:
 		this->add54CardsToDeck(this->deck);
 		return;
 	}
-	virtual const bool sortCards(vector<Card>& cards, const Sorting _sorting) const final
+	virtual const bool sortCards(vector<Card>& cards, const Sorting _sorter) const final
 	{
-		Sorting sorting = _sorting;
+		Sorting sorter = _sorter;
 		bool pointFlag = false, valueFlag = false, suitFlag = false, pointCountFlag = false, unionCountFlag = false, valueCountFlag = false, suitCountFlag = false;
 		vector<function<const int(const Card, const Card)>> lambdas{};
 		Count pointCounts[14] = { 0 }, unionCounts[14][4] = { 0 }, valueCounts[15] = { 0 }, suitCounts[7] = { 0 };
-		while (sorting)
+		while (sorter)
 		{
-			switch (sorting & 0b1111)
+			switch (sorter & 0b1111)
 			{
 			case 0b0000: // 'P' (0b01010000)
 				if (pointFlag)
@@ -441,7 +441,7 @@ protected:
 			default:
 				break;
 			}
-			sorting >>= 4;
+			sorter >>= 4;
 		}
 		if (lambdas.empty())
 			sort(cards.begin(), cards.end(), [this](const Card a, const Card b) { const Value valueA = this->values[a.point], valueB = this->values[b.point]; return valueA > valueB || (valueA == valueB && a.suit > b.suit); });
@@ -867,7 +867,7 @@ protected:
 			return 0;
 	}
 	virtual const bool processHand(Hand& hand, vector<Candidate>& candidates) const = 0;
-	virtual const bool removeCards(const vector<Card>& smallerCards, vector<Card>& largerCards) const final // The vector ``largerCards`` must have been sorted according to the default sorting method. 
+	virtual const bool removeCards(const vector<Card>& smallerCards, vector<Card>& largerCards) const final // The vector ``largerCards`` must have been sorted according to the default sorter method. 
 	{
 		vector<Card> sortedCards(smallerCards);
 		this->sortCards(sortedCards);
@@ -2035,7 +2035,7 @@ public:
 	const bool initialize(const size_t playerCount) override final { return 3 == playerCount && this->initialize(); }
 	const bool deal() override final
 	{
-		if (this->status >= Status::Initialized)
+		if (this->status >= Status::Initialized && this->players.size() == 3)
 		{
 			this->deck.clear();
 			this->add54CardsToDeck();
@@ -4118,7 +4118,7 @@ public:
 	const bool initialize(const size_t playerCount) override final { return 3 == playerCount && this->initialize(); }
 	const bool deal() override final
 	{
-		if (this->status >= Status::Initialized)
+		if (this->status >= Status::Initialized && this->players.size() == 4)
 		{
 			this->deck.clear();
 			this->add54CardsToDeck();
@@ -4461,7 +4461,7 @@ public:
 	const bool initialize(const size_t playerCount) override final { return 3 == playerCount && this->initialize(); }
 	const bool deal() override final
 	{
-		if (this->status >= Status::Initialized)
+		if (this->status >= Status::Initialized && this->players.size() == 4)
 		{
 			this->deck.clear();
 			this->add52CardsToDeck();
@@ -5222,7 +5222,7 @@ public:
 	const bool initialize(const size_t playerCount) override final { return 3 == playerCount && this->initialize(); }
 	const bool deal() override final
 	{
-		if (this->status >= Status::Initialized)
+		if (this->status >= Status::Initialized && this->players.size() == 4)
 		{
 			this->deck.clear();
 			this->add52CardsToDeck();
@@ -5835,8 +5835,8 @@ private:
 	string name = "扑克牌";
 	const vector<string> playerCountOptions = { "p", "/p", "-p", "playerCount", "/playerCount", "--playerCount" };
 	size_t playerCount = 0;
-	const vector<string> sortingOptions = { "s", "/s", "-s", "sorting", "/sorting", "--sorting" };
-	vector<Sorting> sortings{};
+	const vector<string> sorterOptions = { "s", "/s", "-s", "sorter", "/sorter", "--sorter" };
+	vector<Sorting> sorters{};
 	Poker* poker = nullptr;
 	const vector<string> landlordStatements = { "Y", "yes", "1", "T", "true", "是", "叫", "叫地主", "叫牌", "抢", "抢地主", "抢牌" };
 	const vector<string> againStatements = { "Again", "再来", "再来一局", "新开", "新开一局" };
@@ -5950,7 +5950,7 @@ private:
 			cout << "参数（不区分顺序和大小写）：" << endl;
 			cout << "\t" << this->vector2string(this->nameOptions, "[", "|", "]") << " [扑克牌类型]\t\t\t设置扑克牌类型" << endl;
 			cout << "\t" << this->vector2string(this->playerCountOptions, "[", "|", "]") << " [玩家人数]\t\t设置玩家人数" << endl;
-			cout << "\t" << this->vector2string(this->sortingOptions, "[", "|", "]") << " [排序显示方式]\t设置排序显示方式" << endl;
+			cout << "\t" << this->vector2string(this->sorterOptions, "[", "|", "]") << " [排序显示方式]\t设置排序显示方式" << endl;
 			cout << "\t" << this->vector2string(this->helpOptions, "[", "|", "]") << " 或 [其它参数] " << this->vector2string(this->helpOptions, "[", "|", "]") << "\t显示帮助" << endl << endl << endl;
 			cout << "注意：" << endl;
 			cout << "\t（1）键和值应当成对出现，即每一个表示键的参数后均应紧接着其对应的值（含帮助参数）；" << endl;
@@ -6122,7 +6122,7 @@ private:
 			{
 				this->poker->getCurrentPlayer(player);
 				this->clearScreen();
-				this->poker->display(this->sortings.empty() ? INVALID_PLAYER : player);
+				this->poker->display(this->sorters.empty() ? INVALID_PLAYER : player);
 				cout << "请玩家 " << (player + 1) << " 选择是否" << (isRobbing ? "抢" : "叫") << "地主：";
 				this->getDescription(buffer);
 				if (this->controlAction(buffer, action))
@@ -6145,7 +6145,7 @@ private:
 				{
 					this->poker->getCurrentPlayer(player);
 					this->clearScreen();
-					this->poker->display(this->sortings.empty() ? INVALID_PLAYER : player);
+					this->poker->display(this->sorters.empty() ? INVALID_PLAYER : player);
 					cout << "请玩家 " << (player + 1) << " 选择是否抢地主：";
 					this->getDescription(buffer);
 					if (this->controlAction(buffer, action))
@@ -6177,7 +6177,7 @@ private:
 			{
 				this->poker->getCurrentPlayer(player);
 				this->clearScreen();
-				this->poker->display(this->sortings.empty() ? INVALID_PLAYER : player);
+				this->poker->display(this->sorters.empty() ? INVALID_PLAYER : player);
 				cout << "请玩家 " << (player + 1) << " 选择（" << this->vector2string(scoreDescriptions, "", " | ", "") << "）：";
 				this->getDescription(buffer);
 				if (this->controlAction(buffer, action))
@@ -6229,7 +6229,7 @@ private:
 		this->helpKey = 0;
 		this->name = "扑克牌";
 		this->playerCount = 0;
-		this->sortings = vector<Sorting>{};
+		this->sorters = vector<Sorting>{};
 		if (this->poker != nullptr)
 		{
 			delete this->poker;
@@ -6269,7 +6269,7 @@ private:
 		for (;;)
 		{
 			this->clearScreen();
-			this->poker->display(this->sortings.empty() ? INVALID_PLAYER : player);
+			this->poker->display(this->sorters.empty() ? INVALID_PLAYER : player);
 			cout << "请玩家 " << (player + 1) << " 开牌：";
 			this->getDescription(buffer);
 			if (this->controlAction(buffer, action))
@@ -6304,7 +6304,7 @@ private:
 			for (;;)
 			{
 				this->clearScreen();
-				this->poker->display(this->sortings.empty() ? INVALID_PLAYER : player);
+				this->poker->display(this->sorters.empty() ? INVALID_PLAYER : player);
 				cout << "请玩家 " << (player + 1) << " 出牌：";
 				this->getDescription(buffer);
 				if (this->controlAction(buffer, action))
@@ -6371,7 +6371,7 @@ public:
 						else
 							invalidArgumentIndexes.push_back(argumentID);
 					}
-				else if (this->isIn(arguments[argumentID], this->sortingOptions))
+				else if (this->isIn(arguments[argumentID], this->sorterOptions))
 					if (this->isIn(arguments[++argumentID], this->helpOptions))
 						this->helpKey = 's';
 					else
