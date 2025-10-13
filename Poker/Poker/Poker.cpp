@@ -468,7 +468,7 @@ protected:
 			if (suitCountFlag)
 				for (const Card& card : cards)
 					++suitCounts[static_cast<unsigned char>(card.suit)];
-			sort(cards.begin(), cards.end(), [&lambdas](const Card a, const Card b) { for (const function<const int(const Card, const Card)>& lambda : lambdas) { const int result = lambda(a, b); if (result) return result > 0; } return false; });
+			sort(cards.begin(), cards.end(), [&lambdas](const Card a, const Card b) { for (const function<int(const Card, const Card)>& lambda : lambdas) { const int result = lambda(a, b); if (result) return result > 0; } return false; });
 		}
 		return true;
 	}
@@ -737,11 +737,13 @@ protected:
 					if (exactCard.point == this->players[this->currentPlayer][idx].point)
 					{
 						if (exactCard.suit == this->players[this->currentPlayer][idx].suit)
+						{
 							if (find(selected.begin(), selected.end(), idx) == selected.end())
 							{
 								position = idx;
 								break;
 							}
+						}
 						else if (exactCard.suit < this->players[this->currentPlayer][idx].suit)
 							break;
 					}
@@ -1075,12 +1077,12 @@ protected:
 					else
 					{
 						char buffer[3] = { 0 };
-						snprintf(buffer, 3, "%02X", this->records[round][0].type);
+						snprintf(buffer, 3, "%02X", static_cast<unsigned char>(this->records[round][0].type));
 						cout << "{ 玩家 " << (this->records[round][0].player + 1) << ", " << this->cards2string(this->records[round][0].cards, "", "+", "", "要不起") << ", 0x" << buffer << " }";
 						const size_t handCount = this->records[round].size();
 						for (size_t handID = 1; handID < handCount; ++handID)
 						{
-							snprintf(buffer, 3, "%02X", this->records[round][handID].type);
+							snprintf(buffer, 3, "%02X", static_cast<unsigned char>(this->records[round][handID].type));
 							cout << " -> { 玩家 " << (this->records[round][handID].player + 1) << ", " << this->cards2string(this->records[round][handID].cards, "", "+", "", "要不起") << ", 0x" << buffer << " }";
 						}
 						cout << endl;
