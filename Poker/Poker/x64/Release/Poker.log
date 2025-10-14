@@ -1,7 +1,7 @@
 ﻿  Poker.cpp
   正在生成代码
-  805 of 2565 functions (31.4%) were compiled, the rest were copied from previous compilation.
-    123 functions were new in current compilation
-    136 functions had inline decision re-evaluated but remain unchanged
+  1 of 2539 functions (<0.1%) were compiled, the rest were copied from previous compilation.
+    0 functions were new in current compilation
+    10 functions had inline decision re-evaluated but remain unchanged
   已完成代码的生成
   Poker.vcxproj -> E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\x64\Release\Poker.exe
