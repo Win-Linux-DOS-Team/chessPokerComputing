@@ -6446,16 +6446,17 @@ private:
 				string buffer{};
 				this->getDescription(buffer);
 				if (buffer.size() == 1)
-				{
-					const char choice = static_cast<char>(buffer.at(0) - '1');
-					if (-1 == choice)
+					if ('0' == buffer.at(0))
 						return false;
-					else if (0 <= choice && choice < static_cast<char>(length))
+					else
 					{
-						this->name = this->namesC[static_cast<size_t>(choice)];
-						break;
+						const size_t choice = static_cast<size_t>(buffer.at(0) - '1');
+						if (choice < length)
+						{
+							this->name = this->namesC[choice];
+							break;
+						}
 					}
-				}
 				else
 				{
 					this->optimizePokerType(buffer);

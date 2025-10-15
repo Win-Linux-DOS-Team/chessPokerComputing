@@ -1,2 +1,0 @@
-E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\poker\x64\Debug\poker.exe.lastcodeanalysissucceeded
-E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\poker\poker\x64\Debug\NativeCodeAnalysis.read.1.tlog
