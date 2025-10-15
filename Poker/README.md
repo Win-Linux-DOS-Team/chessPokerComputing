@@ -6,9 +6,9 @@
 
 这是一个你能打赢，同时支持多种扑克游戏的 C++ 程序。
 
-该代码支持命令行启动，在 Windows 操作系统下应当使用最新版 Visual Studio（重定向解决方案至最新后）以多线程（调试）的运行库对所有 ``./poker/poker/poker.vcxproj`` 中声明的所有配置和所有平台进行批生成，在其它操作系统下可使用 ``g++ poker.cpp -Wall -Wextra -o poker`` 直接生成。
+该代码支持命令行启动，在 Windows 操作系统下应当使用最新版 Visual Studio（重定向解决方案至最新后）以多线程（调试）的运行库对所有 ``./poker/poker/poker.vcxproj`` 中声明的所有配置和所有平台进行批生成，在其它操作系统下可使用 ``g++ poker.cpp -o poker`` 直接生成。
 
-对于以上生成，在 Windows 操作系统下使用最新版 Visual Studio 以任一 C++ 标准（最低支持 ISO C++14）和任一 /W4 或更低的警告等级在任一配置和任一平台下对 ``poker.cpp`` 执行“对文件运行 Code Analysis”和生成，或在其它平台使用 g++ 以任一 C++11 或更高 C++ 标准且同时启用 ``-Wall`` 和 ``-Wextra`` 两个参数对 ``poker.cpp`` 进行生成，其输出均应当**不含有任何错误、警告或消息**。
+对于以上生成，在 Windows 操作系统下使用最新版 Visual Studio 以任一 C++ 标准（最低支持 ISO C++14）和任一 /W4 或更低的警告等级在任一配置和任一平台下对 ``poker.cpp`` 执行“对文件运行 Code Analysis”和生成，或在其它平台使用 g++ 对指定了任一 C++11 或更高 C++ 标准的 ``g++ poker.cpp -Wall -Wextra -pedantic poker`` 命令对 ``poker.cpp`` 进行生成，其输出均应当**不含有任何错误、警告或消息**。
 
 基类成员变量：
 
