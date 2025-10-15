@@ -1,4 +1,0 @@
-﻿  Poker.cpp
-C:\Program Files\Microsoft Visual Studio\18\Insiders\MSBuild\Microsoft\VC\v180\Microsoft.CppCommon.targets(1194,5): warning MSB8015: 并非所有源文件都是最新的: 由于“E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Debug\Poker.tlog\link.command.1.tlog”的内容无效，强制重新生成所有源文件。
-C:\Program Files\Microsoft Visual Studio\18\Insiders\MSBuild\Microsoft\VC\v180\Microsoft.CppCommon.targets(1194,5): warning MSB8015: 并非所有源文件都是最新的: 由于“E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Debug\Poker.tlog\link.command.1.tlog”的内容无效，强制重新生成所有源文件。
-  Poker.vcxproj -> E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Debug\Poker.exe
