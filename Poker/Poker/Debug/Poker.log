@@ -1,2 +1,1551 @@
 ﻿  Poker.cpp
-  Poker.vcxproj -> E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Debug\Poker.exe
+E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(209,9): warning C4820: "Hand": 数据成员 "Hand::player" 后添加了 "3" 字节填充
+E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(211,7): warning C4820: "Hand": 数据成员 "Hand::type" 后添加了 "3" 字节填充
+E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(277,9): warning C4820: "Poker": 数据成员 "Poker::values" 后添加了 "2" 字节填充
+E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(281,41): warning C4820: "Poker": 数据成员 "Poker::dealer" 后添加了 "2" 字节填充
+E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(284,9): warning C4820: "Poker": 数据成员 "Poker::status" 后添加了 "3" 字节填充
+E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(1053,4): warning C4061: 枚举 "Status" 的开关中的枚举器 "Status::Ready" 未由事例标签显式处理
+      E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(90,12):
+      参见“Status”的声明
+  
+E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(1053,4): warning C4061: 枚举 "Status" 的开关中的枚举器 "Status::Initialized" 未由事例标签显式处理
+      E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(90,12):
+      参见“Status”的声明
+  
+E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(1338,7): warning C4266: “bool Poker::setLandlord(const Score)”: 不重写基“Poker”中的虚拟成员函数；函数被隐藏
+      E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(1134,15):
+      参见“Poker::setLandlord”的声明
+      E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(272,7):
+      参见“Poker”的声明
+  
+E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(1338,7): warning C4266: “bool Poker::display(const Player) const”: 不重写基“Poker”中的虚拟成员函数；函数被隐藏
+      E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(1335,15):
+      参见“Poker::display”的声明
+      E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(272,7):
+      参见“Poker”的声明
+  
+E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(1338,7): warning C4266: “bool Poker::display(void) const”: 不重写基“Poker”中的虚拟成员函数；函数被隐藏
+      E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(1327,15):
+      参见“Poker::display”的声明
+      E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(272,7):
+      参见“Poker”的声明
+  
+E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(1338,7): warning C4266: “bool Poker::display(const std::vector<Player,std::allocator<Player>> &,const std::string &,const std::string &) const”: 不重写基“Poker”中的虚拟成员函数；函数被隐藏
+      E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(1019,15):
+      参见“Poker::display”的声明
+      E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(272,7):
+      参见“Poker”的声明
+  
+E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(1559,5): warning C4061: 枚举 "Suit" 的开关中的枚举器 "Suit::Diamond" 未由事例标签显式处理
+      E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(40,12):
+      参见“Suit”的声明
+  
+E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(1559,5): warning C4061: 枚举 "Suit" 的开关中的枚举器 "Suit::Club" 未由事例标签显式处理
+      E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(40,12):
+      参见“Suit”的声明
+  
+E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(1559,5): warning C4061: 枚举 "Suit" 的开关中的枚举器 "Suit::Heart" 未由事例标签显式处理
+      E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(40,12):
+      参见“Suit”的声明
+  
+E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(1559,5): warning C4061: 枚举 "Suit" 的开关中的枚举器 "Suit::Spade" 未由事例标签显式处理
+      E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(40,12):
+      参见“Suit”的声明
+  
+E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(1559,5): warning C4061: 枚举 "Suit" 的开关中的枚举器 "Suit::Cover" 未由事例标签显式处理
+      E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(40,12):
+      参见“Suit”的声明
+  
+E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(2086,4): warning C4061: 枚举 "Type" 的开关中的枚举器 "Type::Empty" 未由事例标签显式处理
+      E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(51,12):
+      参见“Type”的声明
+  
+E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(2086,4): warning C4061: 枚举 "Type" 的开关中的枚举器 "Type::SingleFlush" 未由事例标签显式处理
+      E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(51,12):
+      参见“Type”的声明
+  
+E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(2086,4): warning C4061: 枚举 "Type" 的开关中的枚举器 "Type::SingleFlushStraight" 未由事例标签显式处理
+      E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(51,12):
+      参见“Type”的声明
+  
+E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(2086,4): warning C4061: 枚举 "Type" 的开关中的枚举器 "Type::PairStraightWithSingle" 未由事例标签显式处理
+      E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(51,12):
+      参见“Type”的声明
+  
+E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(2086,4): warning C4061: 枚举 "Type" 的开关中的枚举器 "Type::TripleWithPairSingle" 未由事例标签显式处理
+      E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(51,12):
+      参见“Type”的声明
+  
+E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(2086,4): warning C4061: 枚举 "Type" 的开关中的枚举器 "Type::TripleStraightWithSingle" 未由事例标签显式处理
+      E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(51,12):
+      参见“Type”的声明
+  
+E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(2086,4): warning C4061: 枚举 "Type" 的开关中的枚举器 "Type::QuadrupleWithSingle" 未由事例标签显式处理
+      E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(51,12):
+      参见“Type”的声明
+  
+E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(2086,4): warning C4061: 枚举 "Type" 的开关中的枚举器 "Type::QuadrupleStraight" 未由事例标签显式处理
+      E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(51,12):
+      参见“Type”的声明
+  
+E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(2086,4): warning C4061: 枚举 "Type" 的开关中的枚举器 "Type::QuadrupleStraightWithSingle" 未由事例标签显式处理
+      E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(51,12):
+      参见“Type”的声明
+  
+E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(2086,4): warning C4061: 枚举 "Type" 的开关中的枚举器 "Type::QuadrupleJokers" 未由事例标签显式处理
+      E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(51,12):
+      参见“Type”的声明
+  
+E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(2086,4): warning C4061: 枚举 "Type" 的开关中的枚举器 "Type::Quintuple" 未由事例标签显式处理
+      E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(51,12):
+      参见“Type”的声明
+  
+E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(2086,4): warning C4061: 枚举 "Type" 的开关中的枚举器 "Type::Sextuple" 未由事例标签显式处理
+      E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(51,12):
+      参见“Type”的声明
+  
+E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(2086,4): warning C4061: 枚举 "Type" 的开关中的枚举器 "Type::Septuple" 未由事例标签显式处理
+      E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(51,12):
+      参见“Type”的声明
+  
+E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(2086,4): warning C4061: 枚举 "Type" 的开关中的枚举器 "Type::Octuple" 未由事例标签显式处理
+      E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(51,12):
+      参见“Type”的声明
+  
+E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(2086,4): warning C4061: 枚举 "Type" 的开关中的枚举器 "Type::Invalid" 未由事例标签显式处理
+      E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(51,12):
+      参见“Type”的声明
+  
+E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(2284,5): warning C4061: 枚举 "Suit" 的开关中的枚举器 "Suit::Diamond" 未由事例标签显式处理
+      E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(40,12):
+      参见“Suit”的声明
+  
+E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(2284,5): warning C4061: 枚举 "Suit" 的开关中的枚举器 "Suit::Club" 未由事例标签显式处理
+      E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(40,12):
+      参见“Suit”的声明
+  
+E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(2284,5): warning C4061: 枚举 "Suit" 的开关中的枚举器 "Suit::Heart" 未由事例标签显式处理
+      E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(40,12):
+      参见“Suit”的声明
+  
+E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(2284,5): warning C4061: 枚举 "Suit" 的开关中的枚举器 "Suit::Spade" 未由事例标签显式处理
+      E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(40,12):
+      参见“Suit”的声明
+  
+E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(2284,5): warning C4061: 枚举 "Suit" 的开关中的枚举器 "Suit::Cover" 未由事例标签显式处理
+      E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(40,12):
+      参见“Suit”的声明
+  
+E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(3770,7): warning C4266: “bool Poker::computeAmounts(const unsigned char,const unsigned int)”: 不重写基“Poker”中的虚拟成员函数；函数被隐藏
+      E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(982,15):
+      参见“Poker::computeAmounts”的声明
+      E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(272,7):
+      参见“Poker”的声明
+  
+E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(3770,7): warning C4266: “bool Poker::setLandlord(const bool)”: 不重写基“Poker”中的虚拟成员函数；函数被隐藏
+      E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(1133,15):
+      参见“Poker::setLandlord”的声明
+      E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(272,7):
+      参见“Poker”的声明
+  
+E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(3770,7): warning C4266: “bool Poker::display(const Player) const”: 不重写基“Poker”中的虚拟成员函数；函数被隐藏
+      E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(1335,15):
+      参见“Poker::display”的声明
+      E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(272,7):
+      参见“Poker”的声明
+  
+E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(3770,7): warning C4266: “bool Poker::display(void) const”: 不重写基“Poker”中的虚拟成员函数；函数被隐藏
+      E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(1327,15):
+      参见“Poker::display”的声明
+      E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(272,7):
+      参见“Poker”的声明
+  
+E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(3770,7): warning C4266: “bool Poker::display(const std::vector<Player,std::allocator<Player>> &,const std::string &,const std::string &) const”: 不重写基“Poker”中的虚拟成员函数；函数被隐藏
+      E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(1019,15):
+      参见“Poker::display”的声明
+      E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(272,7):
+      参见“Poker”的声明
+  
+E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(3815,5): warning C4061: 枚举 "Suit" 的开关中的枚举器 "Suit::Diamond" 未由事例标签显式处理
+      E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(40,12):
+      参见“Suit”的声明
+  
+E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(3815,5): warning C4061: 枚举 "Suit" 的开关中的枚举器 "Suit::Club" 未由事例标签显式处理
+      E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(40,12):
+      参见“Suit”的声明
+  
+E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(3815,5): warning C4061: 枚举 "Suit" 的开关中的枚举器 "Suit::Heart" 未由事例标签显式处理
+      E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(40,12):
+      参见“Suit”的声明
+  
+E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(3815,5): warning C4061: 枚举 "Suit" 的开关中的枚举器 "Suit::Spade" 未由事例标签显式处理
+      E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(40,12):
+      参见“Suit”的声明
+  
+E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(3815,5): warning C4061: 枚举 "Suit" 的开关中的枚举器 "Suit::Cover" 未由事例标签显式处理
+      E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(40,12):
+      参见“Suit”的声明
+  
+E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(4231,4): warning C4061: 枚举 "Type" 的开关中的枚举器 "Type::Empty" 未由事例标签显式处理
+      E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(51,12):
+      参见“Type”的声明
+  
+E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(4231,4): warning C4061: 枚举 "Type" 的开关中的枚举器 "Type::Single" 未由事例标签显式处理
+      E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(51,12):
+      参见“Type”的声明
+  
+E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(4231,4): warning C4061: 枚举 "Type" 的开关中的枚举器 "Type::SingleStraight" 未由事例标签显式处理
+      E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(51,12):
+      参见“Type”的声明
+  
+E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(4231,4): warning C4061: 枚举 "Type" 的开关中的枚举器 "Type::SingleFlush" 未由事例标签显式处理
+      E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(51,12):
+      参见“Type”的声明
+  
+E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(4231,4): warning C4061: 枚举 "Type" 的开关中的枚举器 "Type::SingleFlushStraight" 未由事例标签显式处理
+      E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(51,12):
+      参见“Type”的声明
+  
+E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(4231,4): warning C4061: 枚举 "Type" 的开关中的枚举器 "Type::Pair" 未由事例标签显式处理
+      E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(51,12):
+      参见“Type”的声明
+  
+E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(4231,4): warning C4061: 枚举 "Type" 的开关中的枚举器 "Type::PairStraight" 未由事例标签显式处理
+      E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(51,12):
+      参见“Type”的声明
+  
+E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(4231,4): warning C4061: 枚举 "Type" 的开关中的枚举器 "Type::PairStraightWithSingle" 未由事例标签显式处理
+      E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(51,12):
+      参见“Type”的声明
+  
+E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(4231,4): warning C4061: 枚举 "Type" 的开关中的枚举器 "Type::PairJokers" 未由事例标签显式处理
+      E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(51,12):
+      参见“Type”的声明
+  
+E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(4231,4): warning C4061: 枚举 "Type" 的开关中的枚举器 "Type::Triple" 未由事例标签显式处理
+      E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(51,12):
+      参见“Type”的声明
+  
+E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(4231,4): warning C4061: 枚举 "Type" 的开关中的枚举器 "Type::TripleWithSingle" 未由事例标签显式处理
+      E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(51,12):
+      参见“Type”的声明
+  
+E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(4231,4): warning C4061: 枚举 "Type" 的开关中的枚举器 "Type::TripleWithPair" 未由事例标签显式处理
+      E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(51,12):
+      参见“Type”的声明
+  
+E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(4231,4): warning C4061: 枚举 "Type" 的开关中的枚举器 "Type::TripleWithPairSingle" 未由事例标签显式处理
+      E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(51,12):
+      参见“Type”的声明
+  
+E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(4231,4): warning C4061: 枚举 "Type" 的开关中的枚举器 "Type::TripleStraight" 未由事例标签显式处理
+      E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(51,12):
+      参见“Type”的声明
+  
+E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(4231,4): warning C4061: 枚举 "Type" 的开关中的枚举器 "Type::TripleStraightWithSingle" 未由事例标签显式处理
+      E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(51,12):
+      参见“Type”的声明
+  
+E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(4231,4): warning C4061: 枚举 "Type" 的开关中的枚举器 "Type::TripleStraightWithSingles" 未由事例标签显式处理
+      E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(51,12):
+      参见“Type”的声明
+  
+E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(4231,4): warning C4061: 枚举 "Type" 的开关中的枚举器 "Type::TripleStraightWithPairs" 未由事例标签显式处理
+      E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(51,12):
+      参见“Type”的声明
+  
+E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(4231,4): warning C4061: 枚举 "Type" 的开关中的枚举器 "Type::Quadruple" 未由事例标签显式处理
+      E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(51,12):
+      参见“Type”的声明
+  
+E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(4231,4): warning C4061: 枚举 "Type" 的开关中的枚举器 "Type::QuadrupleWithSingle" 未由事例标签显式处理
+      E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(51,12):
+      参见“Type”的声明
+  
+E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(4231,4): warning C4061: 枚举 "Type" 的开关中的枚举器 "Type::QuadrupleWithSingleSingle" 未由事例标签显式处理
+      E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(51,12):
+      参见“Type”的声明
+  
+E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(4231,4): warning C4061: 枚举 "Type" 的开关中的枚举器 "Type::QuadrupleWithPairPair" 未由事例标签显式处理
+      E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(51,12):
+      参见“Type”的声明
+  
+E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(4231,4): warning C4061: 枚举 "Type" 的开关中的枚举器 "Type::QuadrupleStraight" 未由事例标签显式处理
+      E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(51,12):
+      参见“Type”的声明
+  
+E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(4231,4): warning C4061: 枚举 "Type" 的开关中的枚举器 "Type::QuadrupleStraightWithSingle" 未由事例标签显式处理
+      E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(51,12):
+      参见“Type”的声明
+  
+E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(4231,4): warning C4061: 枚举 "Type" 的开关中的枚举器 "Type::Quintuple" 未由事例标签显式处理
+      E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(51,12):
+      参见“Type”的声明
+  
+E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(4231,4): warning C4061: 枚举 "Type" 的开关中的枚举器 "Type::Invalid" 未由事例标签显式处理
+      E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(51,12):
+      参见“Type”的声明
+  
+E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(4339,4): warning C4061: 枚举 "Type" 的开关中的枚举器 "Type::Empty" 未由事例标签显式处理
+      E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(51,12):
+      参见“Type”的声明
+  
+E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(4339,4): warning C4061: 枚举 "Type" 的开关中的枚举器 "Type::SingleFlush" 未由事例标签显式处理
+      E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(51,12):
+      参见“Type”的声明
+  
+E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(4339,4): warning C4061: 枚举 "Type" 的开关中的枚举器 "Type::SingleFlushStraight" 未由事例标签显式处理
+      E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(51,12):
+      参见“Type”的声明
+  
+E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(4339,4): warning C4061: 枚举 "Type" 的开关中的枚举器 "Type::PairStraightWithSingle" 未由事例标签显式处理
+      E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(51,12):
+      参见“Type”的声明
+  
+E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(4339,4): warning C4061: 枚举 "Type" 的开关中的枚举器 "Type::PairJokers" 未由事例标签显式处理
+      E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(51,12):
+      参见“Type”的声明
+  
+E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(4339,4): warning C4061: 枚举 "Type" 的开关中的枚举器 "Type::TripleWithSingle" 未由事例标签显式处理
+      E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(51,12):
+      参见“Type”的声明
+  
+E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(4339,4): warning C4061: 枚举 "Type" 的开关中的枚举器 "Type::TripleWithPairSingle" 未由事例标签显式处理
+      E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(51,12):
+      参见“Type”的声明
+  
+E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(4339,4): warning C4061: 枚举 "Type" 的开关中的枚举器 "Type::TripleStraightWithSingle" 未由事例标签显式处理
+      E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(51,12):
+      参见“Type”的声明
+  
+E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(4339,4): warning C4061: 枚举 "Type" 的开关中的枚举器 "Type::TripleStraightWithSingles" 未由事例标签显式处理
+      E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(51,12):
+      参见“Type”的声明
+  
+E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(4339,4): warning C4061: 枚举 "Type" 的开关中的枚举器 "Type::QuadrupleWithSingle" 未由事例标签显式处理
+      E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(51,12):
+      参见“Type”的声明
+  
+E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(4339,4): warning C4061: 枚举 "Type" 的开关中的枚举器 "Type::QuadrupleWithSingleSingle" 未由事例标签显式处理
+      E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(51,12):
+      参见“Type”的声明
+  
+E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(4339,4): warning C4061: 枚举 "Type" 的开关中的枚举器 "Type::QuadrupleWithPairPair" 未由事例标签显式处理
+      E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(51,12):
+      参见“Type”的声明
+  
+E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(4339,4): warning C4061: 枚举 "Type" 的开关中的枚举器 "Type::QuadrupleStraight" 未由事例标签显式处理
+      E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(51,12):
+      参见“Type”的声明
+  
+E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(4339,4): warning C4061: 枚举 "Type" 的开关中的枚举器 "Type::QuadrupleStraightWithSingle" 未由事例标签显式处理
+      E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(51,12):
+      参见“Type”的声明
+  
+E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(4339,4): warning C4061: 枚举 "Type" 的开关中的枚举器 "Type::Invalid" 未由事例标签显式处理
+      E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(51,12):
+      参见“Type”的声明
+  
+E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(4560,7): warning C4266: “bool Poker::computeAmounts(const unsigned char,const unsigned int)”: 不重写基“Poker”中的虚拟成员函数；函数被隐藏
+      E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(982,15):
+      参见“Poker::computeAmounts”的声明
+      E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(272,7):
+      参见“Poker”的声明
+  
+E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(4560,7): warning C4266: “bool Poker::display(const Player) const”: 不重写基“Poker”中的虚拟成员函数；函数被隐藏
+      E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(1335,15):
+      参见“Poker::display”的声明
+      E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(272,7):
+      参见“Poker”的声明
+  
+E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(4560,7): warning C4266: “bool Poker::display(void) const”: 不重写基“Poker”中的虚拟成员函数；函数被隐藏
+      E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(1327,15):
+      参见“Poker::display”的声明
+      E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(272,7):
+      参见“Poker”的声明
+  
+E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(4560,7): warning C4266: “bool Poker::display(const std::vector<Player,std::allocator<Player>> &,const std::string &,const std::string &) const”: 不重写基“Poker”中的虚拟成员函数；函数被隐藏
+      E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(1019,15):
+      参见“Poker::display”的声明
+      E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(272,7):
+      参见“Poker”的声明
+  
+E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(4720,4): warning C4061: 枚举 "Type" 的开关中的枚举器 "Type::Empty" 未由事例标签显式处理
+      E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(51,12):
+      参见“Type”的声明
+  
+E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(4720,4): warning C4061: 枚举 "Type" 的开关中的枚举器 "Type::PairStraight" 未由事例标签显式处理
+      E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(51,12):
+      参见“Type”的声明
+  
+E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(4720,4): warning C4061: 枚举 "Type" 的开关中的枚举器 "Type::PairStraightWithSingle" 未由事例标签显式处理
+      E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(51,12):
+      参见“Type”的声明
+  
+E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(4720,4): warning C4061: 枚举 "Type" 的开关中的枚举器 "Type::PairJokers" 未由事例标签显式处理
+      E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(51,12):
+      参见“Type”的声明
+  
+E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(4720,4): warning C4061: 枚举 "Type" 的开关中的枚举器 "Type::TripleWithSingle" 未由事例标签显式处理
+      E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(51,12):
+      参见“Type”的声明
+  
+E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(4720,4): warning C4061: 枚举 "Type" 的开关中的枚举器 "Type::TripleWithPairSingle" 未由事例标签显式处理
+      E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(51,12):
+      参见“Type”的声明
+  
+E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(4720,4): warning C4061: 枚举 "Type" 的开关中的枚举器 "Type::TripleStraight" 未由事例标签显式处理
+      E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(51,12):
+      参见“Type”的声明
+  
+E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(4720,4): warning C4061: 枚举 "Type" 的开关中的枚举器 "Type::TripleStraightWithSingle" 未由事例标签显式处理
+      E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(51,12):
+      参见“Type”的声明
+  
+E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(4720,4): warning C4061: 枚举 "Type" 的开关中的枚举器 "Type::TripleStraightWithSingles" 未由事例标签显式处理
+      E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(51,12):
+      参见“Type”的声明
+  
+E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(4720,4): warning C4061: 枚举 "Type" 的开关中的枚举器 "Type::TripleStraightWithPairs" 未由事例标签显式处理
+      E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(51,12):
+      参见“Type”的声明
+  
+E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(4720,4): warning C4061: 枚举 "Type" 的开关中的枚举器 "Type::Quadruple" 未由事例标签显式处理
+      E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(51,12):
+      参见“Type”的声明
+  
+E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(4720,4): warning C4061: 枚举 "Type" 的开关中的枚举器 "Type::QuadrupleWithSingleSingle" 未由事例标签显式处理
+      E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(51,12):
+      参见“Type”的声明
+  
+E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(4720,4): warning C4061: 枚举 "Type" 的开关中的枚举器 "Type::QuadrupleWithPairPair" 未由事例标签显式处理
+      E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(51,12):
+      参见“Type”的声明
+  
+E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(4720,4): warning C4061: 枚举 "Type" 的开关中的枚举器 "Type::QuadrupleStraight" 未由事例标签显式处理
+      E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(51,12):
+      参见“Type”的声明
+  
+E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(4720,4): warning C4061: 枚举 "Type" 的开关中的枚举器 "Type::QuadrupleStraightWithSingle" 未由事例标签显式处理
+      E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(51,12):
+      参见“Type”的声明
+  
+E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(4720,4): warning C4061: 枚举 "Type" 的开关中的枚举器 "Type::QuadrupleJokers" 未由事例标签显式处理
+      E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(51,12):
+      参见“Type”的声明
+  
+E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(4720,4): warning C4061: 枚举 "Type" 的开关中的枚举器 "Type::Quintuple" 未由事例标签显式处理
+      E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(51,12):
+      参见“Type”的声明
+  
+E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(4720,4): warning C4061: 枚举 "Type" 的开关中的枚举器 "Type::Sextuple" 未由事例标签显式处理
+      E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(51,12):
+      参见“Type”的声明
+  
+E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(4720,4): warning C4061: 枚举 "Type" 的开关中的枚举器 "Type::Septuple" 未由事例标签显式处理
+      E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(51,12):
+      参见“Type”的声明
+  
+E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(4720,4): warning C4061: 枚举 "Type" 的开关中的枚举器 "Type::Octuple" 未由事例标签显式处理
+      E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(51,12):
+      参见“Type”的声明
+  
+E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(4720,4): warning C4061: 枚举 "Type" 的开关中的枚举器 "Type::Invalid" 未由事例标签显式处理
+      E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(51,12):
+      参见“Type”的声明
+  
+E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(4791,7): warning C4266: “bool Poker::computeAmounts(const unsigned char,const unsigned int)”: 不重写基“Poker”中的虚拟成员函数；函数被隐藏
+      E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(982,15):
+      参见“Poker::computeAmounts”的声明
+      E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(272,7):
+      参见“Poker”的声明
+  
+E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(4791,7): warning C4266: “bool Poker::display(const Player) const”: 不重写基“Poker”中的虚拟成员函数；函数被隐藏
+      E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(1335,15):
+      参见“Poker::display”的声明
+      E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(272,7):
+      参见“Poker”的声明
+  
+E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(4791,7): warning C4266: “bool Poker::display(void) const”: 不重写基“Poker”中的虚拟成员函数；函数被隐藏
+      E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(1327,15):
+      参见“Poker::display”的声明
+      E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(272,7):
+      参见“Poker”的声明
+  
+E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(4791,7): warning C4266: “bool Poker::display(const std::vector<Player,std::allocator<Player>> &,const std::string &,const std::string &) const”: 不重写基“Poker”中的虚拟成员函数；函数被隐藏
+      E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(1019,15):
+      参见“Poker::display”的声明
+      E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(272,7):
+      参见“Poker”的声明
+  
+E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(5573,7): warning C4266: “bool Poker::computeAmounts(const unsigned char,const unsigned int)”: 不重写基“Poker”中的虚拟成员函数；函数被隐藏
+      E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(982,15):
+      参见“Poker::computeAmounts”的声明
+      E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(272,7):
+      参见“Poker”的声明
+  
+E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(5573,7): warning C4266: “bool Poker::display(const Player) const”: 不重写基“Poker”中的虚拟成员函数；函数被隐藏
+      E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(1335,15):
+      参见“Poker::display”的声明
+      E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(272,7):
+      参见“Poker”的声明
+  
+E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(5573,7): warning C4266: “bool Poker::display(void) const”: 不重写基“Poker”中的虚拟成员函数；函数被隐藏
+      E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(1327,15):
+      参见“Poker::display”的声明
+      E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(272,7):
+      参见“Poker”的声明
+  
+E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(5573,7): warning C4266: “bool Poker::display(const std::vector<Player,std::allocator<Player>> &,const std::string &,const std::string &) const”: 不重写基“Poker”中的虚拟成员函数；函数被隐藏
+      E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(1019,15):
+      参见“Poker::display”的声明
+      E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(272,7):
+      参见“Poker”的声明
+  
+E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(5606,5): warning C4061: 枚举 "Suit" 的开关中的枚举器 "Suit::Diamond" 未由事例标签显式处理
+      E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(40,12):
+      参见“Suit”的声明
+  
+E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(5606,5): warning C4061: 枚举 "Suit" 的开关中的枚举器 "Suit::Club" 未由事例标签显式处理
+      E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(40,12):
+      参见“Suit”的声明
+  
+E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(5606,5): warning C4061: 枚举 "Suit" 的开关中的枚举器 "Suit::Heart" 未由事例标签显式处理
+      E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(40,12):
+      参见“Suit”的声明
+  
+E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(5606,5): warning C4061: 枚举 "Suit" 的开关中的枚举器 "Suit::Spade" 未由事例标签显式处理
+      E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(40,12):
+      参见“Suit”的声明
+  
+E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(5606,5): warning C4061: 枚举 "Suit" 的开关中的枚举器 "Suit::Cover" 未由事例标签显式处理
+      E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(40,12):
+      参见“Suit”的声明
+  
+E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(5794,4): warning C4061: 枚举 "Type" 的开关中的枚举器 "Type::Empty" 未由事例标签显式处理
+      E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(51,12):
+      参见“Type”的声明
+  
+E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(5794,4): warning C4061: 枚举 "Type" 的开关中的枚举器 "Type::PairStraight" 未由事例标签显式处理
+      E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(51,12):
+      参见“Type”的声明
+  
+E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(5794,4): warning C4061: 枚举 "Type" 的开关中的枚举器 "Type::PairStraightWithSingle" 未由事例标签显式处理
+      E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(51,12):
+      参见“Type”的声明
+  
+E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(5794,4): warning C4061: 枚举 "Type" 的开关中的枚举器 "Type::TripleWithSingle" 未由事例标签显式处理
+      E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(51,12):
+      参见“Type”的声明
+  
+E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(5794,4): warning C4061: 枚举 "Type" 的开关中的枚举器 "Type::TripleWithPairSingle" 未由事例标签显式处理
+      E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(51,12):
+      参见“Type”的声明
+  
+E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(5794,4): warning C4061: 枚举 "Type" 的开关中的枚举器 "Type::TripleStraight" 未由事例标签显式处理
+      E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(51,12):
+      参见“Type”的声明
+  
+E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(5794,4): warning C4061: 枚举 "Type" 的开关中的枚举器 "Type::TripleStraightWithSingle" 未由事例标签显式处理
+      E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(51,12):
+      参见“Type”的声明
+  
+E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(5794,4): warning C4061: 枚举 "Type" 的开关中的枚举器 "Type::TripleStraightWithSingles" 未由事例标签显式处理
+      E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(51,12):
+      参见“Type”的声明
+  
+E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(5794,4): warning C4061: 枚举 "Type" 的开关中的枚举器 "Type::TripleStraightWithPairs" 未由事例标签显式处理
+      E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(51,12):
+      参见“Type”的声明
+  
+E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(5794,4): warning C4061: 枚举 "Type" 的开关中的枚举器 "Type::QuadrupleWithSingleSingle" 未由事例标签显式处理
+      E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(51,12):
+      参见“Type”的声明
+  
+E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(5794,4): warning C4061: 枚举 "Type" 的开关中的枚举器 "Type::QuadrupleWithPairPair" 未由事例标签显式处理
+      E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(51,12):
+      参见“Type”的声明
+  
+E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(5794,4): warning C4061: 枚举 "Type" 的开关中的枚举器 "Type::QuadrupleStraight" 未由事例标签显式处理
+      E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(51,12):
+      参见“Type”的声明
+  
+E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(5794,4): warning C4061: 枚举 "Type" 的开关中的枚举器 "Type::QuadrupleStraightWithSingle" 未由事例标签显式处理
+      E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(51,12):
+      参见“Type”的声明
+  
+E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(5794,4): warning C4061: 枚举 "Type" 的开关中的枚举器 "Type::QuadrupleJokers" 未由事例标签显式处理
+      E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(51,12):
+      参见“Type”的声明
+  
+E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(5794,4): warning C4061: 枚举 "Type" 的开关中的枚举器 "Type::Quintuple" 未由事例标签显式处理
+      E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(51,12):
+      参见“Type”的声明
+  
+E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(5794,4): warning C4061: 枚举 "Type" 的开关中的枚举器 "Type::Sextuple" 未由事例标签显式处理
+      E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(51,12):
+      参见“Type”的声明
+  
+E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(5794,4): warning C4061: 枚举 "Type" 的开关中的枚举器 "Type::Septuple" 未由事例标签显式处理
+      E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(51,12):
+      参见“Type”的声明
+  
+E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(5794,4): warning C4061: 枚举 "Type" 的开关中的枚举器 "Type::Octuple" 未由事例标签显式处理
+      E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(51,12):
+      参见“Type”的声明
+  
+E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(5794,4): warning C4061: 枚举 "Type" 的开关中的枚举器 "Type::Invalid" 未由事例标签显式处理
+      E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(51,12):
+      参见“Type”的声明
+  
+E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(5876,7): warning C4266: “bool Poker::computeAmounts(const unsigned char,const unsigned int)”: 不重写基“Poker”中的虚拟成员函数；函数被隐藏
+      E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(982,15):
+      参见“Poker::computeAmounts”的声明
+      E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(272,7):
+      参见“Poker”的声明
+  
+E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(5876,7): warning C4266: “bool Poker::display(const Player) const”: 不重写基“Poker”中的虚拟成员函数；函数被隐藏
+      E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(1335,15):
+      参见“Poker::display”的声明
+      E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(272,7):
+      参见“Poker”的声明
+  
+E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(5876,7): warning C4266: “bool Poker::display(void) const”: 不重写基“Poker”中的虚拟成员函数；函数被隐藏
+      E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(1327,15):
+      参见“Poker::display”的声明
+      E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(272,7):
+      参见“Poker”的声明
+  
+E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(5876,7): warning C4266: “bool Poker::display(const std::vector<Player,std::allocator<Player>> &,const std::string &,const std::string &) const”: 不重写基“Poker”中的虚拟成员函数；函数被隐藏
+      E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(1019,15):
+      参见“Poker::display”的声明
+      E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(272,7):
+      参见“Poker”的声明
+  
+E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(5909,5): warning C4061: 枚举 "Suit" 的开关中的枚举器 "Suit::Diamond" 未由事例标签显式处理
+      E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(40,12):
+      参见“Suit”的声明
+  
+E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(5909,5): warning C4061: 枚举 "Suit" 的开关中的枚举器 "Suit::Club" 未由事例标签显式处理
+      E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(40,12):
+      参见“Suit”的声明
+  
+E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(5909,5): warning C4061: 枚举 "Suit" 的开关中的枚举器 "Suit::Heart" 未由事例标签显式处理
+      E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(40,12):
+      参见“Suit”的声明
+  
+E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(5909,5): warning C4061: 枚举 "Suit" 的开关中的枚举器 "Suit::Spade" 未由事例标签显式处理
+      E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(40,12):
+      参见“Suit”的声明
+  
+E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(5909,5): warning C4061: 枚举 "Suit" 的开关中的枚举器 "Suit::Cover" 未由事例标签显式处理
+      E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(40,12):
+      参见“Suit”的声明
+  
+E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(6003,4): warning C4061: 枚举 "Type" 的开关中的枚举器 "Type::Empty" 未由事例标签显式处理
+      E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(51,12):
+      参见“Type”的声明
+  
+E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(6003,4): warning C4061: 枚举 "Type" 的开关中的枚举器 "Type::SingleStraight" 未由事例标签显式处理
+      E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(51,12):
+      参见“Type”的声明
+  
+E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(6003,4): warning C4061: 枚举 "Type" 的开关中的枚举器 "Type::SingleFlush" 未由事例标签显式处理
+      E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(51,12):
+      参见“Type”的声明
+  
+E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(6003,4): warning C4061: 枚举 "Type" 的开关中的枚举器 "Type::SingleFlushStraight" 未由事例标签显式处理
+      E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(51,12):
+      参见“Type”的声明
+  
+E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(6003,4): warning C4061: 枚举 "Type" 的开关中的枚举器 "Type::PairStraight" 未由事例标签显式处理
+      E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(51,12):
+      参见“Type”的声明
+  
+E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(6003,4): warning C4061: 枚举 "Type" 的开关中的枚举器 "Type::PairStraightWithSingle" 未由事例标签显式处理
+      E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(51,12):
+      参见“Type”的声明
+  
+E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(6003,4): warning C4061: 枚举 "Type" 的开关中的枚举器 "Type::TripleWithSingle" 未由事例标签显式处理
+      E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(51,12):
+      参见“Type”的声明
+  
+E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(6003,4): warning C4061: 枚举 "Type" 的开关中的枚举器 "Type::TripleWithPair" 未由事例标签显式处理
+      E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(51,12):
+      参见“Type”的声明
+  
+E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(6003,4): warning C4061: 枚举 "Type" 的开关中的枚举器 "Type::TripleWithPairSingle" 未由事例标签显式处理
+      E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(51,12):
+      参见“Type”的声明
+  
+E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(6003,4): warning C4061: 枚举 "Type" 的开关中的枚举器 "Type::TripleStraight" 未由事例标签显式处理
+      E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(51,12):
+      参见“Type”的声明
+  
+E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(6003,4): warning C4061: 枚举 "Type" 的开关中的枚举器 "Type::TripleStraightWithSingle" 未由事例标签显式处理
+      E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(51,12):
+      参见“Type”的声明
+  
+E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(6003,4): warning C4061: 枚举 "Type" 的开关中的枚举器 "Type::TripleStraightWithSingles" 未由事例标签显式处理
+      E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(51,12):
+      参见“Type”的声明
+  
+E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(6003,4): warning C4061: 枚举 "Type" 的开关中的枚举器 "Type::TripleStraightWithPairs" 未由事例标签显式处理
+      E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(51,12):
+      参见“Type”的声明
+  
+E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(6003,4): warning C4061: 枚举 "Type" 的开关中的枚举器 "Type::QuadrupleWithSingle" 未由事例标签显式处理
+      E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(51,12):
+      参见“Type”的声明
+  
+E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(6003,4): warning C4061: 枚举 "Type" 的开关中的枚举器 "Type::QuadrupleWithSingleSingle" 未由事例标签显式处理
+      E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(51,12):
+      参见“Type”的声明
+  
+E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(6003,4): warning C4061: 枚举 "Type" 的开关中的枚举器 "Type::QuadrupleWithPairPair" 未由事例标签显式处理
+      E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(51,12):
+      参见“Type”的声明
+  
+E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(6003,4): warning C4061: 枚举 "Type" 的开关中的枚举器 "Type::QuadrupleStraight" 未由事例标签显式处理
+      E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(51,12):
+      参见“Type”的声明
+  
+E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(6003,4): warning C4061: 枚举 "Type" 的开关中的枚举器 "Type::QuadrupleStraightWithSingle" 未由事例标签显式处理
+      E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(51,12):
+      参见“Type”的声明
+  
+E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(6003,4): warning C4061: 枚举 "Type" 的开关中的枚举器 "Type::QuadrupleJokers" 未由事例标签显式处理
+      E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(51,12):
+      参见“Type”的声明
+  
+E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(6003,4): warning C4061: 枚举 "Type" 的开关中的枚举器 "Type::Quintuple" 未由事例标签显式处理
+      E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(51,12):
+      参见“Type”的声明
+  
+E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(6003,4): warning C4061: 枚举 "Type" 的开关中的枚举器 "Type::Sextuple" 未由事例标签显式处理
+      E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(51,12):
+      参见“Type”的声明
+  
+E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(6003,4): warning C4061: 枚举 "Type" 的开关中的枚举器 "Type::Septuple" 未由事例标签显式处理
+      E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(51,12):
+      参见“Type”的声明
+  
+E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(6003,4): warning C4061: 枚举 "Type" 的开关中的枚举器 "Type::Octuple" 未由事例标签显式处理
+      E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(51,12):
+      参见“Type”的声明
+  
+E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(6003,4): warning C4061: 枚举 "Type" 的开关中的枚举器 "Type::Invalid" 未由事例标签显式处理
+      E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(51,12):
+      参见“Type”的声明
+  
+E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(6132,10): warning C4820: "Interaction": 数据成员 "Interaction::helpKey" 后添加了 "3" 字节填充
+E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(6128,7): warning C4625: “Interaction”: 已将复制构造函数隐式定义为“已删除”
+E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(6798,6): warning C4061: 枚举 "Action" 的开关中的枚举器 "Action::None" 未由事例标签显式处理
+      E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(108,12):
+      参见“Action”的声明
+  
+E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(6798,6): warning C4061: 枚举 "Action" 的开关中的枚举器 "Action::AgainCancelled" 未由事例标签显式处理
+      E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(108,12):
+      参见“Action”的声明
+  
+E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(6798,6): warning C4061: 枚举 "Action" 的开关中的枚举器 "Action::ReturnCancelled" 未由事例标签显式处理
+      E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(108,12):
+      参见“Action”的声明
+  
+E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(6798,6): warning C4061: 枚举 "Action" 的开关中的枚举器 "Action::ExitCancelled" 未由事例标签显式处理
+      E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(108,12):
+      参见“Action”的声明
+  
+E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(6815,6): warning C4061: 枚举 "Action" 的开关中的枚举器 "Action::None" 未由事例标签显式处理
+      E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(108,12):
+      参见“Action”的声明
+  
+E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(6815,6): warning C4061: 枚举 "Action" 的开关中的枚举器 "Action::AgainCancelled" 未由事例标签显式处理
+      E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(108,12):
+      参见“Action”的声明
+  
+E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(6815,6): warning C4061: 枚举 "Action" 的开关中的枚举器 "Action::ReturnCancelled" 未由事例标签显式处理
+      E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(108,12):
+      参见“Action”的声明
+  
+E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(6815,6): warning C4061: 枚举 "Action" 的开关中的枚举器 "Action::ExitCancelled" 未由事例标签显式处理
+      E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(108,12):
+      参见“Action”的声明
+  
+E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(6832,6): warning C4061: 枚举 "Action" 的开关中的枚举器 "Action::None" 未由事例标签显式处理
+      E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(108,12):
+      参见“Action”的声明
+  
+E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(6832,6): warning C4061: 枚举 "Action" 的开关中的枚举器 "Action::AgainCancelled" 未由事例标签显式处理
+      E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(108,12):
+      参见“Action”的声明
+  
+E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(6832,6): warning C4061: 枚举 "Action" 的开关中的枚举器 "Action::ReturnCancelled" 未由事例标签显式处理
+      E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(108,12):
+      参见“Action”的声明
+  
+E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(6832,6): warning C4061: 枚举 "Action" 的开关中的枚举器 "Action::ExitCancelled" 未由事例标签显式处理
+      E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(108,12):
+      参见“Action”的声明
+  
+E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(214,2): warning C4514: “Hand::Hand”: 未引用的内联函数已移除
+E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(256,7): warning C4514: “Values::get”: 未引用的内联函数已移除
+E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(6872,1): warning C5045: 如果指定了 /Qspectre 开关，编译器会插入内存负载的 Spectre 缓解 
+E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(6872,1): warning C5045: E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(6871) : 注意: 在此行上通过对比检查索引 "i" 范围
+E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(6872,1): warning C5045: E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(6872) : 注意: 此行上的源调用
+E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(6870,1): warning C5045: 如果指定了 /Qspectre 开关，编译器会插入内存负载的 Spectre 缓解 
+E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(6870,1): warning C5045: E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(6867) : 注意: 在此行上通过对比检查索引 "argc" 范围
+E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(6870,1): warning C5045: E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(6870) : 注意: 此行上的源调用
+E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(6718,1): warning C5045: 如果指定了 /Qspectre 开关，编译器会插入内存负载的 Spectre 缓解 
+E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(6718,1): warning C5045: E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(6717) : 注意: 在此行上通过对比检查索引 "idx" 范围
+E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(6718,1): warning C5045: E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(6718) : 注意: 此行上的源调用
+E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(6676,1): warning C5045: 如果指定了 /Qspectre 开关，编译器会插入内存负载的 Spectre 缓解 
+E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(6676,1): warning C5045: E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(6675) : 注意: 在此行上通过对比检查索引 "argumentCount" 范围
+E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(6676,1): warning C5045: E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(6676) : 注意: 此行上的源调用
+E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(6155,1): warning C5045: 如果指定了 /Qspectre 开关，编译器会插入内存负载的 Spectre 缓解 
+E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(6155,1): warning C5045: E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(6153) : 注意: 在此行上通过对比检查索引 "idx" 范围
+E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(6155,1): warning C5045: E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(6155) : 注意: 此行上的源调用
+E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(6234,1): warning C5045: 如果指定了 /Qspectre 开关，编译器会插入内存负载的 Spectre 缓解 
+E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(6234,1): warning C5045: E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(6233) : 注意: 在此行上通过对比检查索引 "idx" 范围
+E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(6234,1): warning C5045: E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(6234) : 注意: 此行上的源调用
+E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(6339,1): warning C5045: 如果指定了 /Qspectre 开关，编译器会插入内存负载的 Spectre 缓解 
+E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(6339,1): warning C5045: E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(6337) : 注意: 在此行上通过对比检查索引 "" 范围
+E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(6339,1): warning C5045: E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(6339) : 注意: 此行上的源调用
+E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(6328,1): warning C5045: 如果指定了 /Qspectre 开关，编译器会插入内存负载的 Spectre 缓解 
+E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(6328,1): warning C5045: E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(6327) : 注意: 在此行上通过对比检查索引 "idx" 范围
+E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(6328,1): warning C5045: E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(6328) : 注意: 此行上的源调用
+E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(1332,1): warning C5045: 如果指定了 /Qspectre 开关，编译器会插入内存负载的 Spectre 缓解 
+E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(1332,1): warning C5045: E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(1331) : 注意: 在此行上通过对比检查索引 "" 范围
+E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(1332,1): warning C5045: E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(1332) : 注意: 此行上的源调用
+E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(294,1): warning C5045: 如果指定了 /Qspectre 开关，编译器会插入内存负载的 Spectre 缓解 
+E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(294,1): warning C5045: E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(289) : 注意: 在此行上通过对比检查索引 "" 范围
+E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(294,1): warning C5045: E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(294) : 注意: 此行上的源调用
+E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(963,1): warning C5045: 如果指定了 /Qspectre 开关，编译器会插入内存负载的 Spectre 缓解 
+E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(963,1): warning C5045: E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(962) : 注意: 在此行上通过对比检查索引 "idx" 范围
+E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(963,1): warning C5045: E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(963) : 注意: 此行上的源调用
+E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(955,1): warning C5045: 如果指定了 /Qspectre 开关，编译器会插入内存负载的 Spectre 缓解 
+E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(955,1): warning C5045: E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(954) : 注意: 在此行上通过对比检查索引 "largerLength" 范围
+E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(955,1): warning C5045: E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(955) : 注意: 此行上的源调用
+E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(866,1): warning C5045: 如果指定了 /Qspectre 开关，编译器会插入内存负载的 Spectre 缓解 
+E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(866,1): warning C5045: E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(865) : 注意: 在此行上通过对比检查索引 "idx" 范围
+E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(866,1): warning C5045: E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(866) : 注意: 此行上的源调用
+E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(862,1): warning C5045: 如果指定了 /Qspectre 开关，编译器会插入内存负载的 Spectre 缓解 
+E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(862,1): warning C5045: E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(860) : 注意: 在此行上通过对比检查索引 "idx" 范围
+E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(862,1): warning C5045: E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(862) : 注意: 此行上的源调用
+E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(861,1): warning C5045: 如果指定了 /Qspectre 开关，编译器会插入内存负载的 Spectre 缓解 
+E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(861,1): warning C5045: E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(860) : 注意: 在此行上通过对比检查索引 "idx" 范围
+E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(861,1): warning C5045: E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(861) : 注意: 此行上的源调用
+E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(847,1): warning C5045: 如果指定了 /Qspectre 开关，编译器会插入内存负载的 Spectre 缓解 
+E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(847,1): warning C5045: E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(842) : 注意: 在此行上通过对比检查索引 "cardCount" 范围
+E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(847,1): warning C5045: E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(847) : 注意: 此行上的源调用
+E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(923,1): warning C5045: 如果指定了 /Qspectre 开关，编译器会插入内存负载的 Spectre 缓解 
+E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(923,1): warning C5045: E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(922) : 注意: 在此行上通过对比检查索引 "idx" 范围
+E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(923,1): warning C5045: E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(923) : 注意: 此行上的源调用
+E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(919,1): warning C5045: 如果指定了 /Qspectre 开关，编译器会插入内存负载的 Spectre 缓解 
+E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(919,1): warning C5045: E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(917) : 注意: 在此行上通过对比检查索引 "idx" 范围
+E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(919,1): warning C5045: E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(919) : 注意: 此行上的源调用
+E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(918,1): warning C5045: 如果指定了 /Qspectre 开关，编译器会插入内存负载的 Spectre 缓解 
+E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(918,1): warning C5045: E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(917) : 注意: 在此行上通过对比检查索引 "idx" 范围
+E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(918,1): warning C5045: E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(918) : 注意: 此行上的源调用
+E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(911,1): warning C5045: 如果指定了 /Qspectre 开关，编译器会插入内存负载的 Spectre 缓解 
+E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(911,1): warning C5045: E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(910) : 注意: 在此行上通过对比检查索引 "idx" 范围
+E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(911,1): warning C5045: E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(911) : 注意: 此行上的源调用
+E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(1460,1): warning C5045: 如果指定了 /Qspectre 开关，编译器会插入内存负载的 Spectre 缓解 
+E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(1460,1): warning C5045: E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(1457) : 注意: 在此行上通过对比检查索引 "" 范围
+E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(1460,1): warning C5045: E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(1460) : 注意: 此行上的源调用
+E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(1000,1): warning C5045: 如果指定了 /Qspectre 开关，编译器会插入内存负载的 Spectre 缓解 
+E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(1000,1): warning C5045: E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(999) : 注意: 在此行上通过对比检查索引 "cardID" 范围
+E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(1000,1): warning C5045: E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(1000) : 注意: 此行上的源调用
+E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(1512,1): warning C5045: 如果指定了 /Qspectre 开关，编译器会插入内存负载的 Spectre 缓解 
+E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(1512,1): warning C5045: E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(1509) : 注意: 在此行上通过对比检查索引 "idx" 范围
+E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(1512,1): warning C5045: E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(1512) : 注意: 此行上的源调用
+E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(1504,1): warning C5045: 如果指定了 /Qspectre 开关，编译器会插入内存负载的 Spectre 缓解 
+E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(1504,1): warning C5045: E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(1503) : 注意: 在此行上通过对比检查索引 "length" 范围
+E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(1504,1): warning C5045: E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(1504) : 注意: 此行上的源调用
+E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(1501,1): warning C5045: 如果指定了 /Qspectre 开关，编译器会插入内存负载的 Spectre 缓解 
+E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(1501,1): warning C5045: E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(1500) : 注意: 在此行上通过对比检查索引 "idx" 范围
+E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(1501,1): warning C5045: E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(1501) : 注意: 此行上的源调用
+E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(1013,1): warning C5045: 如果指定了 /Qspectre 开关，编译器会插入内存负载的 Spectre 缓解 
+E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(1013,1): warning C5045: E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(1012) : 注意: 在此行上通过对比检查索引 "" 范围
+E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(1013,1): warning C5045: E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(1013) : 注意: 此行上的源调用
+E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(554,1): warning C5045: 如果指定了 /Qspectre 开关，编译器会插入内存负载的 Spectre 缓解 
+E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(554,1): warning C5045: E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(554) : 注意: 在此行上通过对比检查索引 "descriptionLength" 范围
+E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(554,1): warning C5045: E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(554) : 注意: 此行上的源调用
+E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(541,1): warning C5045: 如果指定了 /Qspectre 开关，编译器会插入内存负载的 Spectre 缓解 
+E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(541,1): warning C5045: E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(540) : 注意: 在此行上通过对比检查索引 "descriptionLength" 范围
+E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(541,1): warning C5045: E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(541) : 注意: 此行上的源调用
+E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(532,1): warning C5045: 如果指定了 /Qspectre 开关，编译器会插入内存负载的 Spectre 缓解 
+E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(532,1): warning C5045: E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(532) : 注意: 在此行上通过对比检查索引 "" 范围
+E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(532,1): warning C5045: E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(532) : 注意: 此行上的源调用
+E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(2102,1): warning C5045: 如果指定了 /Qspectre 开关，编译器会插入内存负载的 Spectre 缓解 
+E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(2102,1): warning C5045: E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(2101) : 注意: 在此行上通过对比检查索引 "" 范围
+E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(2102,1): warning C5045: E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(2102) : 注意: 此行上的源调用
+E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(2129,1): warning C5045: 如果指定了 /Qspectre 开关，编译器会插入内存负载的 Spectre 缓解 
+E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(2129,1): warning C5045: E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(2127) : 注意: 在此行上通过对比检查索引 "" 范围
+E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(2129,1): warning C5045: E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(2129) : 注意: 此行上的源调用
+E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(1226,1): warning C5045: 如果指定了 /Qspectre 开关，编译器会插入内存负载的 Spectre 缓解 
+E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(1226,1): warning C5045: E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(1223) : 注意: 在此行上通过对比检查索引 "" 范围
+E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(1226,1): warning C5045: E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(1226) : 注意: 此行上的源调用
+E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(1149,1): warning C5045: 如果指定了 /Qspectre 开关，编译器会插入内存负载的 Spectre 缓解 
+E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(1149,1): warning C5045: E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(1137) : 注意: 在此行上通过对比检查索引 "" 范围
+E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(1149,1): warning C5045: E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(1149) : 注意: 此行上的源内存负载
+E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(1223,1): warning C5045: 如果指定了 /Qspectre 开关，编译器会插入内存负载的 Spectre 缓解 
+E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(1223,1): warning C5045: E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(1223) : 注意: 在此行上通过对比检查索引 "" 范围
+E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(1223,1): warning C5045: E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(1223) : 注意: 此行上的源调用
+E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(1144,1): warning C5045: 如果指定了 /Qspectre 开关，编译器会插入内存负载的 Spectre 缓解 
+E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(1144,1): warning C5045: E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(1137) : 注意: 在此行上通过对比检查索引 "" 范围
+E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(1144,1): warning C5045: E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(1144) : 注意: 此行上的源内存负载
+E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(1140,1): warning C5045: 如果指定了 /Qspectre 开关，编译器会插入内存负载的 Spectre 缓解 
+E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(1140,1): warning C5045: E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(1137) : 注意: 在此行上通过对比检查索引 "" 范围
+E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(1140,1): warning C5045: E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(1140) : 注意: 此行上的源调用
+E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(1137,1): warning C5045: 如果指定了 /Qspectre 开关，编译器会插入内存负载的 Spectre 缓解 
+E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(1137,1): warning C5045: E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(1137) : 注意: 在此行上通过对比检查索引 "" 范围
+E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(1137,1): warning C5045: E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(1137) : 注意: 此行上的源调用
+E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(1079,1): warning C5045: 如果指定了 /Qspectre 开关，编译器会插入内存负载的 Spectre 缓解 
+E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(1079,1): warning C5045: E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(1076) : 注意: 在此行上通过对比检查索引 "round" 范围
+E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(1079,1): warning C5045: E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(1079) : 注意: 此行上的源调用
+E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(1065,1): warning C5045: 如果指定了 /Qspectre 开关，编译器会插入内存负载的 Spectre 缓解 
+E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(1065,1): warning C5045: E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(1063) : 注意: 在此行上通过对比检查索引 "playerCount" 范围
+E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(1065,1): warning C5045: E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(1065) : 注意: 此行上的源调用
+E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(1064,1): warning C5045: 如果指定了 /Qspectre 开关，编译器会插入内存负载的 Spectre 缓解 
+E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(1064,1): warning C5045: E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(1063) : 注意: 在此行上通过对比检查索引 "playerCount" 范围
+E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(1064,1): warning C5045: E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(1064) : 注意: 此行上的源调用
+E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(1061,1): warning C5045: 如果指定了 /Qspectre 开关，编译器会插入内存负载的 Spectre 缓解 
+E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(1061,1): warning C5045: E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(1060) : 注意: 在此行上通过对比检查索引 "" 范围
+E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(1061,1): warning C5045: E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(1061) : 注意: 此行上的源调用
+E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(2191,1): warning C5045: 如果指定了 /Qspectre 开关，编译器会插入内存负载的 Spectre 缓解 
+E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(2191,1): warning C5045: E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(2190) : 注意: 在此行上通过对比检查索引 "idx" 范围
+E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(2191,1): warning C5045: E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(2191) : 注意: 此行上的源调用
+E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(2148,1): warning C5045: 如果指定了 /Qspectre 开关，编译器会插入内存负载的 Spectre 缓解 
+E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(2148,1): warning C5045: E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(2147) : 注意: 在此行上通过对比检查索引 "" 范围
+E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(2148,1): warning C5045: E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(2148) : 注意: 此行上的源调用
+E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(2147,1): warning C5045: 如果指定了 /Qspectre 开关，编译器会插入内存负载的 Spectre 缓解 
+E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(2147,1): warning C5045: E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(2147) : 注意: 在此行上通过对比检查索引 "" 范围
+E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(2147,1): warning C5045: E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(2147) : 注意: 此行上的源调用
+E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(1185,1): warning C5045: 如果指定了 /Qspectre 开关，编译器会插入内存负载的 Spectre 缓解 
+E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(1185,1): warning C5045: E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(1178) : 注意: 在此行上通过对比检查索引 "" 范围
+E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(1185,1): warning C5045: E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(1185) : 注意: 此行上的源调用
+E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(1184,1): warning C5045: 如果指定了 /Qspectre 开关，编译器会插入内存负载的 Spectre 缓解 
+E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(1184,1): warning C5045: E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(1178) : 注意: 在此行上通过对比检查索引 "" 范围
+E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(1184,1): warning C5045: E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(1184) : 注意: 此行上的源调用
+E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(1183,1): warning C5045: 如果指定了 /Qspectre 开关，编译器会插入内存负载的 Spectre 缓解 
+E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(1183,1): warning C5045: E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(1178) : 注意: 在此行上通过对比检查索引 "" 范围
+E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(1183,1): warning C5045: E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(1183) : 注意: 此行上的源调用
+E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(1181,1): warning C5045: 如果指定了 /Qspectre 开关，编译器会插入内存负载的 Spectre 缓解 
+E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(1181,1): warning C5045: E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(1178) : 注意: 在此行上通过对比检查索引 "" 范围
+E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(1181,1): warning C5045: E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(1181) : 注意: 此行上的源调用
+E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(1178,1): warning C5045: 如果指定了 /Qspectre 开关，编译器会插入内存负载的 Spectre 缓解 
+E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(1178,1): warning C5045: E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(1178) : 注意: 在此行上通过对比检查索引 "" 范围
+E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(1178,1): warning C5045: E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(1178) : 注意: 此行上的源调用
+E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(4297,1): warning C5045: 如果指定了 /Qspectre 开关，编译器会插入内存负载的 Spectre 缓解 
+E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(4297,1): warning C5045: E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(4296) : 注意: 在此行上通过对比检查索引 "" 范围
+E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(4297,1): warning C5045: E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(4297) : 注意: 此行上的源调用
+E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(4277,1): warning C5045: 如果指定了 /Qspectre 开关，编译器会插入内存负载的 Spectre 缓解 
+E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(4277,1): warning C5045: E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(4275) : 注意: 在此行上通过对比检查索引 "outerIdx" 范围
+E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(4277,1): warning C5045: E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(4277) : 注意: 此行上的源调用
+E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(4270,1): warning C5045: 如果指定了 /Qspectre 开关，编译器会插入内存负载的 Spectre 缓解 
+E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(4270,1): warning C5045: E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(4268) : 注意: 在此行上通过对比检查索引 "handCount" 范围
+E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(4270,1): warning C5045: E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(4270) : 注意: 此行上的源调用
+E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(4269,1): warning C5045: 如果指定了 /Qspectre 开关，编译器会插入内存负载的 Spectre 缓解 
+E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(4269,1): warning C5045: E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(4268) : 注意: 在此行上通过对比检查索引 "innerIdx" 范围
+E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(4269,1): warning C5045: E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(4269) : 注意: 此行上的源调用
+E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(4269,1): warning C5045: 如果指定了 /Qspectre 开关，编译器会插入内存负载的 Spectre 缓解 
+E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(4269,1): warning C5045: E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(4268) : 注意: 在此行上通过对比检查索引 "handCount" 范围
+E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(4269,1): warning C5045: E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(4269) : 注意: 此行上的源调用
+E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(4249,1): warning C5045: 如果指定了 /Qspectre 开关，编译器会插入内存负载的 Spectre 缓解 
+E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(4249,1): warning C5045: E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(4248) : 注意: 在此行上通过对比检查索引 "" 范围
+E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(4249,1): warning C5045: E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(4249) : 注意: 此行上的源调用
+E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(4241,1): warning C5045: 如果指定了 /Qspectre 开关，编译器会插入内存负载的 Spectre 缓解 
+E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(4241,1): warning C5045: E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(4240) : 注意: 在此行上通过对比检查索引 "recordCount" 范围
+E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(4241,1): warning C5045: E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(4241) : 注意: 此行上的源调用
+E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(4356,1): warning C5045: 如果指定了 /Qspectre 开关，编译器会插入内存负载的 Spectre 缓解 
+E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(4356,1): warning C5045: E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(4355) : 注意: 在此行上通过对比检查索引 "idx" 范围
+E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(4356,1): warning C5045: E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(4356) : 注意: 此行上的源调用
+E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(4407,1): warning C5045: 如果指定了 /Qspectre 开关，编译器会插入内存负载的 Spectre 缓解 
+E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(4407,1): warning C5045: E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(4406) : 注意: 在此行上通过对比检查索引 "" 范围
+E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(4407,1): warning C5045: E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(4407) : 注意: 此行上的源调用
+E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(4435,1): warning C5045: 如果指定了 /Qspectre 开关，编译器会插入内存负载的 Spectre 缓解 
+E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(4435,1): warning C5045: E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(4433) : 注意: 在此行上通过对比检查索引 "" 范围
+E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(4435,1): warning C5045: E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(4435) : 注意: 此行上的源调用
+E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(4455,1): warning C5045: 如果指定了 /Qspectre 开关，编译器会插入内存负载的 Spectre 缓解 
+E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(4455,1): warning C5045: E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(4454) : 注意: 在此行上通过对比检查索引 "" 范围
+E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(4455,1): warning C5045: E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(4455) : 注意: 此行上的源调用
+E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(490,1): warning C5045: 如果指定了 /Qspectre 开关，编译器会插入内存负载的 Spectre 缓解 
+E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(490,1): warning C5045: E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(489) : 注意: 在此行上通过对比检查索引 "playerCount" 范围
+E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(490,1): warning C5045: E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(490) : 注意: 此行上的源调用
+E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(4717,1): warning C5045: 如果指定了 /Qspectre 开关，编译器会插入内存负载的 Spectre 缓解 
+E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(4717,1): warning C5045: E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(4717) : 注意: 在此行上通过对比检查索引 "" 范围
+E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(4717,1): warning C5045: E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(4717) : 注意: 此行上的源调用
+E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(4715,1): warning C5045: 如果指定了 /Qspectre 开关，编译器会插入内存负载的 Spectre 缓解 
+E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(4715,1): warning C5045: E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(4715) : 注意: 在此行上通过对比检查索引 "" 范围
+E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(4715,1): warning C5045: E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(4715) : 注意: 此行上的源调用
+E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(4713,1): warning C5045: 如果指定了 /Qspectre 开关，编译器会插入内存负载的 Spectre 缓解 
+E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(4713,1): warning C5045: E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(4713) : 注意: 在此行上通过对比检查索引 "" 范围
+E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(4713,1): warning C5045: E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(4713) : 注意: 此行上的源调用
+E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(4711,1): warning C5045: 如果指定了 /Qspectre 开关，编译器会插入内存负载的 Spectre 缓解 
+E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(4711,1): warning C5045: E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(4711) : 注意: 在此行上通过对比检查索引 "" 范围
+E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(4711,1): warning C5045: E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(4711) : 注意: 此行上的源调用
+E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(4709,1): warning C5045: 如果指定了 /Qspectre 开关，编译器会插入内存负载的 Spectre 缓解 
+E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(4709,1): warning C5045: E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(4709) : 注意: 在此行上通过对比检查索引 "" 范围
+E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(4709,1): warning C5045: E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(4709) : 注意: 此行上的源调用
+E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(4677,1): warning C5045: 如果指定了 /Qspectre 开关，编译器会插入内存负载的 Spectre 缓解 
+E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(4677,1): warning C5045: E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(4676) : 注意: 在此行上通过对比检查索引 "idx" 范围
+E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(4677,1): warning C5045: E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(4677) : 注意: 此行上的源调用
+E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(4656,1): warning C5045: 如果指定了 /Qspectre 开关，编译器会插入内存负载的 Spectre 缓解 
+E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(4656,1): warning C5045: E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(4655) : 注意: 在此行上通过对比检查索引 "n" 范围
+E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(4656,1): warning C5045: E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(4656) : 注意: 此行上的源调用
+E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(4654,1): warning C5045: 如果指定了 /Qspectre 开关，编译器会插入内存负载的 Spectre 缓解 
+E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(4654,1): warning C5045: E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(4653) : 注意: 在此行上通过对比检查索引 "n" 范围
+E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(4654,1): warning C5045: E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(4654) : 注意: 此行上的源调用
+E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(4652,1): warning C5045: 如果指定了 /Qspectre 开关，编译器会插入内存负载的 Spectre 缓解 
+E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(4652,1): warning C5045: E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(4651) : 注意: 在此行上通过对比检查索引 "n" 范围
+E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(4652,1): warning C5045: E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(4652) : 注意: 此行上的源调用
+E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(4648,1): warning C5045: 如果指定了 /Qspectre 开关，编译器会插入内存负载的 Spectre 缓解 
+E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(4648,1): warning C5045: E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(4646) : 注意: 在此行上通过对比检查索引 "idx" 范围
+E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(4648,1): warning C5045: E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(4648) : 注意: 此行上的源调用
+E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(4743,1): warning C5045: 如果指定了 /Qspectre 开关，编译器会插入内存负载的 Spectre 缓解 
+E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(4743,1): warning C5045: E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(4742) : 注意: 在此行上通过对比检查索引 "" 范围
+E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(4743,1): warning C5045: E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(4743) : 注意: 此行上的源调用
+E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(4769,1): warning C5045: 如果指定了 /Qspectre 开关，编译器会插入内存负载的 Spectre 缓解 
+E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(4769,1): warning C5045: E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(4767) : 注意: 在此行上通过对比检查索引 "" 范围
+E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(4769,1): warning C5045: E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(4769) : 注意: 此行上的源调用
+E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(2047,1): warning C5045: 如果指定了 /Qspectre 开关，编译器会插入内存负载的 Spectre 缓解 
+E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(2047,1): warning C5045: E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(2047) : 注意: 在此行上通过对比检查索引 "" 范围
+E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(2047,1): warning C5045: E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(2047) : 注意: 此行上的源调用
+E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(2034,1): warning C5045: 如果指定了 /Qspectre 开关，编译器会插入内存负载的 Spectre 缓解 
+E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(2034,1): warning C5045: E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(2034) : 注意: 在此行上通过对比检查索引 "" 范围
+E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(2034,1): warning C5045: E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(2034) : 注意: 此行上的源调用
+E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(2021,1): warning C5045: 如果指定了 /Qspectre 开关，编译器会插入内存负载的 Spectre 缓解 
+E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(2021,1): warning C5045: E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(2021) : 注意: 在此行上通过对比检查索引 "" 范围
+E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(2021,1): warning C5045: E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(2021) : 注意: 此行上的源调用
+E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(5500,1): warning C5045: 如果指定了 /Qspectre 开关，编译器会插入内存负载的 Spectre 缓解 
+E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(5500,1): warning C5045: E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(5499) : 注意: 在此行上通过对比检查索引 "" 范围
+E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(5500,1): warning C5045: E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(5500) : 注意: 此行上的源调用
+E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(2021,1): warning C5045: 如果指定了 /Qspectre 开关，编译器会插入内存负载的 Spectre 缓解 
+E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(2021,1): warning C5045: E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(2020) : 注意: 在此行上通过对比检查索引 "" 范围
+E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(2021,1): warning C5045: E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(2021) : 注意: 此行上的源调用
+E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(2011,1): warning C5045: 如果指定了 /Qspectre 开关，编译器会插入内存负载的 Spectre 缓解 
+E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(2011,1): warning C5045: E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(2010) : 注意: 在此行上通过对比检查索引 "" 范围
+E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(2011,1): warning C5045: E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(2011) : 注意: 此行上的源调用
+E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(2010,1): warning C5045: 如果指定了 /Qspectre 开关，编译器会插入内存负载的 Spectre 缓解 
+E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(2010,1): warning C5045: E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(2005) : 注意: 在此行上通过对比检查索引 "" 范围
+E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(2010,1): warning C5045: E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(2010) : 注意: 此行上的源调用
+E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(2005,1): warning C5045: 如果指定了 /Qspectre 开关，编译器会插入内存负载的 Spectre 缓解 
+E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(2005,1): warning C5045: E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(2005) : 注意: 在此行上通过对比检查索引 "" 范围
+E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(2005,1): warning C5045: E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(2005) : 注意: 此行上的源调用
+E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(1998,1): warning C5045: 如果指定了 /Qspectre 开关，编译器会插入内存负载的 Spectre 缓解 
+E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(1998,1): warning C5045: E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(1998) : 注意: 在此行上通过对比检查索引 "" 范围
+E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(1998,1): warning C5045: E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(1998) : 注意: 此行上的源调用
+E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(1982,1): warning C5045: 如果指定了 /Qspectre 开关，编译器会插入内存负载的 Spectre 缓解 
+E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(1982,1): warning C5045: E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(1981) : 注意: 在此行上通过对比检查索引 "" 范围
+E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(1982,1): warning C5045: E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(1982) : 注意: 此行上的源调用
+E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(1966,1): warning C5045: 如果指定了 /Qspectre 开关，编译器会插入内存负载的 Spectre 缓解 
+E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(1966,1): warning C5045: E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(1965) : 注意: 在此行上通过对比检查索引 "" 范围
+E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(1966,1): warning C5045: E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(1966) : 注意: 此行上的源调用
+E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(1944,1): warning C5045: 如果指定了 /Qspectre 开关，编译器会插入内存负载的 Spectre 缓解 
+E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(1944,1): warning C5045: E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(1944) : 注意: 在此行上通过对比检查索引 "" 范围
+E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(1944,1): warning C5045: E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(1944) : 注意: 此行上的源调用
+E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(1936,1): warning C5045: 如果指定了 /Qspectre 开关，编译器会插入内存负载的 Spectre 缓解 
+E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(1936,1): warning C5045: E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(1936) : 注意: 在此行上通过对比检查索引 "" 范围
+E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(1936,1): warning C5045: E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(1936) : 注意: 此行上的源调用
+E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(1922,1): warning C5045: 如果指定了 /Qspectre 开关，编译器会插入内存负载的 Spectre 缓解 
+E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(1922,1): warning C5045: E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(1922) : 注意: 在此行上通过对比检查索引 "" 范围
+E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(1922,1): warning C5045: E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(1922) : 注意: 此行上的源调用
+E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(5526,1): warning C5045: 如果指定了 /Qspectre 开关，编译器会插入内存负载的 Spectre 缓解 
+E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(5526,1): warning C5045: E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(5524) : 注意: 在此行上通过对比检查索引 "" 范围
+E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(5526,1): warning C5045: E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(5526) : 注意: 此行上的源调用
+E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(1909,1): warning C5045: 如果指定了 /Qspectre 开关，编译器会插入内存负载的 Spectre 缓解 
+E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(1909,1): warning C5045: E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(1909) : 注意: 在此行上通过对比检查索引 "" 范围
+E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(1909,1): warning C5045: E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(1909) : 注意: 此行上的源调用
+E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(1902,1): warning C5045: 如果指定了 /Qspectre 开关，编译器会插入内存负载的 Spectre 缓解 
+E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(1902,1): warning C5045: E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(1901) : 注意: 在此行上通过对比检查索引 "" 范围
+E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(1902,1): warning C5045: E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(1902) : 注意: 此行上的源调用
+E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(1893,1): warning C5045: 如果指定了 /Qspectre 开关，编译器会插入内存负载的 Spectre 缓解 
+E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(1893,1): warning C5045: E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(1893) : 注意: 在此行上通过对比检查索引 "" 范围
+E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(1893,1): warning C5045: E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(1893) : 注意: 此行上的源调用
+E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(1875,1): warning C5045: 如果指定了 /Qspectre 开关，编译器会插入内存负载的 Spectre 缓解 
+E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(1875,1): warning C5045: E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(1874) : 注意: 在此行上通过对比检查索引 "" 范围
+E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(1875,1): warning C5045: E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(1875) : 注意: 此行上的源调用
+E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(1854,1): warning C5045: 如果指定了 /Qspectre 开关，编译器会插入内存负载的 Spectre 缓解 
+E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(1854,1): warning C5045: E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(1854) : 注意: 在此行上通过对比检查索引 "" 范围
+E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(1854,1): warning C5045: E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(1854) : 注意: 此行上的源调用
+E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(1846,1): warning C5045: 如果指定了 /Qspectre 开关，编译器会插入内存负载的 Spectre 缓解 
+E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(1846,1): warning C5045: E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(1846) : 注意: 在此行上通过对比检查索引 "" 范围
+E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(1846,1): warning C5045: E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(1846) : 注意: 此行上的源调用
+E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(1834,1): warning C5045: 如果指定了 /Qspectre 开关，编译器会插入内存负载的 Spectre 缓解 
+E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(1834,1): warning C5045: E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(1834) : 注意: 在此行上通过对比检查索引 "" 范围
+E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(1834,1): warning C5045: E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(1834) : 注意: 此行上的源调用
+E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(1823,1): warning C5045: 如果指定了 /Qspectre 开关，编译器会插入内存负载的 Spectre 缓解 
+E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(1823,1): warning C5045: E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(1823) : 注意: 在此行上通过对比检查索引 "" 范围
+E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(1823,1): warning C5045: E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(1823) : 注意: 此行上的源调用
+E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(1815,1): warning C5045: 如果指定了 /Qspectre 开关，编译器会插入内存负载的 Spectre 缓解 
+E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(1815,1): warning C5045: E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(1815) : 注意: 在此行上通过对比检查索引 "" 范围
+E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(1815,1): warning C5045: E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(1815) : 注意: 此行上的源调用
+E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(1802,1): warning C5045: 如果指定了 /Qspectre 开关，编译器会插入内存负载的 Spectre 缓解 
+E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(1802,1): warning C5045: E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(1802) : 注意: 在此行上通过对比检查索引 "" 范围
+E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(1802,1): warning C5045: E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(1802) : 注意: 此行上的源调用
+E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(1794,1): warning C5045: 如果指定了 /Qspectre 开关，编译器会插入内存负载的 Spectre 缓解 
+E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(1794,1): warning C5045: E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(1792) : 注意: 在此行上通过对比检查索引 "" 范围
+E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(1794,1): warning C5045: E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(1794) : 注意: 此行上的源调用
+E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(1792,1): warning C5045: 如果指定了 /Qspectre 开关，编译器会插入内存负载的 Spectre 缓解 
+E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(1792,1): warning C5045: E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(1792) : 注意: 在此行上通过对比检查索引 "" 范围
+E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(1792,1): warning C5045: E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(1792) : 注意: 此行上的源调用
+E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(1773,1): warning C5045: 如果指定了 /Qspectre 开关，编译器会插入内存负载的 Spectre 缓解 
+E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(1773,1): warning C5045: E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(1772) : 注意: 在此行上通过对比检查索引 "" 范围
+E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(1773,1): warning C5045: E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(1773) : 注意: 此行上的源调用
+E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(1757,1): warning C5045: 如果指定了 /Qspectre 开关，编译器会插入内存负载的 Spectre 缓解 
+E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(1757,1): warning C5045: E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(1757) : 注意: 在此行上通过对比检查索引 "" 范围
+E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(1757,1): warning C5045: E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(1757) : 注意: 此行上的源调用
+E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(1746,1): warning C5045: 如果指定了 /Qspectre 开关，编译器会插入内存负载的 Spectre 缓解 
+E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(1746,1): warning C5045: E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(1746) : 注意: 在此行上通过对比检查索引 "" 范围
+E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(1746,1): warning C5045: E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(1746) : 注意: 此行上的源调用
+E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(4204,1): warning C5045: 如果指定了 /Qspectre 开关，编译器会插入内存负载的 Spectre 缓解 
+E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(4204,1): warning C5045: E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(4204) : 注意: 在此行上通过对比检查索引 "" 范围
+E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(4204,1): warning C5045: E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(4204) : 注意: 此行上的源调用
+E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(1738,1): warning C5045: 如果指定了 /Qspectre 开关，编译器会插入内存负载的 Spectre 缓解 
+E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(1738,1): warning C5045: E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(1738) : 注意: 在此行上通过对比检查索引 "" 范围
+E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(1738,1): warning C5045: E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(1738) : 注意: 此行上的源调用
+E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(4191,1): warning C5045: 如果指定了 /Qspectre 开关，编译器会插入内存负载的 Spectre 缓解 
+E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(4191,1): warning C5045: E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(4191) : 注意: 在此行上通过对比检查索引 "" 范围
+E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(4191,1): warning C5045: E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(4191) : 注意: 此行上的源调用
+E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(1730,1): warning C5045: 如果指定了 /Qspectre 开关，编译器会插入内存负载的 Spectre 缓解 
+E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(1730,1): warning C5045: E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(1730) : 注意: 在此行上通过对比检查索引 "" 范围
+E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(1730,1): warning C5045: E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(1730) : 注意: 此行上的源调用
+E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(4183,1): warning C5045: 如果指定了 /Qspectre 开关，编译器会插入内存负载的 Spectre 缓解 
+E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(4183,1): warning C5045: E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(4183) : 注意: 在此行上通过对比检查索引 "" 范围
+E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(4183,1): warning C5045: E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(4183) : 注意: 此行上的源调用
+E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(1716,1): warning C5045: 如果指定了 /Qspectre 开关，编译器会插入内存负载的 Spectre 缓解 
+E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(1716,1): warning C5045: E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(1716) : 注意: 在此行上通过对比检查索引 "" 范围
+E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(1716,1): warning C5045: E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(1716) : 注意: 此行上的源调用
+E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(4171,1): warning C5045: 如果指定了 /Qspectre 开关，编译器会插入内存负载的 Spectre 缓解 
+E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(4171,1): warning C5045: E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(4171) : 注意: 在此行上通过对比检查索引 "" 范围
+E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(4171,1): warning C5045: E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(4171) : 注意: 此行上的源调用
+E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(1708,1): warning C5045: 如果指定了 /Qspectre 开关，编译器会插入内存负载的 Spectre 缓解 
+E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(1708,1): warning C5045: E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(1708) : 注意: 在此行上通过对比检查索引 "" 范围
+E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(1708,1): warning C5045: E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(1708) : 注意: 此行上的源调用
+E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(4163,1): warning C5045: 如果指定了 /Qspectre 开关，编译器会插入内存负载的 Spectre 缓解 
+E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(4163,1): warning C5045: E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(4163) : 注意: 在此行上通过对比检查索引 "" 范围
+E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(4163,1): warning C5045: E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(4163) : 注意: 此行上的源调用
+E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(1694,1): warning C5045: 如果指定了 /Qspectre 开关，编译器会插入内存负载的 Spectre 缓解 
+E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(1694,1): warning C5045: E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(1694) : 注意: 在此行上通过对比检查索引 "" 范围
+E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(1694,1): warning C5045: E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(1694) : 注意: 此行上的源调用
+E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(4152,1): warning C5045: 如果指定了 /Qspectre 开关，编译器会插入内存负载的 Spectre 缓解 
+E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(4152,1): warning C5045: E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(4152) : 注意: 在此行上通过对比检查索引 "" 范围
+E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(4152,1): warning C5045: E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(4152) : 注意: 此行上的源调用
+E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(1686,1): warning C5045: 如果指定了 /Qspectre 开关，编译器会插入内存负载的 Spectre 缓解 
+E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(1686,1): warning C5045: E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(1686) : 注意: 在此行上通过对比检查索引 "" 范围
+E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(1686,1): warning C5045: E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(1686) : 注意: 此行上的源调用
+E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(4144,1): warning C5045: 如果指定了 /Qspectre 开关，编译器会插入内存负载的 Spectre 缓解 
+E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(4144,1): warning C5045: E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(4144) : 注意: 在此行上通过对比检查索引 "" 范围
+E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(4144,1): warning C5045: E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(4144) : 注意: 此行上的源调用
+E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(1678,1): warning C5045: 如果指定了 /Qspectre 开关，编译器会插入内存负载的 Spectre 缓解 
+E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(1678,1): warning C5045: E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(1678) : 注意: 在此行上通过对比检查索引 "" 范围
+E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(1678,1): warning C5045: E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(1678) : 注意: 此行上的源调用
+E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(4133,1): warning C5045: 如果指定了 /Qspectre 开关，编译器会插入内存负载的 Spectre 缓解 
+E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(4133,1): warning C5045: E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(4133) : 注意: 在此行上通过对比检查索引 "" 范围
+E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(4133,1): warning C5045: E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(4133) : 注意: 此行上的源调用
+E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(1659,1): warning C5045: 如果指定了 /Qspectre 开关，编译器会插入内存负载的 Spectre 缓解 
+E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(1659,1): warning C5045: E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(1659) : 注意: 在此行上通过对比检查索引 "" 范围
+E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(1659,1): warning C5045: E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(1659) : 注意: 此行上的源调用
+E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(4122,1): warning C5045: 如果指定了 /Qspectre 开关，编译器会插入内存负载的 Spectre 缓解 
+E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(4122,1): warning C5045: E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(4122) : 注意: 在此行上通过对比检查索引 "" 范围
+E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(4122,1): warning C5045: E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(4122) : 注意: 此行上的源调用
+E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(1648,1): warning C5045: 如果指定了 /Qspectre 开关，编译器会插入内存负载的 Spectre 缓解 
+E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(1648,1): warning C5045: E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(1648) : 注意: 在此行上通过对比检查索引 "" 范围
+E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(1648,1): warning C5045: E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(1648) : 注意: 此行上的源调用
+E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(4114,1): warning C5045: 如果指定了 /Qspectre 开关，编译器会插入内存负载的 Spectre 缓解 
+E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(4114,1): warning C5045: E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(4114) : 注意: 在此行上通过对比检查索引 "" 范围
+E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(4114,1): warning C5045: E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(4114) : 注意: 此行上的源调用
+E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(1640,1): warning C5045: 如果指定了 /Qspectre 开关，编译器会插入内存负载的 Spectre 缓解 
+E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(1640,1): warning C5045: E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(1640) : 注意: 在此行上通过对比检查索引 "" 范围
+E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(1640,1): warning C5045: E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(1640) : 注意: 此行上的源调用
+E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(4100,1): warning C5045: 如果指定了 /Qspectre 开关，编译器会插入内存负载的 Spectre 缓解 
+E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(4100,1): warning C5045: E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(4100) : 注意: 在此行上通过对比检查索引 "" 范围
+E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(4100,1): warning C5045: E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(4100) : 注意: 此行上的源调用
+E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(1618,1): warning C5045: 如果指定了 /Qspectre 开关，编译器会插入内存负载的 Spectre 缓解 
+E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(1618,1): warning C5045: E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(1618) : 注意: 在此行上通过对比检查索引 "" 范围
+E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(1618,1): warning C5045: E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(1618) : 注意: 此行上的源调用
+E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(4092,1): warning C5045: 如果指定了 /Qspectre 开关，编译器会插入内存负载的 Spectre 缓解 
+E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(4092,1): warning C5045: E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(4092) : 注意: 在此行上通过对比检查索引 "" 范围
+E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(4092,1): warning C5045: E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(4092) : 注意: 此行上的源调用
+E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(4081,1): warning C5045: 如果指定了 /Qspectre 开关，编译器会插入内存负载的 Spectre 缓解 
+E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(4081,1): warning C5045: E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(4081) : 注意: 在此行上通过对比检查索引 "" 范围
+E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(4081,1): warning C5045: E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(4081) : 注意: 此行上的源调用
+E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(4068,1): warning C5045: 如果指定了 /Qspectre 开关，编译器会插入内存负载的 Spectre 缓解 
+E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(4068,1): warning C5045: E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(4068) : 注意: 在此行上通过对比检查索引 "" 范围
+E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(4068,1): warning C5045: E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(4068) : 注意: 此行上的源调用
+E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(4060,1): warning C5045: 如果指定了 /Qspectre 开关，编译器会插入内存负载的 Spectre 缓解 
+E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(4060,1): warning C5045: E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(4060) : 注意: 在此行上通过对比检查索引 "" 范围
+E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(4060,1): warning C5045: E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(4060) : 注意: 此行上的源调用
+E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(4048,1): warning C5045: 如果指定了 /Qspectre 开关，编译器会插入内存负载的 Spectre 缓解 
+E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(4048,1): warning C5045: E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(4048) : 注意: 在此行上通过对比检查索引 "" 范围
+E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(4048,1): warning C5045: E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(4048) : 注意: 此行上的源调用
+E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(4037,1): warning C5045: 如果指定了 /Qspectre 开关，编译器会插入内存负载的 Spectre 缓解 
+E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(4037,1): warning C5045: E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(4037) : 注意: 在此行上通过对比检查索引 "" 范围
+E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(4037,1): warning C5045: E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(4037) : 注意: 此行上的源调用
+E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(4029,1): warning C5045: 如果指定了 /Qspectre 开关，编译器会插入内存负载的 Spectre 缓解 
+E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(4029,1): warning C5045: E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(4029) : 注意: 在此行上通过对比检查索引 "" 范围
+E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(4029,1): warning C5045: E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(4029) : 注意: 此行上的源调用
+E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(4021,1): warning C5045: 如果指定了 /Qspectre 开关，编译器会插入内存负载的 Spectre 缓解 
+E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(4021,1): warning C5045: E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(4021) : 注意: 在此行上通过对比检查索引 "" 范围
+E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(4021,1): warning C5045: E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(4021) : 注意: 此行上的源调用
+E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(4010,1): warning C5045: 如果指定了 /Qspectre 开关，编译器会插入内存负载的 Spectre 缓解 
+E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(4010,1): warning C5045: E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(4010) : 注意: 在此行上通过对比检查索引 "" 范围
+E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(4010,1): warning C5045: E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(4010) : 注意: 此行上的源调用
+E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(3999,1): warning C5045: 如果指定了 /Qspectre 开关，编译器会插入内存负载的 Spectre 缓解 
+E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(3999,1): warning C5045: E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(3999) : 注意: 在此行上通过对比检查索引 "" 范围
+E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(3999,1): warning C5045: E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(3999) : 注意: 此行上的源调用
+E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(3991,1): warning C5045: 如果指定了 /Qspectre 开关，编译器会插入内存负载的 Spectre 缓解 
+E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(3991,1): warning C5045: E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(3991) : 注意: 在此行上通过对比检查索引 "" 范围
+E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(3991,1): warning C5045: E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(3991) : 注意: 此行上的源调用
+E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(3983,1): warning C5045: 如果指定了 /Qspectre 开关，编译器会插入内存负载的 Spectre 缓解 
+E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(3983,1): warning C5045: E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(3983) : 注意: 在此行上通过对比检查索引 "" 范围
+E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(3983,1): warning C5045: E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(3983) : 注意: 此行上的源调用
+E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(3969,1): warning C5045: 如果指定了 /Qspectre 开关，编译器会插入内存负载的 Spectre 缓解 
+E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(3969,1): warning C5045: E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(3969) : 注意: 在此行上通过对比检查索引 "" 范围
+E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(3969,1): warning C5045: E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(3969) : 注意: 此行上的源调用
+E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(3961,1): warning C5045: 如果指定了 /Qspectre 开关，编译器会插入内存负载的 Spectre 缓解 
+E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(3961,1): warning C5045: E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(3961) : 注意: 在此行上通过对比检查索引 "" 范围
+E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(3961,1): warning C5045: E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(3961) : 注意: 此行上的源调用
+E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(3947,1): warning C5045: 如果指定了 /Qspectre 开关，编译器会插入内存负载的 Spectre 缓解 
+E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(3947,1): warning C5045: E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(3947) : 注意: 在此行上通过对比检查索引 "" 范围
+E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(3947,1): warning C5045: E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(3947) : 注意: 此行上的源调用
+E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(3939,1): warning C5045: 如果指定了 /Qspectre 开关，编译器会插入内存负载的 Spectre 缓解 
+E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(3939,1): warning C5045: E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(3939) : 注意: 在此行上通过对比检查索引 "" 范围
+E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(3939,1): warning C5045: E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(3939) : 注意: 此行上的源调用
+E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(3922,1): warning C5045: 如果指定了 /Qspectre 开关，编译器会插入内存负载的 Spectre 缓解 
+E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(3922,1): warning C5045: E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(3922) : 注意: 在此行上通过对比检查索引 "" 范围
+E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(3922,1): warning C5045: E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(3922) : 注意: 此行上的源调用
+E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(3905,1): warning C5045: 如果指定了 /Qspectre 开关，编译器会插入内存负载的 Spectre 缓解 
+E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(3905,1): warning C5045: E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(3905) : 注意: 在此行上通过对比检查索引 "" 范围
+E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(3905,1): warning C5045: E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(3905) : 注意: 此行上的源调用
+E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(3897,1): warning C5045: 如果指定了 /Qspectre 开关，编译器会插入内存负载的 Spectre 缓解 
+E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(3897,1): warning C5045: E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(3897) : 注意: 在此行上通过对比检查索引 "" 范围
+E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(3897,1): warning C5045: E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(3897) : 注意: 此行上的源调用
+E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(3889,1): warning C5045: 如果指定了 /Qspectre 开关，编译器会插入内存负载的 Spectre 缓解 
+E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(3889,1): warning C5045: E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(3889) : 注意: 在此行上通过对比检查索引 "" 范围
+E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(3889,1): warning C5045: E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(3889) : 注意: 此行上的源调用
+E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(3872,1): warning C5045: 如果指定了 /Qspectre 开关，编译器会插入内存负载的 Spectre 缓解 
+E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(3872,1): warning C5045: E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(3872) : 注意: 在此行上通过对比检查索引 "" 范围
+E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(3872,1): warning C5045: E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(3872) : 注意: 此行上的源调用
+E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(5791,1): warning C5045: 如果指定了 /Qspectre 开关，编译器会插入内存负载的 Spectre 缓解 
+E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(5791,1): warning C5045: E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(5791) : 注意: 在此行上通过对比检查索引 "" 范围
+E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(5791,1): warning C5045: E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(5791) : 注意: 此行上的源调用
+E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(5789,1): warning C5045: 如果指定了 /Qspectre 开关，编译器会插入内存负载的 Spectre 缓解 
+E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(5789,1): warning C5045: E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(5789) : 注意: 在此行上通过对比检查索引 "" 范围
+E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(5789,1): warning C5045: E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(5789) : 注意: 此行上的源调用
+E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(5787,1): warning C5045: 如果指定了 /Qspectre 开关，编译器会插入内存负载的 Spectre 缓解 
+E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(5787,1): warning C5045: E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(5787) : 注意: 在此行上通过对比检查索引 "" 范围
+E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(5787,1): warning C5045: E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(5787) : 注意: 此行上的源调用
+E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(5785,1): warning C5045: 如果指定了 /Qspectre 开关，编译器会插入内存负载的 Spectre 缓解 
+E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(5785,1): warning C5045: E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(5785) : 注意: 在此行上通过对比检查索引 "" 范围
+E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(5785,1): warning C5045: E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(5785) : 注意: 此行上的源调用
+E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(5781,1): warning C5045: 如果指定了 /Qspectre 开关，编译器会插入内存负载的 Spectre 缓解 
+E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(5781,1): warning C5045: E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(5781) : 注意: 在此行上通过对比检查索引 "" 范围
+E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(5781,1): warning C5045: E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(5781) : 注意: 此行上的源调用
+E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(5779,1): warning C5045: 如果指定了 /Qspectre 开关，编译器会插入内存负载的 Spectre 缓解 
+E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(5779,1): warning C5045: E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(5779) : 注意: 在此行上通过对比检查索引 "" 范围
+E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(5779,1): warning C5045: E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(5779) : 注意: 此行上的源调用
+E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(5774,1): warning C5045: 如果指定了 /Qspectre 开关，编译器会插入内存负载的 Spectre 缓解 
+E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(5774,1): warning C5045: E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(5774) : 注意: 在此行上通过对比检查索引 "" 范围
+E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(5774,1): warning C5045: E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(5774) : 注意: 此行上的源调用
+E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(5772,1): warning C5045: 如果指定了 /Qspectre 开关，编译器会插入内存负载的 Spectre 缓解 
+E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(5772,1): warning C5045: E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(5772) : 注意: 在此行上通过对比检查索引 "" 范围
+E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(5772,1): warning C5045: E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(5772) : 注意: 此行上的源调用
+E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(5770,1): warning C5045: 如果指定了 /Qspectre 开关，编译器会插入内存负载的 Spectre 缓解 
+E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(5770,1): warning C5045: E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(5770) : 注意: 在此行上通过对比检查索引 "" 范围
+E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(5770,1): warning C5045: E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(5770) : 注意: 此行上的源调用
+E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(5762,1): warning C5045: 如果指定了 /Qspectre 开关，编译器会插入内存负载的 Spectre 缓解 
+E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(5762,1): warning C5045: E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(5762) : 注意: 在此行上通过对比检查索引 "" 范围
+E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(5762,1): warning C5045: E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(5762) : 注意: 此行上的源调用
+E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(5760,1): warning C5045: 如果指定了 /Qspectre 开关，编译器会插入内存负载的 Spectre 缓解 
+E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(5760,1): warning C5045: E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(5760) : 注意: 在此行上通过对比检查索引 "" 范围
+E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(5760,1): warning C5045: E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(5760) : 注意: 此行上的源调用
+E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(5758,1): warning C5045: 如果指定了 /Qspectre 开关，编译器会插入内存负载的 Spectre 缓解 
+E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(5758,1): warning C5045: E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(5758) : 注意: 在此行上通过对比检查索引 "" 范围
+E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(5758,1): warning C5045: E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(5758) : 注意: 此行上的源调用
+E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(5753,1): warning C5045: 如果指定了 /Qspectre 开关，编译器会插入内存负载的 Spectre 缓解 
+E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(5753,1): warning C5045: E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(5753) : 注意: 在此行上通过对比检查索引 "" 范围
+E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(5753,1): warning C5045: E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(5753) : 注意: 此行上的源调用
+E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(5829,1): warning C5045: 如果指定了 /Qspectre 开关，编译器会插入内存负载的 Spectre 缓解 
+E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(5829,1): warning C5045: E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(5828) : 注意: 在此行上通过对比检查索引 "" 范围
+E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(5829,1): warning C5045: E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(5829) : 注意: 此行上的源调用
+E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(5827,1): warning C5045: 如果指定了 /Qspectre 开关，编译器会插入内存负载的 Spectre 缓解 
+E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(5827,1): warning C5045: E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(5826) : 注意: 在此行上通过对比检查索引 "" 范围
+E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(5827,1): warning C5045: E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(5827) : 注意: 此行上的源调用
+E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(5854,1): warning C5045: 如果指定了 /Qspectre 开关，编译器会插入内存负载的 Spectre 缓解 
+E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(5854,1): warning C5045: E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(5852) : 注意: 在此行上通过对比检查索引 "" 范围
+E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(5854,1): warning C5045: E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(5854) : 注意: 此行上的源调用
+E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(6000,1): warning C5045: 如果指定了 /Qspectre 开关，编译器会插入内存负载的 Spectre 缓解 
+E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(6000,1): warning C5045: E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(6000) : 注意: 在此行上通过对比检查索引 "" 范围
+E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(6000,1): warning C5045: E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(6000) : 注意: 此行上的源调用
+E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(5997,1): warning C5045: 如果指定了 /Qspectre 开关，编译器会插入内存负载的 Spectre 缓解 
+E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(5997,1): warning C5045: E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(5997) : 注意: 在此行上通过对比检查索引 "" 范围
+E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(5997,1): warning C5045: E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(5997) : 注意: 此行上的源调用
+E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(6039,1): warning C5045: 如果指定了 /Qspectre 开关，编译器会插入内存负载的 Spectre 缓解 
+E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(6039,1): warning C5045: E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(6038) : 注意: 在此行上通过对比检查索引 "" 范围
+E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(6039,1): warning C5045: E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(6039) : 注意: 此行上的源调用
+E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(6068,1): warning C5045: 如果指定了 /Qspectre 开关，编译器会插入内存负载的 Spectre 缓解 
+E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(6068,1): warning C5045: E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(6066) : 注意: 在此行上通过对比检查索引 "" 范围
+E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(6068,1): warning C5045: E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(6068) : 注意: 此行上的源调用
+E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(6107,1): warning C5045: 如果指定了 /Qspectre 开关，编译器会插入内存负载的 Spectre 缓解 
+E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(6107,1): warning C5045: E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(6106) : 注意: 在此行上通过对比检查索引 "" 范围
+E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(6107,1): warning C5045: E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(6107) : 注意: 此行上的源调用
+E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(6218,1): warning C5045: 如果指定了 /Qspectre 开关，编译器会插入内存负载的 Spectre 缓解 
+E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(6218,1): warning C5045: E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(6217) : 注意: 在此行上通过对比检查索引 "stringID" 范围
+E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(6218,1): warning C5045: E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(6218) : 注意: 此行上的源调用
+E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(6216,1): warning C5045: 如果指定了 /Qspectre 开关，编译器会插入内存负载的 Spectre 缓解 
+E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(6216,1): warning C5045: E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(6214) : 注意: 在此行上通过对比检查索引 "length" 范围
+E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(6216,1): warning C5045: E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(6216) : 注意: 此行上的源调用
+E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(6566,1): warning C5045: 如果指定了 /Qspectre 开关，编译器会插入内存负载的 Spectre 缓解 
+E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(6566,1): warning C5045: E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(6565) : 注意: 在此行上通过对比检查索引 "idx" 范围
+E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(6566,1): warning C5045: E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(6566) : 注意: 此行上的源调用
+E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(268,1): warning C5045: 如果指定了 /Qspectre 开关，编译器会插入内存负载的 Spectre 缓解 
+E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(268,1): warning C5045: E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(268) : 注意: 在此行上通过对比检查索引 "" 范围
+E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(268,1): warning C5045: E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(268) : 注意: 此行上的源调用
+E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(3747,1): warning C5045: 如果指定了 /Qspectre 开关，编译器会插入内存负载的 Spectre 缓解 
+E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(3747,1): warning C5045: E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(3747) : 注意: 在此行上通过对比检查索引 "" 范围
+E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(3747,1): warning C5045: E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(3747) : 注意: 此行上的源调用
+E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(3734,1): warning C5045: 如果指定了 /Qspectre 开关，编译器会插入内存负载的 Spectre 缓解 
+E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(3734,1): warning C5045: E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(3734) : 注意: 在此行上通过对比检查索引 "" 范围
+E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(3734,1): warning C5045: E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(3734) : 注意: 此行上的源调用
+E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(3719,1): warning C5045: 如果指定了 /Qspectre 开关，编译器会插入内存负载的 Spectre 缓解 
+E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(3719,1): warning C5045: E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(3717) : 注意: 在此行上通过对比检查索引 "" 范围
+E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(3719,1): warning C5045: E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(3719) : 注意: 此行上的源调用
+E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(3717,1): warning C5045: 如果指定了 /Qspectre 开关，编译器会插入内存负载的 Spectre 缓解 
+E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(3717,1): warning C5045: E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(3717) : 注意: 在此行上通过对比检查索引 "" 范围
+E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(3717,1): warning C5045: E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(3717) : 注意: 此行上的源调用
+E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(3709,1): warning C5045: 如果指定了 /Qspectre 开关，编译器会插入内存负载的 Spectre 缓解 
+E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(3709,1): warning C5045: E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(3709) : 注意: 在此行上通过对比检查索引 "" 范围
+E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(3709,1): warning C5045: E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(3709) : 注意: 此行上的源调用
+E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(3700,1): warning C5045: 如果指定了 /Qspectre 开关，编译器会插入内存负载的 Spectre 缓解 
+E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(3700,1): warning C5045: E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(3699) : 注意: 在此行上通过对比检查索引 "" 范围
+E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(3700,1): warning C5045: E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(3700) : 注意: 此行上的源调用
+E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(3664,1): warning C5045: 如果指定了 /Qspectre 开关，编译器会插入内存负载的 Spectre 缓解 
+E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(3664,1): warning C5045: E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(3664) : 注意: 在此行上通过对比检查索引 "" 范围
+E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(3664,1): warning C5045: E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(3664) : 注意: 此行上的源调用
+E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(3664,1): warning C5045: 如果指定了 /Qspectre 开关，编译器会插入内存负载的 Spectre 缓解 
+E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(3664,1): warning C5045: E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(3653) : 注意: 在此行上通过对比检查索引 "" 范围
+E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(3664,1): warning C5045: E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(3664) : 注意: 此行上的源调用
+E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(3661,1): warning C5045: 如果指定了 /Qspectre 开关，编译器会插入内存负载的 Spectre 缓解 
+E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(3661,1): warning C5045: E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(3660) : 注意: 在此行上通过对比检查索引 "" 范围
+E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(3661,1): warning C5045: E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(3661) : 注意: 此行上的源调用
+E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(3654,1): warning C5045: 如果指定了 /Qspectre 开关，编译器会插入内存负载的 Spectre 缓解 
+E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(3654,1): warning C5045: E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(3653) : 注意: 在此行上通过对比检查索引 "" 范围
+E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(3654,1): warning C5045: E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(3654) : 注意: 此行上的源调用
+E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(3582,1): warning C5045: 如果指定了 /Qspectre 开关，编译器会插入内存负载的 Spectre 缓解 
+E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(3582,1): warning C5045: E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(3580) : 注意: 在此行上通过对比检查索引 "" 范围
+E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(3582,1): warning C5045: E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(3582) : 注意: 此行上的源调用
+E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(3580,1): warning C5045: 如果指定了 /Qspectre 开关，编译器会插入内存负载的 Spectre 缓解 
+E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(3580,1): warning C5045: E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(3580) : 注意: 在此行上通过对比检查索引 "" 范围
+E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(3580,1): warning C5045: E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(3580) : 注意: 此行上的源调用
+E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(3568,1): warning C5045: 如果指定了 /Qspectre 开关，编译器会插入内存负载的 Spectre 缓解 
+E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(3568,1): warning C5045: E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(3568) : 注意: 在此行上通过对比检查索引 "" 范围
+E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(3568,1): warning C5045: E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(3568) : 注意: 此行上的源调用
+E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(3568,1): warning C5045: 如果指定了 /Qspectre 开关，编译器会插入内存负载的 Spectre 缓解 
+E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(3568,1): warning C5045: E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(3565) : 注意: 在此行上通过对比检查索引 "" 范围
+E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(3568,1): warning C5045: E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(3568) : 注意: 此行上的源调用
+E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(3565,1): warning C5045: 如果指定了 /Qspectre 开关，编译器会插入内存负载的 Spectre 缓解 
+E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(3565,1): warning C5045: E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(3565) : 注意: 在此行上通过对比检查索引 "" 范围
+E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(3565,1): warning C5045: E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(3565) : 注意: 此行上的源调用
+E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(3544,1): warning C5045: 如果指定了 /Qspectre 开关，编译器会插入内存负载的 Spectre 缓解 
+E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(3544,1): warning C5045: E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(3543) : 注意: 在此行上通过对比检查索引 "" 范围
+E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(3544,1): warning C5045: E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(3544) : 注意: 此行上的源调用
+E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(3505,1): warning C5045: 如果指定了 /Qspectre 开关，编译器会插入内存负载的 Spectre 缓解 
+E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(3505,1): warning C5045: E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(3504) : 注意: 在此行上通过对比检查索引 "" 范围
+E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(3505,1): warning C5045: E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(3505) : 注意: 此行上的源调用
+E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(3504,1): warning C5045: 如果指定了 /Qspectre 开关，编译器会插入内存负载的 Spectre 缓解 
+E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(3504,1): warning C5045: E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(3497) : 注意: 在此行上通过对比检查索引 "" 范围
+E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(3504,1): warning C5045: E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(3504) : 注意: 此行上的源调用
+E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(3498,1): warning C5045: 如果指定了 /Qspectre 开关，编译器会插入内存负载的 Spectre 缓解 
+E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(3498,1): warning C5045: E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(3497) : 注意: 在此行上通过对比检查索引 "" 范围
+E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(3498,1): warning C5045: E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(3498) : 注意: 此行上的源调用
+E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(3468,1): warning C5045: 如果指定了 /Qspectre 开关，编译器会插入内存负载的 Spectre 缓解 
+E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(3468,1): warning C5045: E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(3466) : 注意: 在此行上通过对比检查索引 "" 范围
+E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(3468,1): warning C5045: E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(3468) : 注意: 此行上的源调用
+E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(3466,1): warning C5045: 如果指定了 /Qspectre 开关，编译器会插入内存负载的 Spectre 缓解 
+E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(3466,1): warning C5045: E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(3466) : 注意: 在此行上通过对比检查索引 "" 范围
+E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(3466,1): warning C5045: E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(3466) : 注意: 此行上的源调用
+E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(3257,1): warning C5045: 如果指定了 /Qspectre 开关，编译器会插入内存负载的 Spectre 缓解 
+E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(3257,1): warning C5045: E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(3251) : 注意: 在此行上通过对比检查索引 "" 范围
+E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(3257,1): warning C5045: E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(3257) : 注意: 此行上的源调用
+E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(3252,1): warning C5045: 如果指定了 /Qspectre 开关，编译器会插入内存负载的 Spectre 缓解 
+E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(3252,1): warning C5045: E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(3251) : 注意: 在此行上通过对比检查索引 "" 范围
+E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(3252,1): warning C5045: E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(3252) : 注意: 此行上的源调用
+E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(3216,1): warning C5045: 如果指定了 /Qspectre 开关，编译器会插入内存负载的 Spectre 缓解 
+E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(3216,1): warning C5045: E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(3214) : 注意: 在此行上通过对比检查索引 "" 范围
+E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(3216,1): warning C5045: E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(3216) : 注意: 此行上的源调用
+E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(3214,1): warning C5045: 如果指定了 /Qspectre 开关，编译器会插入内存负载的 Spectre 缓解 
+E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(3214,1): warning C5045: E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(3214) : 注意: 在此行上通过对比检查索引 "" 范围
+E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(3214,1): warning C5045: E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(3214) : 注意: 此行上的源调用
+E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(3184,1): warning C5045: 如果指定了 /Qspectre 开关，编译器会插入内存负载的 Spectre 缓解 
+E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(3184,1): warning C5045: E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(3181) : 注意: 在此行上通过对比检查索引 "" 范围
+E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(3184,1): warning C5045: E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(3184) : 注意: 此行上的源调用
+E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(3181,1): warning C5045: 如果指定了 /Qspectre 开关，编译器会插入内存负载的 Spectre 缓解 
+E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(3181,1): warning C5045: E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(3181) : 注意: 在此行上通过对比检查索引 "" 范围
+E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(3181,1): warning C5045: E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(3181) : 注意: 此行上的源调用
+E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(3156,1): warning C5045: 如果指定了 /Qspectre 开关，编译器会插入内存负载的 Spectre 缓解 
+E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(3156,1): warning C5045: E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(3156) : 注意: 在此行上通过对比检查索引 "" 范围
+E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(3156,1): warning C5045: E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(3156) : 注意: 此行上的源调用
+E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(3127,1): warning C5045: 如果指定了 /Qspectre 开关，编译器会插入内存负载的 Spectre 缓解 
+E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(3127,1): warning C5045: E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(3127) : 注意: 在此行上通过对比检查索引 "" 范围
+E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(3127,1): warning C5045: E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(3127) : 注意: 此行上的源调用
+E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(3119,1): warning C5045: 如果指定了 /Qspectre 开关，编译器会插入内存负载的 Spectre 缓解 
+E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(3119,1): warning C5045: E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(3119) : 注意: 在此行上通过对比检查索引 "" 范围
+E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(3119,1): warning C5045: E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(3119) : 注意: 此行上的源调用
+E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(3103,1): warning C5045: 如果指定了 /Qspectre 开关，编译器会插入内存负载的 Spectre 缓解 
+E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(3103,1): warning C5045: E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(3103) : 注意: 在此行上通过对比检查索引 "" 范围
+E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(3103,1): warning C5045: E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(3103) : 注意: 此行上的源调用
+E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(3084,1): warning C5045: 如果指定了 /Qspectre 开关，编译器会插入内存负载的 Spectre 缓解 
+E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(3084,1): warning C5045: E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(3084) : 注意: 在此行上通过对比检查索引 "" 范围
+E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(3084,1): warning C5045: E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(3084) : 注意: 此行上的源调用
+E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(3073,1): warning C5045: 如果指定了 /Qspectre 开关，编译器会插入内存负载的 Spectre 缓解 
+E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(3073,1): warning C5045: E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(3072) : 注意: 在此行上通过对比检查索引 "" 范围
+E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(3073,1): warning C5045: E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(3073) : 注意: 此行上的源调用
+E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(3072,1): warning C5045: 如果指定了 /Qspectre 开关，编译器会插入内存负载的 Spectre 缓解 
+E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(3072,1): warning C5045: E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(3070) : 注意: 在此行上通过对比检查索引 "" 范围
+E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(3072,1): warning C5045: E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(3072) : 注意: 此行上的源调用
+E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(3070,1): warning C5045: 如果指定了 /Qspectre 开关，编译器会插入内存负载的 Spectre 缓解 
+E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(3070,1): warning C5045: E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(3070) : 注意: 在此行上通过对比检查索引 "" 范围
+E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(3070,1): warning C5045: E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(3070) : 注意: 此行上的源调用
+E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(3013,1): warning C5045: 如果指定了 /Qspectre 开关，编译器会插入内存负载的 Spectre 缓解 
+E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(3013,1): warning C5045: E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(3007) : 注意: 在此行上通过对比检查索引 "" 范围
+E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(3013,1): warning C5045: E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(3013) : 注意: 此行上的源调用
+E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(3008,1): warning C5045: 如果指定了 /Qspectre 开关，编译器会插入内存负载的 Spectre 缓解 
+E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(3008,1): warning C5045: E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(3007) : 注意: 在此行上通过对比检查索引 "" 范围
+E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(3008,1): warning C5045: E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(3008) : 注意: 此行上的源调用
+E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(2986,1): warning C5045: 如果指定了 /Qspectre 开关，编译器会插入内存负载的 Spectre 缓解 
+E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(2986,1): warning C5045: E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(2984) : 注意: 在此行上通过对比检查索引 "" 范围
+E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(2986,1): warning C5045: E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(2986) : 注意: 此行上的源调用
+E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(2984,1): warning C5045: 如果指定了 /Qspectre 开关，编译器会插入内存负载的 Spectre 缓解 
+E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(2984,1): warning C5045: E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(2984) : 注意: 在此行上通过对比检查索引 "" 范围
+E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(2984,1): warning C5045: E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(2984) : 注意: 此行上的源调用
+E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(2926,1): warning C5045: 如果指定了 /Qspectre 开关，编译器会插入内存负载的 Spectre 缓解 
+E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(2926,1): warning C5045: E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(2914) : 注意: 在此行上通过对比检查索引 "" 范围
+E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(2926,1): warning C5045: E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(2926) : 注意: 此行上的源调用
+E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(2915,1): warning C5045: 如果指定了 /Qspectre 开关，编译器会插入内存负载的 Spectre 缓解 
+E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(2915,1): warning C5045: E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(2914) : 注意: 在此行上通过对比检查索引 "" 范围
+E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(2915,1): warning C5045: E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(2915) : 注意: 此行上的源调用
+E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(2891,1): warning C5045: 如果指定了 /Qspectre 开关，编译器会插入内存负载的 Spectre 缓解 
+E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(2891,1): warning C5045: E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(2890) : 注意: 在此行上通过对比检查索引 "" 范围
+E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(2891,1): warning C5045: E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(2891) : 注意: 此行上的源调用
+E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(2890,1): warning C5045: 如果指定了 /Qspectre 开关，编译器会插入内存负载的 Spectre 缓解 
+E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(2890,1): warning C5045: E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(2885) : 注意: 在此行上通过对比检查索引 "" 范围
+E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(2890,1): warning C5045: E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(2890) : 注意: 此行上的源调用
+E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(2885,1): warning C5045: 如果指定了 /Qspectre 开关，编译器会插入内存负载的 Spectre 缓解 
+E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(2885,1): warning C5045: E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(2885) : 注意: 在此行上通过对比检查索引 "" 范围
+E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(2885,1): warning C5045: E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(2885) : 注意: 此行上的源调用
+E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(2869,1): warning C5045: 如果指定了 /Qspectre 开关，编译器会插入内存负载的 Spectre 缓解 
+E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(2869,1): warning C5045: E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(2868) : 注意: 在此行上通过对比检查索引 "" 范围
+E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(2869,1): warning C5045: E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(2869) : 注意: 此行上的源调用
+E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(2868,1): warning C5045: 如果指定了 /Qspectre 开关，编译器会插入内存负载的 Spectre 缓解 
+E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(2868,1): warning C5045: E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(2865) : 注意: 在此行上通过对比检查索引 "" 范围
+E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(2868,1): warning C5045: E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(2868) : 注意: 此行上的源调用
+E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(2865,1): warning C5045: 如果指定了 /Qspectre 开关，编译器会插入内存负载的 Spectre 缓解 
+E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(2865,1): warning C5045: E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(2865) : 注意: 在此行上通过对比检查索引 "" 范围
+E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(2865,1): warning C5045: E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(2865) : 注意: 此行上的源调用
+E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(2851,1): warning C5045: 如果指定了 /Qspectre 开关，编译器会插入内存负载的 Spectre 缓解 
+E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(2851,1): warning C5045: E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(2851) : 注意: 在此行上通过对比检查索引 "" 范围
+E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(2851,1): warning C5045: E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(2851) : 注意: 此行上的源调用
+E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(2817,1): warning C5045: 如果指定了 /Qspectre 开关，编译器会插入内存负载的 Spectre 缓解 
+E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(2817,1): warning C5045: E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(2817) : 注意: 在此行上通过对比检查索引 "" 范围
+E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(2817,1): warning C5045: E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(2817) : 注意: 此行上的源调用
+E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(2809,1): warning C5045: 如果指定了 /Qspectre 开关，编译器会插入内存负载的 Spectre 缓解 
+E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(2809,1): warning C5045: E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(2809) : 注意: 在此行上通过对比检查索引 "" 范围
+E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(2809,1): warning C5045: E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(2809) : 注意: 此行上的源调用
+E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(2796,1): warning C5045: 如果指定了 /Qspectre 开关，编译器会插入内存负载的 Spectre 缓解 
+E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(2796,1): warning C5045: E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(2796) : 注意: 在此行上通过对比检查索引 "" 范围
+E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(2796,1): warning C5045: E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(2796) : 注意: 此行上的源调用
+E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(2784,1): warning C5045: 如果指定了 /Qspectre 开关，编译器会插入内存负载的 Spectre 缓解 
+E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(2784,1): warning C5045: E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(2784) : 注意: 在此行上通过对比检查索引 "" 范围
+E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(2784,1): warning C5045: E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(2784) : 注意: 此行上的源调用
+E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(2771,1): warning C5045: 如果指定了 /Qspectre 开关，编译器会插入内存负载的 Spectre 缓解 
+E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(2771,1): warning C5045: E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(2771) : 注意: 在此行上通过对比检查索引 "" 范围
+E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(2771,1): warning C5045: E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(2771) : 注意: 此行上的源调用
+E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(2762,1): warning C5045: 如果指定了 /Qspectre 开关，编译器会插入内存负载的 Spectre 缓解 
+E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(2762,1): warning C5045: E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(2762) : 注意: 在此行上通过对比检查索引 "" 范围
+E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(2762,1): warning C5045: E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(2762) : 注意: 此行上的源调用
+E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(2744,1): warning C5045: 如果指定了 /Qspectre 开关，编译器会插入内存负载的 Spectre 缓解 
+E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(2744,1): warning C5045: E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(2744) : 注意: 在此行上通过对比检查索引 "" 范围
+E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(2744,1): warning C5045: E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(2744) : 注意: 此行上的源调用
+E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(2735,1): warning C5045: 如果指定了 /Qspectre 开关，编译器会插入内存负载的 Spectre 缓解 
+E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(2735,1): warning C5045: E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(2733) : 注意: 在此行上通过对比检查索引 "" 范围
+E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(2735,1): warning C5045: E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(2735) : 注意: 此行上的源调用
+E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(2733,1): warning C5045: 如果指定了 /Qspectre 开关，编译器会插入内存负载的 Spectre 缓解 
+E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(2733,1): warning C5045: E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(2733) : 注意: 在此行上通过对比检查索引 "" 范围
+E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(2733,1): warning C5045: E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(2733) : 注意: 此行上的源调用
+E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(2686,1): warning C5045: 如果指定了 /Qspectre 开关，编译器会插入内存负载的 Spectre 缓解 
+E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(2686,1): warning C5045: E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(2674) : 注意: 在此行上通过对比检查索引 "" 范围
+E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(2686,1): warning C5045: E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(2686) : 注意: 此行上的源调用
+E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(2675,1): warning C5045: 如果指定了 /Qspectre 开关，编译器会插入内存负载的 Spectre 缓解 
+E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(2675,1): warning C5045: E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(2674) : 注意: 在此行上通过对比检查索引 "" 范围
+E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(2675,1): warning C5045: E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(2675) : 注意: 此行上的源调用
+E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(2657,1): warning C5045: 如果指定了 /Qspectre 开关，编译器会插入内存负载的 Spectre 缓解 
+E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(2657,1): warning C5045: E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(2656) : 注意: 在此行上通过对比检查索引 "" 范围
+E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(2657,1): warning C5045: E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(2657) : 注意: 此行上的源调用
+E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(2656,1): warning C5045: 如果指定了 /Qspectre 开关，编译器会插入内存负载的 Spectre 缓解 
+E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(2656,1): warning C5045: E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(2653) : 注意: 在此行上通过对比检查索引 "" 范围
+E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(2656,1): warning C5045: E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(2656) : 注意: 此行上的源调用
+E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(2653,1): warning C5045: 如果指定了 /Qspectre 开关，编译器会插入内存负载的 Spectre 缓解 
+E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(2653,1): warning C5045: E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(2653) : 注意: 在此行上通过对比检查索引 "" 范围
+E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(2653,1): warning C5045: E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(2653) : 注意: 此行上的源调用
+E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(2651,1): warning C5045: 如果指定了 /Qspectre 开关，编译器会插入内存负载的 Spectre 缓解 
+E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(2651,1): warning C5045: E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(2650) : 注意: 在此行上通过对比检查索引 "" 范围
+E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(2651,1): warning C5045: E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(2651) : 注意: 此行上的源调用
+E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(2636,1): warning C5045: 如果指定了 /Qspectre 开关，编译器会插入内存负载的 Spectre 缓解 
+E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(2636,1): warning C5045: E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(2635) : 注意: 在此行上通过对比检查索引 "" 范围
+E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(2636,1): warning C5045: E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(2636) : 注意: 此行上的源调用
+E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(2635,1): warning C5045: 如果指定了 /Qspectre 开关，编译器会插入内存负载的 Spectre 缓解 
+E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(2635,1): warning C5045: E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(2632) : 注意: 在此行上通过对比检查索引 "" 范围
+E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(2635,1): warning C5045: E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(2635) : 注意: 此行上的源调用
+E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(2632,1): warning C5045: 如果指定了 /Qspectre 开关，编译器会插入内存负载的 Spectre 缓解 
+E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(2632,1): warning C5045: E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(2632) : 注意: 在此行上通过对比检查索引 "" 范围
+E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(2632,1): warning C5045: E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(2632) : 注意: 此行上的源调用
+E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(2630,1): warning C5045: 如果指定了 /Qspectre 开关，编译器会插入内存负载的 Spectre 缓解 
+E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(2630,1): warning C5045: E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(2629) : 注意: 在此行上通过对比检查索引 "" 范围
+E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(2630,1): warning C5045: E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(2630) : 注意: 此行上的源调用
+E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(2609,1): warning C5045: 如果指定了 /Qspectre 开关，编译器会插入内存负载的 Spectre 缓解 
+E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(2609,1): warning C5045: E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(2609) : 注意: 在此行上通过对比检查索引 "" 范围
+E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(2609,1): warning C5045: E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(2609) : 注意: 此行上的源调用
+E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(2597,1): warning C5045: 如果指定了 /Qspectre 开关，编译器会插入内存负载的 Spectre 缓解 
+E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(2597,1): warning C5045: E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(2597) : 注意: 在此行上通过对比检查索引 "" 范围
+E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(2597,1): warning C5045: E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(2597) : 注意: 此行上的源调用
+E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(2589,1): warning C5045: 如果指定了 /Qspectre 开关，编译器会插入内存负载的 Spectre 缓解 
+E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(2589,1): warning C5045: E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(2589) : 注意: 在此行上通过对比检查索引 "" 范围
+E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(2589,1): warning C5045: E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(2589) : 注意: 此行上的源调用
+E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(2581,1): warning C5045: 如果指定了 /Qspectre 开关，编译器会插入内存负载的 Spectre 缓解 
+E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(2581,1): warning C5045: E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(2581) : 注意: 在此行上通过对比检查索引 "" 范围
+E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(2581,1): warning C5045: E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(2581) : 注意: 此行上的源调用
+E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(2557,1): warning C5045: 如果指定了 /Qspectre 开关，编译器会插入内存负载的 Spectre 缓解 
+E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(2557,1): warning C5045: E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(2557) : 注意: 在此行上通过对比检查索引 "" 范围
+E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(2557,1): warning C5045: E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(2557) : 注意: 此行上的源调用
+E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(2549,1): warning C5045: 如果指定了 /Qspectre 开关，编译器会插入内存负载的 Spectre 缓解 
+E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(2549,1): warning C5045: E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(2549) : 注意: 在此行上通过对比检查索引 "" 范围
+E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(2549,1): warning C5045: E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(2549) : 注意: 此行上的源调用
+E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(2533,1): warning C5045: 如果指定了 /Qspectre 开关，编译器会插入内存负载的 Spectre 缓解 
+E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(2533,1): warning C5045: E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(2533) : 注意: 在此行上通过对比检查索引 "" 范围
+E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(2533,1): warning C5045: E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(2533) : 注意: 此行上的源调用
+E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(2524,1): warning C5045: 如果指定了 /Qspectre 开关，编译器会插入内存负载的 Spectre 缓解 
+E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(2524,1): warning C5045: E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(2524) : 注意: 在此行上通过对比检查索引 "" 范围
+E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(2524,1): warning C5045: E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(2524) : 注意: 此行上的源调用
+E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(2515,1): warning C5045: 如果指定了 /Qspectre 开关，编译器会插入内存负载的 Spectre 缓解 
+E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(2515,1): warning C5045: E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(2515) : 注意: 在此行上通过对比检查索引 "" 范围
+E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(2515,1): warning C5045: E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(2515) : 注意: 此行上的源调用
+E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(2492,1): warning C5045: 如果指定了 /Qspectre 开关，编译器会插入内存负载的 Spectre 缓解 
+E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(2492,1): warning C5045: E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(2492) : 注意: 在此行上通过对比检查索引 "" 范围
+E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(2492,1): warning C5045: E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(2492) : 注意: 此行上的源调用
+E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(2449,1): warning C5045: 如果指定了 /Qspectre 开关，编译器会插入内存负载的 Spectre 缓解 
+E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(2449,1): warning C5045: E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(2449) : 注意: 在此行上通过对比检查索引 "" 范围
+E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(2449,1): warning C5045: E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(2449) : 注意: 此行上的源调用
+E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(2431,1): warning C5045: 如果指定了 /Qspectre 开关，编译器会插入内存负载的 Spectre 缓解 
+E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(2431,1): warning C5045: E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(2431) : 注意: 在此行上通过对比检查索引 "" 范围
+E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(2431,1): warning C5045: E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(2431) : 注意: 此行上的源调用
+E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(2419,1): warning C5045: 如果指定了 /Qspectre 开关，编译器会插入内存负载的 Spectre 缓解 
+E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(2419,1): warning C5045: E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(2419) : 注意: 在此行上通过对比检查索引 "" 范围
+E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(2419,1): warning C5045: E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(2419) : 注意: 此行上的源调用
+E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(2411,1): warning C5045: 如果指定了 /Qspectre 开关，编译器会插入内存负载的 Spectre 缓解 
+E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(2411,1): warning C5045: E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(2411) : 注意: 在此行上通过对比检查索引 "" 范围
+E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(2411,1): warning C5045: E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(2411) : 注意: 此行上的源调用
+E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(2393,1): warning C5045: 如果指定了 /Qspectre 开关，编译器会插入内存负载的 Spectre 缓解 
+E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(2393,1): warning C5045: E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(2393) : 注意: 在此行上通过对比检查索引 "" 范围
+E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(2393,1): warning C5045: E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\Poker\Poker.cpp(2393) : 注意: 此行上的源调用

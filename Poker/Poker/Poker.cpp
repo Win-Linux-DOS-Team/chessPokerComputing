@@ -210,13 +210,17 @@ struct Hand
 	vector<Card> cards{};
 	Type type = Type::Invalid;
 	
-	operator bool() const
-	{
-		return this->player != INVALID_PLAYER || this->type != Type::Invalid;
-	}
+	Hand() : player(INVALID_PLAYER), cards(vector<Card>{}), type(Type::Invalid) {}
+	Hand(const Player player) : player(player), cards(vector<Card>{}), type(Type::Invalid) {}
+	Hand(const Player player, const vector<Card>& cards) : player(player), cards(cards), type(Type::Invalid) {}
+	Hand(const Player player, const vector<Card>& cards, const Type type) = delete;
 	friend bool operator==(const Hand& a, const Hand& b)
 	{
 		return a.player == b.player && a.cards == b.cards && a.type == b.type;
+	}
+	operator bool() const
+	{
+		return this->player != INVALID_PLAYER || this->type != Type::Invalid;
 	}
 };
 
@@ -233,7 +237,7 @@ class Values
 {
 private:
 	Value values[14] = { 0 };
-
+	
 public:
 	Values()
 	{
@@ -580,7 +584,7 @@ protected:
 						waitingForAPoint = false;
 					}
 					else
-						fuzzyPoints.push_back(description.at(idx) - '0');
+						fuzzyPoints.push_back(static_cast<Player>(description.at(idx) - '0'));
 					break;
 				case 'T':
 				case 't':
@@ -749,10 +753,10 @@ protected:
 					}
 					else if(value < this->values[this->players[this->currentPlayer][idx].point])
 						break;
-				if (0 <= position && position < length)
+				if (/* 0 <= position && */position < length)
 					selected.emplace_back(move(position));
 				else if (exactCard == this->players[this->currentPlayer][0]) // avoid (size_t)(-1)
-					selected.emplace_back(0);
+					selected.emplace_back(static_cast<size_t>(0));
 				else
 					return false;
 			}
@@ -771,10 +775,10 @@ protected:
 					}
 					else if (value < this->values[this->players[this->currentPlayer][idx].point])
 						break;
-				if (0 <= position && position < length)
+				if (/* 0 <= position && */position < length)
 					selected.emplace_back(move(position));
 				else if (fuzzyPoint == this->players[this->currentPlayer][0].point) // avoid (size_t)(-1)
-					selected.emplace_back(0);
+					selected.emplace_back(static_cast<size_t>(0));
 				else
 					return false;
 			}
@@ -787,10 +791,10 @@ protected:
 						position = idx;
 						break;
 					}
-				if (0 <= position && position < length)
+				if (/* 0 <= position && */position < length)
 					selected.emplace_back(move(position));
 				else if (fuzzySuit == this->players[this->currentPlayer][0].suit) // avoid (size_t)(-1)
-					selected.emplace_back(0);
+					selected.emplace_back(static_cast<size_t>(0));
 				else
 					return false;
 			}
@@ -863,7 +867,7 @@ protected:
 									return false;
 							if (applySorting)
 							{
-								rotate(sortedCards.begin(), sortedCards.begin() + indexToRotation, sortedCards.end());
+								rotate(sortedCards.begin(), sortedCards.begin() + static_cast<ptrdiff_t>(indexToRotation), sortedCards.end());
 								cards = sortedCards;
 							}
 							return true;
@@ -919,7 +923,7 @@ protected:
 							if (units[idx + 1][0].point + 1 != units[idx][0].point)
 								return 0;
 						if (applySorting)
-							rotate(units.begin(), units.begin() + indexToRotation, units.end());
+							rotate(units.begin(), units.begin() + static_cast<ptrdiff_t>(indexToRotation), units.end());
 						break;
 					}
 					else
@@ -956,8 +960,8 @@ protected:
 			if (selected.size() == smallerLength)
 			{
 				for (size_t idx = smallerLength - 1; idx > 0; --idx)
-					largerCards.erase(largerCards.begin() + selected[idx]);
-				largerCards.erase(largerCards.begin() + selected[0]);
+					largerCards.erase(largerCards.begin() + static_cast<ptrdiff_t>(selected[idx]));
+				largerCards.erase(largerCards.begin() + static_cast<ptrdiff_t>(selected[0]));
 				return true;
 			}
 			else
@@ -1048,7 +1052,7 @@ protected:
 				break;
 			}
 			cout << "）" << endl << this->getBasisString() << endl;
-
+			
 			/* Players */
 			cout << "/* 玩家区域 */" << endl;
 			const size_t playerCount = this->players.size();
@@ -1062,7 +1066,7 @@ protected:
 					else
 						cout << "玩家 " << (player + 1) << (this->dealer == player ? "（" + dealerRemark + "）剩余 " : " 剩余 ") << this->players[player].size() << " 张扑克牌：" << this->cards2string(this->players[player], "\n", " | ", "", "（空）") << endl << endl;
 			cout << deckDescription;
-
+			
 			/* Records */
 			if (!this->records.empty())
 			{
@@ -1089,7 +1093,7 @@ protected:
 					}
 				}
 				cout << endl;
-
+				
 				/* Amounts */
 				if (Status::Over == this->status)
 					cout << this->getAmountString() << endl;
@@ -1158,7 +1162,6 @@ public:
 		}
 		else
 			return false;
-
 	}
 	virtual bool start(const string& description, vector<Candidate>& candidates) final // records[1], currentPlayer, lastHand, amounts (const) | amounts[0] | amounts(this->players.size()), and status = Status::Started | Status::Over
 	{
@@ -4257,7 +4260,7 @@ private:
 					for (Player player = 0; player < 4; ++player)
 						if (player != this->dealer)
 							playerFlags[player] = 1;
-
+				
 				/* Spring and anti-sprint parsing */
 				bool isSpring = true, isAntiSpring = true;
 				{
@@ -4286,7 +4289,7 @@ private:
 						this->amounts[0] <<= 1;
 				else if (isAntiSpring)
 					this->amounts[0] <<= 1;
-
+				
 				/* Amount finalization */
 				const Amount base = this->amounts[0];
 				this->amounts = vector<Amount>(4);
@@ -4646,7 +4649,7 @@ private:
 					if (n <= 0)
 						++winnerCount;
 					else if (n < 8)
-						this->amounts[idx] = n;
+						this->amounts[idx] = static_cast<Amount>(n);
 					else if (8 <= n && n < 10)
 						this->amounts[idx] = static_cast<Amount>(n) << 1;
 					else if (10 <= n && n < 13)
@@ -5551,7 +5554,7 @@ public:
 			Player offsetPlayer = this->currentPlayer;
 			for (Count count = 0; count < 4; ++count)
 			{
-				offsetPlayer = (offsetPlayer + 1) % 4;
+				offsetPlayer = static_cast<Player>((offsetPlayer + 1) % 4);
 				if (flags[offsetPlayer])
 				{
 					this->currentPlayer = offsetPlayer;
@@ -5687,7 +5690,6 @@ private:
 				}
 				else
 					return false;
-
 			case 1:
 				if (1 == counts[1]) // && 1 == counts[2] && 1 == counts[3]
 				{
@@ -6141,7 +6143,7 @@ private:
 	const vector<string> againStatements = { "Again", "再来", "再来一局", "新开", "新开一局" };
 	const vector<string> returnStatements = { "Return", "返回", "返回主面板", "返回主界面" };
 	const vector<string> exitStatements = { "Exit", "Ctrl+C", "Ctrl + C", "退出", "退出程序" };
-
+	
 	/* Command line handling */
 	bool isEqual(const string& s1, const string& s2) const // Please use == directly if cases cannot be ignored
 	{
@@ -6262,7 +6264,7 @@ private:
 			return 1 == this->helpKey;
 		}
 	}
-
+	
 	/* Interactive handling */
 	int clearScreen() const
 	{
@@ -6334,7 +6336,7 @@ private:
 						return false;
 					else if (0 <= choice && choice < static_cast<char>(this->namesC.size()))
 					{
-						this->name = this->namesC[choice];
+						this->name = this->namesC[static_cast<size_t>(choice)];
 						break;
 					}
 				}
@@ -6373,7 +6375,7 @@ private:
 		else
 			return false;
 	}
-
+	
 	/* Action confirmation */
 	bool ensureAction(const string& buffer, const string& actionDescriptioin) const
 	{
@@ -6420,7 +6422,7 @@ private:
 		else
 			return false;
 	}
-
+	
 	/* Procedures */
 	bool setLandlord(Action& action) const
 	{
@@ -6523,7 +6525,7 @@ private:
 					{
 						if (score > currentHighestScore)
 						{
-							for (Count removalCount = static_cast<Count>(score) - static_cast<Count>(currentHighestScore); removalCount > 0; --removalCount)
+							for (Count removalCount = static_cast<Count>(static_cast<Count>(score) - static_cast<Count>(currentHighestScore)); removalCount > 0; --removalCount)
 								scoreDescriptions.pop_back();
 							currentHighestScore = score;
 						}
@@ -6574,7 +6576,7 @@ private:
 			else if (!buffer.empty())
 			{
 				const unsigned long int choice = strtoul(buffer.c_str(), nullptr, 0) - 1;
-				if (0 <= choice && choice < length)
+				if (/* 0 <= choice && */choice < length)
 				{
 					candidates = vector<Candidate>{ candidates[choice] };
 					return true;
@@ -6661,7 +6663,7 @@ private:
 public:
 	Interaction()
 	{
-
+		
 	}
 	Interaction(const vector<string>& arguments)
 	{
@@ -6744,7 +6746,7 @@ public:
 					else if ("七鬼五二一" == this->name || this->isEqual("Qiguiwueryi", this->name)) // "七鬼五二一"
 						this->poker = new Qiguiwueryi;
 					else if ("七鬼五二三" == this->name || this->isEqual("Qiguiwuersan", this->name)) // "七鬼五二三"
-						this->poker = new Qiguiwueryi;
+						this->poker = new Qiguiwuersan;
 					else if (!this->fetchPokerType())
 						return true;
 				}
@@ -6828,7 +6830,7 @@ public:
 					default:
 						break;
 					}
-
+					
 					/* Ending */
 					this->clearScreen();
 					this->poker->display();
@@ -6854,15 +6856,26 @@ public:
 				}
 			}
 	}
+	Interaction& operator=(const Interaction&) = delete;
+	Interaction& operator=(Interaction&&) = delete;
 };
 
 
 
 int main(int argc, char* argv[])
 {
-	vector<string> arguments(argc - 1);
-	for (int i = 0; i < argc - 1; ++i)
-		arguments[i] = argv[i + 1];
-	Interaction interaction = Interaction(arguments);
-	return interaction.interact() ? EXIT_SUCCESS : EXIT_FAILURE;
+	if (argc >= 2)
+	{
+		const size_t argumentCount = static_cast<size_t>(argc) - 1;
+		vector<string> arguments(argumentCount);
+		for (size_t i = 0; i < argumentCount; ++i)
+			arguments[i] = argv[i + 1];
+		Interaction interaction(arguments);
+		return interaction.interact() ? EXIT_SUCCESS : EXIT_FAILURE;
+	}
+	else
+	{
+		Interaction interaction{};
+		return interaction.interact() ? EXIT_SUCCESS : EXIT_FAILURE;
+	}
 }
