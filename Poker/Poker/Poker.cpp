@@ -211,7 +211,7 @@ struct Hand
 	Type type = Type::Invalid;
 	
 	Hand() : player(INVALID_PLAYER), cards(vector<Card>{}), type(Type::Invalid) {}
-	Hand(const Player player) : player(player), cards(vector<Card>{}), type(Type::Invalid) {}
+	Hand(const Player player) = delete;
 	Hand(const Player player, const vector<Card>& cards) : player(player), cards(cards), type(Type::Invalid) {}
 	Hand(const Player player, const vector<Card>& cards, const Type type) = delete;
 	friend bool operator==(const Hand& a, const Hand& b)
@@ -237,7 +237,7 @@ class Values
 {
 private:
 	Value values[14] = { 0 };
-	
+
 public:
 	Values()
 	{
@@ -859,6 +859,7 @@ protected:
 			{
 				for (size_t idx = 0; idx < indexToLastPoint; ++idx) // Straights like K ... 2 and Q ... A
 					if (sortedCards[idx + repeatedCount].point + 1 != sortedCards[idx].point)
+					{
 						if (sortedCards[idx += repeatedCount].point < pointNotAllowedToConnectK && 13 == sortedCards[0].point && 1 == sortedCards[indexToLastPoint].point)
 						{
 							const size_t indexToRotation = idx;
@@ -874,6 +875,7 @@ protected:
 						}
 						else
 							return false;
+					}
 				if (applySorting)
 					cards = sortedCards;
 				return true;
@@ -916,6 +918,7 @@ protected:
 				return repeatedCount; // No need to rotate
 			for (size_t idx = 0; idx < indexToLastBlock; ++idx) // Straights like K ... 2
 				if (units[idx + 1][0].point + 1 != units[idx][0].point)
+				{
 					if (units[++idx][0].point < pointNotAllowedToConnectK && 13 == units[0][0].point && 1 == units.back()[0].point)
 					{
 						const size_t indexToRotation = idx;
@@ -928,6 +931,7 @@ protected:
 					}
 					else
 						return 0;
+				}
 			if (applySorting)
 			{
 				size_t idx = 0;
@@ -1033,7 +1037,7 @@ protected:
 		{
 			/* Beginning */
 			bool flag = true;
-			cout << "扑克牌类型：" << this->name << "（";
+			cout << "扑克游戏：" << this->name << "（";
 			switch (this->status)
 			{
 			case Status::Dealt:
@@ -1052,7 +1056,7 @@ protected:
 				break;
 			}
 			cout << "）" << endl << this->getBasisString() << endl;
-			
+
 			/* Players */
 			cout << "/* 玩家区域 */" << endl;
 			const size_t playerCount = this->players.size();
@@ -1066,7 +1070,7 @@ protected:
 					else
 						cout << "玩家 " << (player + 1) << (this->dealer == player ? "（" + dealerRemark + "）剩余 " : " 剩余 ") << this->players[player].size() << " 张扑克牌：" << this->cards2string(this->players[player], "\n", " | ", "", "（空）") << endl << endl;
 			cout << deckDescription;
-			
+
 			/* Records */
 			if (!this->records.empty())
 			{
@@ -1093,7 +1097,7 @@ protected:
 					}
 				}
 				cout << endl;
-				
+
 				/* Amounts */
 				if (Status::Over == this->status)
 					cout << this->getAmountString() << endl;
@@ -1162,6 +1166,7 @@ public:
 		}
 		else
 			return false;
+
 	}
 	virtual bool start(const string& description, vector<Candidate>& candidates) final // records[1], currentPlayer, lastHand, amounts (const) | amounts[0] | amounts(this->players.size()), and status = Status::Started | Status::Over
 	{
@@ -1770,6 +1775,7 @@ protected:
 					{
 					case 3:
 						if (this->values[hand.cards[0].point] <= 12)
+						{
 							if (this->values[hand.cards[9].point] + 3 == this->values[hand.cards[0].point])
 							{
 								hand.type = Type::TripleStraight; // 飞机（不带翅膀）
@@ -1780,6 +1786,7 @@ protected:
 								hand.type = Type::TripleStraightWithSingles; // 飞机带小翼
 								return true;
 							}
+						}
 						if (this->values[hand.cards[9].point] + 2 == this->values[hand.cards[3].point])
 						{
 							rotate(hand.cards.begin(), hand.cards.begin() + 3, hand.cards.end()); // e.g., 222999888777 -> 999888777 + 222
@@ -1872,6 +1879,7 @@ protected:
 					{
 					case 3:
 						if (this->values[hand.cards[0].point] <= 12)
+						{
 							if (this->values[hand.cards[12].point] + 4 == this->values[hand.cards[0].point])
 								return false;
 							else if (this->values[hand.cards[9].point] + 3 == this->values[hand.cards[0].point])
@@ -1881,6 +1889,7 @@ protected:
 								hand.type = Type::TripleStraightWithSingles; // 飞机带小翼
 								return true;
 							}
+						}
 						if (this->values[hand.cards[12].point] + 3 == this->values[hand.cards[3].point])
 						{
 							rotate(hand.cards.begin(), hand.cards.begin() + 3, this->values[hand.cards[0].point] < this->values[hand.cards[15].point] ? hand.cards.end() : hand.cards.end() - 1); // e.g., KKK9998887776662 -> 999888777666 + 2KKK | 222999888777666K -> 999888777666 + 222K
@@ -1963,9 +1972,11 @@ protected:
 						{
 						case 3:
 							if (this->values[hand.cards[0].point] <= 12)
+							{
 								if (this->values[hand.cards[15].point] + 5 == this->values[hand.cards[0].point])
 									return false;
 								else if (this->values[hand.cards[12].point] + 4 == this->values[hand.cards[0].point])
+								{
 									if (2 == counts[6])
 										if (JOKER_POINT != hand.cards[18].point) // 被带的牌不能含有王炸
 										{
@@ -1983,6 +1994,8 @@ protected:
 										hand.type = Type::TripleStraightWithSingles; // 飞机带小翼
 										return true;
 									}
+								}
+							}
 							if (this->values[hand.cards[15].point] + 4 == this->values[hand.cards[3].point])
 								if (2 == counts[6])
 									if (JOKER_POINT != hand.cards[18].point) // 被带的牌不能含有王炸
@@ -2341,10 +2354,12 @@ protected:
 				potentialHands.back().hand.type = Type::TripleWithSingle; // 三带一
 				if (this->lastHand && hand.player != this->lastHand.player)
 					for (vector<Candidate>::iterator it = potentialHands.begin(); it != potentialHands.end();)
+					{
 						if (this->coverLastHand(it->hand))
 							++it;
 						else
 							it = potentialHands.erase(it);
+					}
 				switch (potentialHands.size())
 				{
 				case 0:
@@ -2459,10 +2474,12 @@ protected:
 					potentialHands.back().hand.type = Type::QuadrupleWithPairPair; // 四带二对
 					if (this->lastHand && hand.player != this->lastHand.player)
 						for (vector<Candidate>::iterator it = potentialHands.begin(); it != potentialHands.end();)
+						{
 							if (this->coverLastHand(it->hand))
 								++it;
 							else
 								it = potentialHands.erase(it);
+						}
 					switch (potentialHands.size())
 					{
 					case 0:
@@ -2672,6 +2689,7 @@ protected:
 					{
 					case 3:
 						if (this->values[hand.cards[0].point] <= 12)
+						{
 							if (this->values[hand.cards[9].point] + 3 == this->values[hand.cards[0].point])
 							{
 								vector<Candidate> potentialHands{};
@@ -2685,10 +2703,12 @@ protected:
 								potentialHands.back().hand.type = Type::TripleStraightWithSingles; // 飞机带小翼
 								if (this->lastHand && hand.player != this->lastHand.player)
 									for (vector<Candidate>::iterator it = potentialHands.begin(); it != potentialHands.end();)
+									{
 										if (this->coverLastHand(it->hand))
 											++it;
 										else
 											it = potentialHands.erase(it);
+									}
 								switch (potentialHands.size())
 								{
 								case 0:
@@ -2719,6 +2739,7 @@ protected:
 								candidates.clear();
 								return true;
 							}
+						}
 						candidates.clear();
 						if (this->values[hand.cards[9].point] + 2 == this->values[hand.cards[3].point])
 						{
@@ -2912,6 +2933,7 @@ protected:
 								cardIt += 3;
 							rotate(hand.cards.begin(), hand.cards.begin() + 3, cardIt);
 							if (this->values[hand.cards[0].point] <= 12)
+							{
 								if (this->values[hand.cards[12].point] + 4 == this->values[hand.cards[0].point])
 								{
 									vector<Candidate> potentialHands{};
@@ -2925,10 +2947,12 @@ protected:
 									potentialHands.back().hand.type = Type::TripleStraightWithSingles; // 飞机带小翼
 									if (this->lastHand && hand.player != this->lastHand.player)
 										for (vector<Candidate>::iterator candidateIt = potentialHands.begin(); candidateIt != potentialHands.end();)
+										{
 											if (this->coverLastHand(candidateIt->hand))
 												++candidateIt;
 											else
 												candidateIt = potentialHands.erase(candidateIt);
+										}
 									switch (potentialHands.size())
 									{
 									case 0:
@@ -2960,6 +2984,7 @@ protected:
 									candidates.clear();
 									return true;
 								}
+							}
 							candidates.clear();
 							if (this->values[hand.cards[12].point] + 3 == this->values[hand.cards[3].point])
 							{
@@ -3005,6 +3030,7 @@ protected:
 					{
 					case 3: // && 1 == counts[4]
 						if (this->values[hand.cards[0].point] <= 12)
+						{
 							if (this->values[hand.cards[12].point] + 4 == this->values[hand.cards[0].point])
 							{
 								vector<Candidate> potentialHands{};
@@ -3017,11 +3043,13 @@ protected:
 								rotate(potentialHands.back().hand.cards.begin(), potentialHands.back().hand.cards.begin() + 3, hand.cards[0].point < hand.cards[15].point ? potentialHands.back().hand.cards.end() : potentialHands.back().hand.cards.end() - 1); // e.g., 999888777666555K -> 888777666555 + K999 | 9998887776665553 -> 888777666555 + 9993
 								potentialHands.back().hand.type = Type::TripleStraightWithSingles; // 飞机带小翼
 								if (this->lastHand && hand.player != this->lastHand.player)
+								{
 									for (vector<Candidate>::iterator it = potentialHands.begin(); it != potentialHands.end();)
 										if (this->coverLastHand(it->hand))
 											++it;
 										else
 											it = potentialHands.erase(it);
+								}
 								switch (potentialHands.size())
 								{
 								case 0:
@@ -3054,6 +3082,7 @@ protected:
 								candidates.clear();
 								return true;
 							}
+						}
 						candidates.clear();
 						if (this->values[hand.cards[12].point] + 3 == this->values[hand.cards[3].point])
 						{
@@ -3249,6 +3278,7 @@ protected:
 								const Value newValue0 = this->values[hand.cards[0].point];
 								const string cardString0 = this->point2description(hand.cards[0].point), cardString3 = this->point2description(hand.cards[3].point), cardString15 = this->point2description(hand.cards[15].point);
 								if (newValue0 <= 12)
+								{
 									if (this->values[hand.cards[15].point] + 5 == newValue0)
 									{
 										vector<Candidate> potentialHands{};
@@ -3282,10 +3312,12 @@ protected:
 										potentialHands.back().hand.type = Type::TripleStraightWithSingles; // 飞机带小翼
 										if (this->lastHand && hand.player != this->lastHand.player)
 											for (vector<Candidate>::iterator candidateIt = potentialHands.begin(); candidateIt != potentialHands.end();)
+											{
 												if (this->coverLastHand(candidateIt->hand))
 													++candidateIt;
 												else
 													candidateIt = potentialHands.erase(candidateIt);
+											}
 										switch (potentialHands.size())
 										{
 										case 0:
@@ -3323,10 +3355,12 @@ protected:
 											potentialHands.back().hand.type = Type::TripleStraightWithSingles; // 飞机带小翼
 											if (this->lastHand && hand.player != this->lastHand.player)
 												for (vector<Candidate>::iterator candidateIt = potentialHands.begin(); candidateIt != potentialHands.end();)
+												{
 													if (this->coverLastHand(candidateIt->hand))
 														++candidateIt;
 													else
 														candidateIt = potentialHands.erase(candidateIt);
+												}
 											switch (potentialHands.size())
 											{
 											case 0:
@@ -3365,6 +3399,7 @@ protected:
 										candidates.clear();
 										return true;
 									}
+								}
 								const Value newValue3 = this->values[hand.cards[3].point], value15 = this->values[hand.cards[15].point];
 								if (value15 + 4 == newValue3)
 									if (hand.cards[18].point == hand.cards[3].point && hand.cards[19].point == hand.cards[15].point)
@@ -3379,10 +3414,12 @@ protected:
 										potentialHands.back().hand.type = Type::TripleStraightWithSingles; // 飞机带小翼
 										if (this->lastHand && hand.player != this->lastHand.player)
 											for (vector<Candidate>::iterator candidateIt = potentialHands.begin(); candidateIt != potentialHands.end();)
+											{
 												if (this->coverLastHand(candidateIt->hand))
 													++candidateIt;
 												else
 													candidateIt = potentialHands.erase(candidateIt);
+											}
 										switch (potentialHands.size())
 										{
 										case 0:
@@ -3495,6 +3532,7 @@ protected:
 							rotate(hand.cards.begin(), hand.cards.begin() + 3, it);
 							const Value newValue = this->values[hand.cards[0].point];
 							if (newValue <= 12)
+							{
 								if (this->values[hand.cards[15].point] + 5 == newValue)
 								{
 									vector<Candidate> potentialHands{};
@@ -3509,10 +3547,12 @@ protected:
 									potentialHands.back().hand.type = Type::TripleStraightWithSingles; // 飞机带小翼
 									if (this->lastHand && hand.player != this->lastHand.player)
 										for (vector<Candidate>::iterator candidateIt = potentialHands.begin(); candidateIt != potentialHands.end();)
+										{
 											if (this->coverLastHand(candidateIt->hand))
 												++candidateIt;
 											else
 												candidateIt = potentialHands.erase(candidateIt);
+										}
 									switch (potentialHands.size())
 									{
 									case 0:
@@ -3546,6 +3586,7 @@ protected:
 									candidates.clear();
 									return true;
 								}
+							}
 							candidates.clear();
 							if (this->values[hand.cards[15].point] + 4 == this->values[hand.cards[3].point])
 							{
@@ -3592,10 +3633,12 @@ protected:
 									potentialHands.back().hand.type = Type::TripleStraightWithSingles; // 飞机带小翼
 									if (this->lastHand && hand.player != this->lastHand.player)
 										for (vector<Candidate>::iterator candidateIt = potentialHands.begin(); candidateIt != potentialHands.end();)
+										{
 											if (this->coverLastHand(candidateIt->hand))
 												++candidateIt;
 											else
 												candidateIt = potentialHands.erase(candidateIt);
+										}
 									switch (potentialHands.size())
 									{
 									case 0:
@@ -3651,6 +3694,7 @@ protected:
 						{
 						case 3:
 							if (this->values[hand.cards[0].point] <= 12)
+							{
 								if (this->values[hand.cards[15].point] + 5 == this->values[hand.cards[0].point])
 								{
 									const Value value0 = this->values[hand.cards[0].point], value15 = this->values[hand.cards[15].point];
@@ -3665,10 +3709,12 @@ protected:
 									potentialHands.back().hand.type = Type::TripleStraightWithSingles; // 飞机带小翼
 									if (this->lastHand && hand.player != this->lastHand.player)
 										for (vector<Candidate>::iterator candidateIt = potentialHands.begin(); candidateIt != potentialHands.end();)
+										{
 											if (this->coverLastHand(candidateIt->hand))
 												++candidateIt;
 											else
 												candidateIt = potentialHands.erase(candidateIt);
+										}
 									switch (potentialHands.size())
 									{
 									case 0:
@@ -3702,6 +3748,7 @@ protected:
 									candidates.clear();
 									return true;
 								}
+							}
 							candidates.clear();
 							if (this->values[hand.cards[15].point] + 4 == this->values[hand.cards[3].point])
 							{
@@ -4247,6 +4294,7 @@ private:
 				char playerFlags[4] = { -1, -1, -1, -1 };
 				for (Player player = 0; player < 4; ++player)
 					if (this->players[player].empty())
+					{
 						if (INVALID_PLAYER == winner)
 						{
 							winner = player;
@@ -4254,33 +4302,38 @@ private:
 						}
 						else
 							return false;
+					}
 				if (INVALID_PLAYER == winner)
 					return false;
 				else if (winner != this->dealer)
 					for (Player player = 0; player < 4; ++player)
 						if (player != this->dealer)
 							playerFlags[player] = 1;
-				
+
 				/* Spring and anti-sprint parsing */
 				bool isSpring = true, isAntiSpring = true;
 				{
 					const size_t handCount = this->records[1].size();
 					for (size_t innerIdx = 1; innerIdx < handCount; ++innerIdx)
 						if (Type::Single <= this->records[1][innerIdx].type && this->records[1][innerIdx].type <= Type::Octuple && !this->records[1][innerIdx].cards.empty())
+						{
 							if (this->records[1][innerIdx].player == this->dealer)
 								isAntiSpring = false;
 							else
 								isSpring = false;
+						}
 				}
 				for (size_t outerIdx = 2; outerIdx < recordCount && (isSpring || isAntiSpring); ++outerIdx)
 				{
 					const size_t handCount = this->records[outerIdx].size();
 					for (size_t innerIdx = 0; innerIdx < handCount; ++innerIdx)
 						if (Type::Single <= this->records[outerIdx][innerIdx].type && this->records[outerIdx][innerIdx].type <= Type::Octuple && !this->records[outerIdx][innerIdx].cards.empty())
+						{
 							if (this->records[outerIdx][innerIdx].player == this->dealer)
 								isAntiSpring = false;
 							else
 								isSpring = false;
+						}
 				}
 				if (isSpring)
 					if (isAntiSpring)
@@ -4289,7 +4342,7 @@ private:
 						this->amounts[0] <<= 1;
 				else if (isAntiSpring)
 					this->amounts[0] <<= 1;
-				
+
 				/* Amount finalization */
 				const Amount base = this->amounts[0];
 				this->amounts = vector<Amount>(4);
@@ -4853,10 +4906,12 @@ private:
 					}
 					if (this->lastHand && hand.player != this->lastHand.player)
 						for (vector<Candidate>::iterator it = potentialHands.begin(); it != potentialHands.end();)
+						{
 							if (this->coverLastHand(it->hand))
 								++it;
 							else
 								it = potentialHands.erase(it);
+						}
 					switch (potentialHands.size())
 					{
 					case 0:
@@ -5690,6 +5745,7 @@ private:
 				}
 				else
 					return false;
+
 			case 1:
 				if (1 == counts[1]) // && 1 == counts[2] && 1 == counts[3]
 				{
@@ -5718,10 +5774,12 @@ private:
 			bool hasCards = false;
 			for (const vector<Card>& cards : this->players)
 				if (!cards.empty())
+				{
 					if (hasCards)
 						return false;
 					else
 						hasCards = true;
+				}
 			return true;
 		}
 		return false;
@@ -5960,10 +6018,12 @@ private:
 			bool hasCards = false;
 			for (const vector<Card>& cards : this->players)
 				if (!cards.empty())
+				{
 					if (hasCards)
 						return false;
 					else
 						hasCards = true;
+				}
 			return true;
 		}
 		return false;
@@ -6130,7 +6190,7 @@ class Interaction
 private:
 	const vector<string> helpOptions = { "?", "/?", "-?", "h", "/h", "-h", "help", "/help", "--help" };
 	HelpKey helpKey = 0;
-	const vector<string> nameOptions = { "t", "/t", "-t", "name", "/name", "--name" };
+	const vector<string> nameOptions = { "n", "/n", "-n", "name", "/name", "--name" };
 	const vector<string> namesC = { "斗地主", "斗地主拓展版", "四人斗地主", "锄大地", "三两一", "五瓜皮", "七鬼五二一", "七鬼五二三" };
 	const vector<string> namesE = { "Landlords", "LandlordsX", "Landlords4P", "BigTwo", "ThreeTwoOne", "Wuguapi", "Qiguiwueryi", "Qiguiwuersan" };
 	string name = "扑克牌";
@@ -6222,45 +6282,62 @@ private:
 	}
 	bool printHelp()
 	{
-		cout << "通用扑克牌实现与解杀程序。" << endl << endl << endl;
+		cout << "通用扑克游戏实现程序。" << endl << endl;
 		switch (this->helpKey)
 		{
 		case 'T':
 		case 't':
 		{
-			cout << "目前支持以下扑克牌类型：" << endl;
+			cout << "目前支持以下扑克游戏：" << endl;
 			const size_t length = this->namesC.size();
-			for (size_t idx = 0; idx < length;)
-				cout << "\t（" << ++idx << "）" << this->namesC[idx] << "；" << endl;
-			cout << endl << endl << endl;
+			for (size_t idx = 0; idx < length; ++idx)
+				cout << "\t（" << (idx + 1) << "）" << this->namesC[idx] << "；" << endl;
+			cout << endl;
 			return true;
 		}
 		case 'P':
 		case 'p':
-			cout << "用于指定玩家人数的参数目前仅对以下扑克牌类型生效：" << endl;
+			cout << "用于指定玩家人数的参数目前仅对以下扑克游戏生效：" << endl;
 			cout << "\t（1）五瓜皮：最少 2 人，最多 10 人，默认 2 人；" << endl;
 			cout << "\t（2）七鬼五二一：最少 2 人，最多 7 人，默认 2 人；" << endl;
 			cout << "\t（3）七鬼五二三：最少 2 人，最多 7 人，默认 2 人。" << endl << endl;
-			cout << "否则，该参数将会被自动忽略。" << endl << endl << endl << endl;
+			cout << "否则，该参数将会被自动忽略。" << endl << endl;
 			return true;
 		case 'S':
 		case 's':
-			cout << "目前支持以下排序显示方式：" << endl;
-			cout << "\t（1）从大到小排序（默认）：FromBigToSmall (0)；" << endl;
-			cout << "\t（2）从小到大排序：FromSmallToBig (1)；" << endl;
-			cout << "\t（3）从多到少排序：FromManyToFew (2)；" << endl;
-			cout << "\t（4）从少到多排序：FromFewToMany (3)。" << endl << endl << endl << endl;
+			cout << "目前支持以下十四项单级排序：" << endl;
+			cout << "\t（01）P：依照点数升序（0b01010000）；" << endl;
+			cout << "\t（02）V：依照价值升序（0b01010110）；" << endl;
+			cout << "\t（03）S：依照花色升序（0b01010011）；" << endl;
+			cout << "\t（04）H：依照点数的计数升序（0b01001000 = 'P' - 0b1000）；" << endl;
+			cout << "\t（05）M：依照扑克牌的计数升序（0b01001101 = 'U' - 0b1000）；" << endl;
+			cout << "\t（06）N：依照价值的计数升序（0b01001110 = 'V' - 0b1000）；" << endl;
+			cout << "\t（07）K：依照花色的计数升序（0b01001011 = 'S' - 0b1000）；" << endl;
+			cout << "\t（08）p：依照点数降序（0b01110000）；" << endl;
+			cout << "\t（09）v：依照价值降序（0b01110110）；" << endl;
+			cout << "\t（10）s：依照花色降序（0b01110011）；" << endl;
+			cout << "\t（11）h：依照点数的计数降序（0b01101000 = 'p' - 0b1000）；" << endl;
+			cout << "\t（12）m：依照扑克牌的计数降序（0b01101101 = 'u' - 0b1000）；" << endl;
+			cout << "\t（13）n：依照价值的计数降序（0b01101110 = 'v' - 0b1000）；" << endl;
+			cout << "\t（14）k：依照花色的计数降序（0b01101011 = 's' - 0b1000）。" << endl << endl;
+			cout << "请注意：" << endl;
+			cout << "\t（1）该排序仅对玩家手上的扑克牌生效，对于每级排序，所调用的排序函数均使用不稳定排序算法；" << endl;
+			cout << "\t（2）您可以使用至少一项、至多七项单级排序依照您所期望的顺序来实现单级或多级排序，例如，使用默认值“vs”将先按价值降序，再按花色降序；" << endl;
+			cout << "\t（3）您可以使用二进制（以“0b”作为前缀）、八进制（以“0o”或“0”作为前缀）、十进制或十六进制（以“0x”作为前缀）来替代对应字母，若为多级排序，请仅保留值最前方的前缀，例如使用 0b0111011001110011 替代“vs”；" << endl;
+			cout << "\t（4）使用字母指示一级排序时，该字母须严格区分大小写，使用带有前缀的数值时，前缀可不区分大小写；" << endl;
+			cout << "\t（5）同一字母的大小写不能同时出现在多级排序中，因为它们通常没有意义，例如，您不能使用“vsV”，因为在按价值降序后传递给后续每级排序的两个 Card 类型变量均满足价值相等，这会导致后续的按价值升序对比两个 Card 类型变量的结果恒定为相等。" << endl << endl;
 			return true;
 		default:
-			cout << "参数（不区分顺序和大小写）：" << endl;
-			cout << "\t" << this->vector2string(this->nameOptions, "[", "|", "]") << " [扑克牌类型]\t\t\t设置扑克牌类型" << endl;
-			cout << "\t" << this->vector2string(this->playerCountOptions, "[", "|", "]") << " [玩家人数]\t\t设置玩家人数" << endl;
-			cout << "\t" << this->vector2string(this->sorterOptions, "[", "|", "]") << " [排序显示方式]\t设置排序显示方式" << endl;
-			cout << "\t" << this->vector2string(this->helpOptions, "[", "|", "]") << " 或 [其它参数] " << this->vector2string(this->helpOptions, "[", "|", "]") << "\t显示帮助" << endl << endl << endl;
+			cout << "参数：" << endl;
+			cout << "\t" << this->vector2string(this->nameOptions, "[", "|", "]") << " [扑克游戏]\t\t\t\t\t\t\t设置扑克游戏" << endl;
+			cout << "\t" << this->vector2string(this->playerCountOptions, "[", "|", "]") << " [玩家人数]\t\t\t\t设置玩家人数" << endl;
+			cout << "\t" << this->vector2string(this->sorterOptions, "[", "|", "]") << " [排序显示方式]\t\t\t\t\t设置排序显示方式" << endl;
+			cout << "\t" << this->vector2string(this->helpOptions, "[", "|", "]") << " 或 [其它参数] " << this->vector2string(this->helpOptions, "[", "|", "]") << "\t显示帮助" << endl << endl;
 			cout << "注意：" << endl;
 			cout << "\t（1）键和值应当成对出现，即每一个表示键的参数后均应紧接着其对应的值（含帮助参数）；" << endl;
-			cout << "\t（2）当同一键出现多次时，其值以该键最后一次以合法键值对的形式出现时的值为准；" << endl;
-			cout << "\t（3）出现多个帮助参数时，以最后一次出现帮助参数时的上下文进行显示帮助。" << endl << endl << endl << endl;
+			cout << "\t（2）不存在重复的键时，键值对的顺序不影响程序对命令行的解析，除以字母指示的排序外，所有键和值均不区分大小写；" << endl;
+			cout << "\t（3）当同一键出现多次时，其值以该键最后一次以合法键值对的形式出现时的值为准；" << endl;
+			cout << "\t（4）出现多个帮助参数时，以最后一次出现帮助参数时的上下文进行显示帮助。" << endl << endl;
 			return 1 == this->helpKey;
 		}
 	}
@@ -6297,8 +6374,8 @@ private:
 		else
 		{
 			this->clearScreen();
-			cout << "已选定扑克牌类型：" << this->name << endl;
-			cout << "该扑克牌类型支持最少 " << lowerBound << " 人，最多 " << upperBound << " 人。" << endl;
+			cout << "已选定扑克游戏为" << this->name << "。" << endl;
+			cout << "该扑克游戏支持最少 " << lowerBound << " 人，最多 " << upperBound << " 人。" << endl;
 			for (;;)
 			{
 				string playerCountString{};
@@ -6322,7 +6399,7 @@ private:
 			for (;;)
 			{
 				this->clearScreen();
-				cout << "可选的扑克牌类型如下：" << endl;
+				cout << "可选的扑克游戏如下：" << endl;
 				const size_t length = this->namesC.size();
 				for (size_t idx = 0; idx < length; ++idx)
 					cout << "\t" << (idx + 1) << " = " << this->namesC[idx] << endl;
@@ -6375,7 +6452,7 @@ private:
 		else
 			return false;
 	}
-	
+
 	/* Action confirmation */
 	bool ensureAction(const string& buffer, const string& actionDescriptioin) const
 	{
@@ -6422,7 +6499,7 @@ private:
 		else
 			return false;
 	}
-	
+
 	/* Procedures */
 	bool setLandlord(Action& action) const
 	{
@@ -6445,6 +6522,7 @@ private:
 				else if (action > Action::None)
 					action = Action::None;
 				else if (!buffer.empty())
+				{
 					if (this->isIn(buffer, this->landlordStatements))
 					{
 						if (this->poker->setLandlord(true))
@@ -6456,6 +6534,7 @@ private:
 					}
 					else if (this->poker->setLandlord(false))
 						++count;
+				}
 			}
 			if (callerAndRobberCount >= 2)
 				for (;;)
@@ -6663,7 +6742,7 @@ private:
 public:
 	Interaction()
 	{
-		
+
 	}
 	Interaction(const vector<string>& arguments)
 	{
@@ -6706,10 +6785,12 @@ public:
 				else
 					invalidArgumentIndexes.push_back(argumentID);
 			if (argumentID == argumentCount)
+			{
 				if (this->isIn(arguments[argumentID], this->helpOptions))
 					this->helpKey = 1;
 				else
 					invalidArgumentIndexes.push_back(argumentID);
+			}
 			if (!invalidArgumentIndexes.empty())
 			{
 				const size_t length = invalidArgumentIndexes.size();
@@ -6830,11 +6911,11 @@ public:
 					default:
 						break;
 					}
-					
+
 					/* Ending */
 					this->clearScreen();
 					this->poker->display();
-					cout << "此局已终，请按 A 键回车再来一局，按 E 键回车退出程序，按其它键回车更改扑克牌游戏：";
+					cout << "此局已终，请按 A 键回车再来一局，按 E 键回车退出程序，按其它键回车更改扑克游戏：";
 					this->rfstdin();
 					switch (getchar())
 					{
@@ -6856,6 +6937,8 @@ public:
 				}
 			}
 	}
+	Interaction(const Interaction&) = delete;
+	Interaction(Interaction&&) = delete;
 	Interaction& operator=(const Interaction&) = delete;
 	Interaction& operator=(Interaction&&) = delete;
 };
