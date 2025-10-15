@@ -18,18 +18,14 @@
 #define EOF (-1)
 #endif
 #ifndef UNREFERENCED_PARAMETER
-#if defined _WIN32 || defined _WIN64
-#define UNREFERENCED_PARAMETER(P) (P)
-#else
-#define UNREFERENCED_PARAMETER(P)
-#endif
+#define UNREFERENCED_PARAMETER(P) (void(P))
 #endif
 using namespace std;
 typedef unsigned char HelpKey;
 typedef unsigned short Sorting;
 typedef unsigned char Value;
-typedef unsigned char Point;
-typedef unsigned char Player;
+typedef unsigned char Point; // Please remove the comments by searching the string "/* 0 <= " if the ``unsigned`` here is removed. 
+typedef unsigned char Player; // Please remove the comments by searching the string "/* 0 <= " if the ``unsigned`` here is removed. 
 typedef unsigned char Count;
 typedef long long int Amount;
 constexpr long long int TIME_FOR_SLEEP = 3;
@@ -123,8 +119,8 @@ struct Card
 	Suit suit = Suit::Cover;
 	
 	Card() : point(JOKER_POINT), suit(Suit::Cover) {}
-	Card(const Point point) : point(0 <= point && point <= 13 ? point : JOKER_POINT), suit(Suit::Cover) {}
-	Card(const Point point, const Suit suit) : point(0 <= point && point <= 13 ? point : JOKER_POINT), suit(((1 <= point && point <= 13 && (suit <= Suit::Spade || Suit::Cover == suit)) || (JOKER_POINT == point && suit >= Suit::Black)) ? suit : Suit::Cover) {}
+	Card(const Point point) : point(/* 0 <= point && */point <= 13 ? point : JOKER_POINT), suit(Suit::Cover) {}
+	Card(const Point point, const Suit suit) : point(/* 0 <= point && */point <= 13 ? point : JOKER_POINT), suit(((1 <= point && point <= 13 && (suit <= Suit::Spade || Suit::Cover == suit)) || (JOKER_POINT == point && suit >= Suit::Black)) ? suit : Suit::Cover) {}
 	friend bool operator==(const Card& a, const Card& b)
 	{
 		return a.point == b.point && a.suit == b.suit;
@@ -245,7 +241,7 @@ public:
 	}
 	bool set(const Point point, const Value value)
 	{
-		if (0 <= point && point <= 13 && 1 <= value && value <= 14)
+		if (/* 0 <= point && */point <= 13 && 1 <= value && value <= 14)
 		{
 			this->values[point] = value;
 			return true;
@@ -255,7 +251,7 @@ public:
 	}
 	bool get(const Point point, Value& value) const
 	{
-		if (0 <= point && point <= 13)
+		if (/* 0 <= point && */point <= 13)
 		{
 			value = this->values[point];
 			return true;
@@ -265,7 +261,7 @@ public:
 	}
 	Value operator[](const Point point) const
 	{
-		return 0 <= point && point <= 13 ? this->values[point] : (Value)0;
+		return /* 0 <= point && */point <= 13 ? this->values[point] : (Value)0;
 	}
 };
 
@@ -504,7 +500,7 @@ protected:
 	virtual bool nextPlayer()
 	{
 		const size_t playerCount = this->players.size();
-		if (0 <= this->currentPlayer && this->currentPlayer < playerCount)
+		if (/* 0 <= this->currentPlayer && */this->currentPlayer < playerCount)
 		{
 			const Player originalPlayer = this->currentPlayer;
 			for (;;)
@@ -529,7 +525,7 @@ protected:
 			cards.clear();
 			return true;
 		}
-		else if (0 <= this->currentPlayer && this->currentPlayer < this->players.size() && !this->players[this->currentPlayer].empty())
+		else if (/* 0 <= this->currentPlayer && */this->currentPlayer < this->players.size() && !this->players[this->currentPlayer].empty())
 		{
 			vector<Card> exactCards{};
 			vector<Point> fuzzyPoints{};
@@ -753,7 +749,7 @@ protected:
 					}
 					else if(value < this->values[this->players[this->currentPlayer][idx].point])
 						break;
-				if (/* 0 <= position && */position < length)
+				if (position < length)
 					selected.emplace_back(move(position));
 				else if (exactCard == this->players[this->currentPlayer][0]) // avoid (size_t)(-1)
 					selected.emplace_back(static_cast<size_t>(0));
@@ -775,7 +771,7 @@ protected:
 					}
 					else if (value < this->values[this->players[this->currentPlayer][idx].point])
 						break;
-				if (/* 0 <= position && */position < length)
+				if (position < length)
 					selected.emplace_back(move(position));
 				else if (fuzzyPoint == this->players[this->currentPlayer][0].point) // avoid (size_t)(-1)
 					selected.emplace_back(static_cast<size_t>(0));
@@ -791,7 +787,7 @@ protected:
 						position = idx;
 						break;
 					}
-				if (/* 0 <= position && */position < length)
+				if (position < length)
 					selected.emplace_back(move(position));
 				else if (fuzzySuit == this->players[this->currentPlayer][0].suit) // avoid (size_t)(-1)
 					selected.emplace_back(static_cast<size_t>(0));
@@ -1126,7 +1122,7 @@ public:
 	virtual bool deal() = 0; // players, deck, records (clear) -> records[0], currentPlayer, dealer, lastHand (reset), amounts (clear) | amounts = vector<Amount>{ 0 }, and status = Status::Dealt | Status::Assigned
 	virtual bool getCurrentPlayer(Player& player) const final // const
 	{
-		if ((Status::Dealt <= this->status && this->status <= Status::Started && 0 <= this->currentPlayer && this->currentPlayer < this->players.size()) || Status::Over == this->status)
+		if ((Status::Dealt <= this->status && this->status <= Status::Started && /* 0 <= this->currentPlayer && */this->currentPlayer < this->players.size()) || Status::Over == this->status)
 		{
 			player = this->currentPlayer;
 			return true;
@@ -1138,7 +1134,7 @@ public:
 	virtual bool setLandlord(const Score score) { UNREFERENCED_PARAMETER(score); return false; } // records[0], currentPlayer, dealer (const) -> dealer, lastHand -> lastHand (reset), amounts[0], and status (const) -> status = Status::Assigned
 	virtual bool start(const vector<Card>& cards, vector<Candidate>& candidates) final // records[1], currentPlayer, lastHand, amounts (const) | amounts[0] | amounts(this->players.size()), and status = Status::Started | Status::Over
 	{
-		if (Status::Assigned == this->status && this->records.size() == 1 && !this->records[0].empty() && 0 <= this->currentPlayer && this->currentPlayer < this->players.size() && this->checkStarting(cards))
+		if (Status::Assigned == this->status && this->records.size() == 1 && !this->records[0].empty() && /* 0 <= this->currentPlayer && */this->currentPlayer < this->players.size() && this->checkStarting(cards))
 		{
 			Hand hand{ this->currentPlayer, cards };
 			if (this->processHand(hand, candidates) && this->removeCards(cards, this->players[this->currentPlayer]))
@@ -1180,7 +1176,7 @@ public:
 	}
 	virtual bool play(const vector<Card>& cards, vector<Candidate>& candidates) final // records, currentPlayer, lastHand, amounts (const) | amounts[0] | amounts(this->players.size()), and status (const) -> status = Status::Over
 	{
-		if (Status::Started == this->status && this->records.size() >= 2 && !this->records.back().empty() && 0 <= this->currentPlayer && this->currentPlayer < this->players.size() && this->lastHand)
+		if (Status::Started == this->status && this->records.size() >= 2 && !this->records.back().empty() && /* 0 <= this->currentPlayer && */this->currentPlayer < this->players.size() && this->lastHand)
 		{
 			Hand hand{ this->currentPlayer, cards };
 			if (this->processHand(hand, candidates))
@@ -1255,7 +1251,7 @@ public:
 			case '9':
 			{
 				const Player player = (Player)(keyChar & 0b1111);
-				if (0 <= player && player < playerCount)
+				if (/* 0 <= player && */player < playerCount)
 					break;
 				else
 					return false;
@@ -1426,22 +1422,22 @@ private:
 						break;
 					case 15:
 						*p *= *q;
-#if ((defined __cplusplus && __cplusplus >= 201703L) || (defined _MSVC_LANG && _MSVC_LANG >= 201703L))
+#if ((defined _MSVC_LANG && _MSVC_LANG >= 201703L) || (!defined _MSVC_LANG && defined __cplusplus && __cplusplus >= 201103L))
 						[[fallthrough]];
 #endif
 					case 14:
 						*p *= *q;
-#if ((defined __cplusplus && __cplusplus >= 201703L) || (defined _MSVC_LANG && _MSVC_LANG >= 201703L))
+#if ((defined _MSVC_LANG && _MSVC_LANG >= 201703L) || (!defined _MSVC_LANG && defined __cplusplus && __cplusplus >= 201103L))
 						[[fallthrough]];
 #endif
 					case 13:
 						*p *= *q;
-#if ((defined __cplusplus && __cplusplus >= 201703L) || (defined _MSVC_LANG && _MSVC_LANG >= 201703L))
+#if ((defined _MSVC_LANG && _MSVC_LANG >= 201703L) || (!defined _MSVC_LANG && defined __cplusplus && __cplusplus >= 201103L))
 						[[fallthrough]];
 #endif
 					case 12:
 						*p *= *q;
-#if ((defined __cplusplus && __cplusplus >= 201703L) || (defined _MSVC_LANG && _MSVC_LANG >= 201703L))
+#if ((defined _MSVC_LANG && _MSVC_LANG >= 201703L) || (!defined _MSVC_LANG && defined __cplusplus && __cplusplus >= 201103L))
 						[[fallthrough]];
 #endif
 					case 11:
@@ -1469,7 +1465,7 @@ private:
 					this->amounts = vector<Amount>{ backup };
 					return false;
 				}
-#if ((defined __cplusplus && __cplusplus >= 201703L) || (defined _MSVC_LANG && _MSVC_LANG >= 201703L))
+#if ((defined _MSVC_LANG && _MSVC_LANG >= 201703L) || (!defined _MSVC_LANG && defined __cplusplus && __cplusplus >= 201103L))
 				[[fallthrough]];
 #endif
 			}
@@ -2157,7 +2153,7 @@ public:
 	}
 	bool setLandlord(const bool b) override final
 	{
-		if (Status::Dealt == this->status && this->records.size() == 1 && 0 <= this->currentPlayer && this->currentPlayer < this->players.size() && this->amounts.size() == 1)
+		if (Status::Dealt == this->status && this->records.size() == 1 && /* 0 <= this->currentPlayer && */this->currentPlayer < this->players.size() && this->amounts.size() == 1)
 			switch (this->records[0].size())
 			{
 			case 0:
@@ -4348,7 +4344,7 @@ private:
 				this->amounts = vector<Amount>(4);
 				for (Player player = 0; player < 4; ++player)
 					this->amounts[player] = base * playerFlags[player];
-#if ((defined __cplusplus && __cplusplus >= 201703L) || (defined _MSVC_LANG && _MSVC_LANG >= 201703L))
+#if ((defined _MSVC_LANG && _MSVC_LANG >= 201703L) || (!defined _MSVC_LANG && defined __cplusplus && __cplusplus >= 201103L))
 				[[fallthrough]];
 #endif
 			}
@@ -4504,7 +4500,7 @@ public:
 	bool setLandlord(const Score score) override final
 	{
 		const Point point = static_cast<Point>(score);
-		if (Status::Dealt == this->status && this->records.size() == 1 && 0 <= this->currentPlayer && this->currentPlayer < this->players.size())
+		if (Status::Dealt == this->status && this->records.size() == 1 && /* 0 <= this->currentPlayer && */this->currentPlayer < this->players.size())
 			switch (this->records[0].size())
 			{
 			case 0:
@@ -4734,7 +4730,7 @@ private:
 					this->amounts.clear();
 					return false;
 				}
-#if ((defined __cplusplus && __cplusplus >= 201703L) || (defined _MSVC_LANG && _MSVC_LANG >= 201703L))
+#if ((defined _MSVC_LANG && _MSVC_LANG >= 201703L) || (!defined _MSVC_LANG && defined __cplusplus && __cplusplus >= 201103L))
 				[[fallthrough]];
 #endif
 			}
@@ -5507,7 +5503,7 @@ private:
 				}
 				else
 					this->amounts[winner] = s;
-#if ((defined __cplusplus && __cplusplus >= 201703L) || (defined _MSVC_LANG && _MSVC_LANG >= 201703L))
+#if ((defined _MSVC_LANG && _MSVC_LANG >= 201703L) || (!defined _MSVC_LANG && defined __cplusplus && __cplusplus >= 201103L))
 				[[fallthrough]];
 #endif
 			}
@@ -6654,8 +6650,8 @@ private:
 				action = Action::None;
 			else if (!buffer.empty())
 			{
-				const unsigned long int choice = strtoul(buffer.c_str(), nullptr, 0) - 1;
-				if (/* 0 <= choice && */choice < length)
+				const size_t choice = static_cast<size_t>(strtoul(buffer.c_str(), nullptr, 0) - 1);
+				if (choice < length)
 				{
 					candidates = vector<Candidate>{ candidates[choice] };
 					return true;
@@ -6867,7 +6863,7 @@ public:
 					{
 					case Action::ReturnConfirmed:
 						this->resetAll();
-#if ((defined __cplusplus && __cplusplus >= 201703L) || (defined _MSVC_LANG && _MSVC_LANG >= 201703L))
+#if ((defined _MSVC_LANG && _MSVC_LANG >= 201703L) || (!defined _MSVC_LANG && defined __cplusplus && __cplusplus >= 201103L))
 						[[fallthrough]];
 #endif
 					case Action::AgainConfirmed:
@@ -6884,7 +6880,7 @@ public:
 					{
 					case Action::ReturnConfirmed:
 						this->resetAll();
-#if ((defined __cplusplus && __cplusplus >= 201703L) || (defined _MSVC_LANG && _MSVC_LANG >= 201703L))
+#if ((defined _MSVC_LANG && _MSVC_LANG >= 201703L) || (!defined _MSVC_LANG && defined __cplusplus && __cplusplus >= 201103L))
 						[[fallthrough]];
 #endif
 					case Action::AgainConfirmed:
@@ -6901,7 +6897,7 @@ public:
 					{
 					case Action::ReturnConfirmed:
 						this->resetAll();
-#if ((defined __cplusplus && __cplusplus >= 201703L) || (defined _MSVC_LANG && _MSVC_LANG >= 201703L))
+#if ((defined _MSVC_LANG && _MSVC_LANG >= 201703L) || (!defined _MSVC_LANG && defined __cplusplus && __cplusplus >= 201103L))
 						[[fallthrough]];
 #endif
 					case Action::AgainConfirmed:
