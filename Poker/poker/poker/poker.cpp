@@ -316,7 +316,7 @@ protected:
 		Sorting sorter = _sorter;
 		bool pointFlag = false, valueFlag = false, suitFlag = false, pointCountFlag = false, unionCountFlag = false, valueCountFlag = false, suitCountFlag = false;
 		vector<function<int(const Card, const Card)>> lambdas{};
-		Count pointCounts[14] = { 0 }, unionCounts[14][4] = { 0 }, valueCounts[15] = { 0 }, suitCounts[7] = { 0 };
+		Count pointCounts[14] = { 0 }, unionCounts[14][4] = { { 0 } }, valueCounts[15] = { 0 }, suitCounts[7] = { 0 };
 		while (sorter)
 		{
 			switch (sorter & 0b1111)
@@ -750,7 +750,7 @@ protected:
 					else if(value < this->values[this->players[this->currentPlayer][idx].point])
 						break;
 				if (position < length)
-					selected.emplace_back(move(position));
+					selected.emplace_back(std::move(position));
 				else if (exactCard == this->players[this->currentPlayer][0]) // avoid (size_t)(-1)
 					selected.emplace_back(static_cast<size_t>(0));
 				else
@@ -772,7 +772,7 @@ protected:
 					else if (value < this->values[this->players[this->currentPlayer][idx].point])
 						break;
 				if (position < length)
-					selected.emplace_back(move(position));
+					selected.emplace_back(std::move(position));
 				else if (fuzzyPoint == this->players[this->currentPlayer][0].point) // avoid (size_t)(-1)
 					selected.emplace_back(static_cast<size_t>(0));
 				else
@@ -788,7 +788,7 @@ protected:
 						break;
 					}
 				if (position < length)
-					selected.emplace_back(move(position));
+					selected.emplace_back(std::move(position));
 				else if (fuzzySuit == this->players[this->currentPlayer][0].suit) // avoid (size_t)(-1)
 					selected.emplace_back(static_cast<size_t>(0));
 				else
@@ -1048,7 +1048,10 @@ protected:
 			case Status::Over:
 				cout << "已结束";
 				break;
+			case Status::Ready:
+			case Status::Initialized:
 			default:
+				cout << "请检查进程内存";
 				break;
 			}
 			cout << "）" << endl << this->getBasisString() << endl;
@@ -1486,7 +1489,7 @@ private:
 	{
 		return Type::PairJokers == hand.type;
 	}
-	string getBasisString() const
+	string getBasisString() const override final
 	{
 		return this->amounts.size() == 1 ? "倍数信息：当前共叫地主 " + to_string(this->amounts[0] >> 10) + " 次，抢地主 " + to_string((this->amounts[0] >> 8) & 0b11) + " 次；共出实炸 " + to_string((this->amounts[0] >> 4) & 0b1111) + " 个，空炸 " + to_string(this->amounts[0] & 0b1111) + " 个。\n" : "";
 	}
@@ -1555,6 +1558,11 @@ protected:
 						++counts[JOKER_POINT];
 						break;
 					}
+				case Suit::Diamond:
+				case Suit::Club:
+				case Suit::Heart:
+				case Suit::Spade:
+				case Suit::Cover:
 				default:
 					return false;
 				}
@@ -2090,6 +2098,21 @@ protected:
 				return false;
 			case Type::Quadruple: // 炸弹
 				return Type::PairJokers == currentHand.type || (Type::Quadruple == currentHand.type && this->values[currentHand.cards[0].point] > this->values[this->lastHand.cards[0].point]);
+			case Type::Empty:
+			case Type::SingleFlush:
+			case Type::SingleFlushStraight:
+			case Type::PairStraightWithSingle:
+			case Type::TripleWithPairSingle:
+			case Type::TripleStraightWithSingle:
+			case Type::QuadrupleWithSingle:
+			case Type::QuadrupleStraight:
+			case Type::QuadrupleStraightWithSingle:
+			case Type::QuadrupleJokers:
+			case Type::Quintuple:
+			case Type::Sextuple:
+			case Type::Septuple:
+			case Type::Octuple:
+			case Type::Invalid:
 			default:
 				return false;
 			}
@@ -2287,6 +2310,11 @@ protected:
 						++counts[JOKER_POINT];
 						break;
 					}
+				case Suit::Diamond:
+				case Suit::Club:
+				case Suit::Heart:
+				case Suit::Spade:
+				case Suit::Cover:
 				default:
 					candidates.clear();
 					return false;
@@ -2362,7 +2390,7 @@ protected:
 					candidates.clear();
 					return false;
 				case 1:
-					hand = move(potentialHands[0].hand);
+					hand = std::move(potentialHands[0].hand);
 					candidates.clear();
 					return true;
 				default:
@@ -2371,12 +2399,12 @@ protected:
 						const vector<Candidate>::iterator it = find_if(potentialHands.begin(), potentialHands.end(), [&candidates](const Candidate& candidate) { return candidate.hand == candidates[0].hand; });
 						if (it != potentialHands.end())
 						{
-							hand = move(it->hand);
+							hand = std::move(it->hand);
 							candidates.clear();
 							return true;
 						}
 					}
-					candidates = move(potentialHands);
+					candidates = std::move(potentialHands);
 					return false;
 				}
 			}
@@ -2482,7 +2510,7 @@ protected:
 						candidates.clear();
 						return false;
 					case 1:
-						hand = move(potentialHands[0].hand);
+						hand = std::move(potentialHands[0].hand);
 						candidates.clear();
 						return true;
 					default:
@@ -2491,12 +2519,12 @@ protected:
 							const vector<Candidate>::iterator it = find_if(potentialHands.begin(), potentialHands.end(), [&candidates](const Candidate& candidate) { return candidate.hand == candidates[0].hand; });
 							if (it != potentialHands.end())
 							{
-								hand = move(it->hand);
+								hand = std::move(it->hand);
 								candidates.clear();
 								return true;
 							}
 						}
-						candidates = move(potentialHands);
+						candidates = std::move(potentialHands);
 						return false;
 					}
 				}
@@ -2711,7 +2739,7 @@ protected:
 									candidates.clear();
 									return false;
 								case 1:
-									hand = move(potentialHands[0].hand);
+									hand = std::move(potentialHands[0].hand);
 									candidates.clear();
 									return true;
 								default:
@@ -2720,12 +2748,12 @@ protected:
 										const vector<Candidate>::iterator it = find_if(potentialHands.begin(), potentialHands.end(), [&candidates](const Candidate& candidate) { return candidate.hand == candidates[0].hand; });
 										if (it != potentialHands.end())
 										{
-											hand = move(it->hand);
+											hand = std::move(it->hand);
 											candidates.clear();
 											return true;
 										}
 									}
-									candidates = move(potentialHands);
+									candidates = std::move(potentialHands);
 									return false;
 								}
 							}
@@ -2955,7 +2983,7 @@ protected:
 										candidates.clear();
 										return false;
 									case 1:
-										hand = move(potentialHands[0].hand);
+										hand = std::move(potentialHands[0].hand);
 										candidates.clear();
 										return true;
 									default:
@@ -2969,7 +2997,7 @@ protected:
 												return true;
 											}
 										}
-										candidates = move(potentialHands);
+										candidates = std::move(potentialHands);
 										return false;
 									}
 								}
@@ -3052,7 +3080,7 @@ protected:
 									candidates.clear();
 									return false;
 								case 1:
-									hand = move(potentialHands[0].hand);
+									hand = std::move(potentialHands[0].hand);
 									candidates.clear();
 									return true;
 								default:
@@ -3061,12 +3089,12 @@ protected:
 										const vector<Candidate>::iterator it = find_if(potentialHands.begin(), potentialHands.end(), [&candidates](const Candidate& candidate) { return candidate.hand == candidates[0].hand; });
 										if (it != potentialHands.end())
 										{
-											hand = move(it->hand);
+											hand = std::move(it->hand);
 											candidates.clear();
 											return true;
 										}
 									}
-									candidates = move(potentialHands);
+									candidates = std::move(potentialHands);
 									return false;
 								}
 							}
@@ -3320,7 +3348,7 @@ protected:
 											candidates.clear();
 											return false;
 										case 1:
-											hand = move(potentialHands[0].hand);
+											hand = std::move(potentialHands[0].hand);
 											candidates.clear();
 											return true;
 										default:
@@ -3334,7 +3362,7 @@ protected:
 													return true;
 												}
 											}
-											candidates = move(potentialHands);
+											candidates = std::move(potentialHands);
 											return false;
 										}
 									}
@@ -3363,7 +3391,7 @@ protected:
 												candidates.clear();
 												return false;
 											case 1:
-												hand = move(potentialHands[0].hand);
+												hand = std::move(potentialHands[0].hand);
 												candidates.clear();
 												return true;
 											default:
@@ -3377,7 +3405,7 @@ protected:
 														return true;
 													}
 												}
-												candidates = move(potentialHands);
+												candidates = std::move(potentialHands);
 												return false;
 											}
 										}
@@ -3422,7 +3450,7 @@ protected:
 											candidates.clear();
 											return false;
 										case 1:
-											hand = move(potentialHands[0].hand);
+											hand = std::move(potentialHands[0].hand);
 											candidates.clear();
 											return true;
 										default:
@@ -3436,7 +3464,7 @@ protected:
 													return true;
 												}
 											}
-											candidates = move(potentialHands);
+											candidates = std::move(potentialHands);
 											return false;
 										}
 									}
@@ -3555,7 +3583,7 @@ protected:
 										candidates.clear();
 										return false;
 									case 1:
-										hand = move(potentialHands[0].hand);
+										hand = std::move(potentialHands[0].hand);
 										candidates.clear();
 										return true;
 									default:
@@ -3569,7 +3597,7 @@ protected:
 												return true;
 											}
 										}
-										candidates = move(potentialHands);
+										candidates = std::move(potentialHands);
 										return false;
 									}
 								}
@@ -3641,7 +3669,7 @@ protected:
 										candidates.clear();
 										return false;
 									case 1:
-										hand = move(potentialHands[0].hand);
+										hand = std::move(potentialHands[0].hand);
 										candidates.clear();
 										return true;
 									default:
@@ -3655,7 +3683,7 @@ protected:
 												return true;
 											}
 										}
-										candidates = move(potentialHands);
+										candidates = std::move(potentialHands);
 										return false;
 									}
 								}
@@ -3667,7 +3695,7 @@ protected:
 							}
 							else
 							{
-								hand = move(potentialHands[0].hand);
+								hand = std::move(potentialHands[0].hand);
 								candidates.clear();
 								return true;
 							}
@@ -3717,7 +3745,7 @@ protected:
 										candidates.clear();
 										return false;
 									case 1:
-										hand = move(potentialHands[0].hand);
+										hand = std::move(potentialHands[0].hand);
 										candidates.clear();
 										return true;
 									default:
@@ -3731,7 +3759,7 @@ protected:
 												return true;
 											}
 										}
-										candidates = move(potentialHands);
+										candidates = std::move(potentialHands);
 										return false;
 									}
 								}
@@ -3853,6 +3881,11 @@ private:
 						return false;
 					else
 						break;
+				case Suit::Diamond:
+				case Suit::Club:
+				case Suit::Heart:
+				case Suit::Spade:
+				case Suit::Cover:
 				default:
 					return false;
 				}
@@ -4287,7 +4320,7 @@ private:
 			{
 				/* Winner fetching */
 				Player winner = INVALID_PLAYER;
-				char playerFlags[4] = { -1, -1, -1, -1 };
+				char playerFlags[4] = { static_cast<char>(-1), static_cast<char>(-1), static_cast<char>(-1), static_cast<char>(-1) };
 				for (Player player = 0; player < 4; ++player)
 					if (this->players[player].empty())
 					{
@@ -4389,7 +4422,7 @@ private:
 		else
 			return false;
 	}
-	string getBasisString() const
+	string getBasisString() const override final
 	{
 		return this->amounts.size() == 1 ? "当前倍数：" + to_string(this->amounts[0]) : "";
 	}
@@ -4914,7 +4947,7 @@ private:
 						candidates.clear();
 						return false;
 					case 1:
-						hand = move(potentialHands[0].hand);
+						hand = std::move(potentialHands[0].hand);
 						candidates.clear();
 						return true;
 					default:
@@ -4923,12 +4956,12 @@ private:
 							const vector<Candidate>::iterator it = find_if(potentialHands.begin(), potentialHands.end(), [&candidates](const Candidate& candidate) { return candidate.hand == candidates[0].hand; });
 							if (it != potentialHands.end())
 							{
-								hand = move(it->hand);
+								hand = std::move(it->hand);
 								candidates.clear();
 								return true;
 							}
 						}
-						candidates = move(potentialHands);
+						candidates = std::move(potentialHands);
 						return false;
 					}
 				}
@@ -5060,7 +5093,7 @@ private:
 						if (this->judgeStraight(bodyCards, 3, 3, true))
 						{
 							bodyCards.push_back(hand.cards[3]);
-							hand.cards = move(bodyCards);
+							hand.cards = std::move(bodyCards);
 							hand.type = Type::TripleStraightWithSingle; // 三顺夹一
 							return true;
 						}
@@ -5093,7 +5126,7 @@ private:
 							if (this->judgeStraight(bodyCards, 2, 3, true))
 							{
 								bodyCards.push_back(hand.cards[2]);
-								hand.cards = move(bodyCards);
+								hand.cards = std::move(bodyCards);
 								hand.type = Type::PairStraightWithSingle; // 连对夹一
 								return true;
 							}
@@ -5157,7 +5190,7 @@ private:
 						if (this->judgeStraight(bodyCards, 4, 3, true))
 						{
 							bodyCards.push_back(hand.cards.back());
-							hand.cards = move(bodyCards);
+							hand.cards = std::move(bodyCards);
 							hand.type = Type::QuadrupleStraightWithSingle; // 四顺夹一
 							return true;
 						}
@@ -5185,7 +5218,7 @@ private:
 							if (this->judgeStraight(bodyCards, 2, 3, true))
 							{
 								bodyCards.push_back(hand.cards[2]);
-								hand.cards = move(bodyCards);
+								hand.cards = std::move(bodyCards);
 								hand.type = Type::PairStraightWithSingle; // 连对夹一
 								return true;
 							}
@@ -5204,7 +5237,7 @@ private:
 						if (this->judgeStraight(bodyCards, 2, 3, true))
 						{
 							bodyCards.push_back(hand.cards.back());
-							hand.cards = move(bodyCards);
+							hand.cards = std::move(bodyCards);
 							hand.type = Type::PairStraightWithSingle; // 连对夹一
 							return true;
 						}
@@ -5235,7 +5268,7 @@ private:
 						if (this->judgeStraight(bodyCards, 3, 3, true))
 						{
 							bodyCards.push_back(hand.cards[3]);
-							hand.cards = move(bodyCards);
+							hand.cards = std::move(bodyCards);
 							hand.type = Type::TripleStraightWithSingle; // 三顺夹一
 							return true;
 						}
@@ -5251,7 +5284,7 @@ private:
 						if (this->judgeStraight(bodyCards, 3, 3, true))
 						{
 							bodyCards.push_back(hand.cards.back());
-							hand.cards = move(bodyCards);
+							hand.cards = std::move(bodyCards);
 							hand.type = Type::TripleStraightWithSingle; // 三顺夹一
 							return true;
 						}
@@ -5267,7 +5300,7 @@ private:
 						if (this->judgeStraight(bodyCards, 2, 3, true))
 						{
 							bodyCards.push_back(hand.cards.back());
-							hand.cards = move(bodyCards);
+							hand.cards = std::move(bodyCards);
 							hand.type = Type::PairStraight; // 连对
 							return true;
 						}
@@ -5298,7 +5331,7 @@ private:
 						if (this->judgeStraight(bodyCards, 2, 3, true))
 						{
 							bodyCards.push_back(hand.cards[2]);
-							hand.cards = move(bodyCards);
+							hand.cards = std::move(bodyCards);
 							hand.type = Type::PairStraightWithSingle; // 连对夹一
 							return true;
 						}
@@ -5314,7 +5347,7 @@ private:
 						if (this->judgeStraight(bodyCards, 2, 3, true))
 						{
 							bodyCards.push_back(hand.cards.back());
-							hand.cards = move(bodyCards);
+							hand.cards = std::move(bodyCards);
 							hand.type = Type::PairStraightWithSingle; // 连对夹一
 							return true;
 						}
@@ -5363,7 +5396,7 @@ private:
 						if (this->judgeStraight(bodyCards, 3, 3, true))
 						{
 							bodyCards.push_back(hand.cards[3]);
-							hand.cards = move(bodyCards);
+							hand.cards = std::move(bodyCards);
 							hand.type = Type::TripleStraightWithSingle; // 三顺夹一
 							return true;
 						}
@@ -5382,7 +5415,7 @@ private:
 							if (this->judgeStraight(bodyCards, 3, 3, true))
 							{
 								bodyCards.push_back(hand.cards.back());
-								hand.cards = move(bodyCards);
+								hand.cards = std::move(bodyCards);
 								hand.type = Type::TripleStraightWithSingle; // 三顺夹一
 								return true;
 							}
@@ -5399,7 +5432,7 @@ private:
 							if (this->judgeStraight(bodyCards, 2, 3, true))
 							{
 								bodyCards.push_back(hand.cards[2]);
-								hand.cards = move(bodyCards);
+								hand.cards = std::move(bodyCards);
 								hand.type = Type::PairStraightWithSingle; // 连对夹一
 								return true;
 							}
@@ -5418,7 +5451,7 @@ private:
 						if (2 == this->judgeStraight(bodyCards, 3, true))
 						{
 							bodyCards.push_back(hand.cards.back());
-							hand.cards = move(bodyCards);
+							hand.cards = std::move(bodyCards);
 							hand.type = Type::PairStraightWithSingle; // 连对夹一
 							return true;
 						}
@@ -5652,6 +5685,11 @@ private:
 						++counts[JOKER_POINT];
 						break;
 					}
+				case Suit::Diamond:
+				case Suit::Club:
+				case Suit::Heart:
+				case Suit::Spade:
+				case Suit::Cover:
 				default:
 					return false;
 				}
@@ -5958,6 +5996,11 @@ private:
 						++counts[JOKER_POINT];
 						break;
 					}
+				case Suit::Diamond:
+				case Suit::Club:
+				case Suit::Heart:
+				case Suit::Spade:
+				case Suit::Cover:
 				default:
 					return false;
 				}
@@ -6400,14 +6443,14 @@ private:
 				for (size_t idx = 0; idx < length; ++idx)
 					cout << "\t" << (idx + 1) << " = " << this->namesC[idx] << endl;
 				cout << "\t0 = 退出程序" << endl << endl << "请选择或输入一种扑克牌以继续：";
-				string _name{};
-				this->getDescription(_name);
-				if (_name.size() == 1)
+				string buffer{};
+				this->getDescription(buffer);
+				if (buffer.size() == 1)
 				{
-					const char choice = _name.at(0) - '1';
+					const char choice = static_cast<char>(buffer.at(0) - '1');
 					if (-1 == choice)
 						return false;
-					else if (0 <= choice && choice < static_cast<char>(this->namesC.size()))
+					else if (0 <= choice && choice < static_cast<char>(length))
 					{
 						this->name = this->namesC[static_cast<size_t>(choice)];
 						break;
@@ -6415,13 +6458,13 @@ private:
 				}
 				else
 				{
-					this->optimizePokerType(_name);
-					if (this->isIn(_name, this->namesC) || this->isIn(_name, this->namesE))
+					this->optimizePokerType(buffer);
+					if (this->isIn(buffer, this->namesC) || this->isIn(buffer, this->namesE))
 					{
-						this->name = _name;
+						this->name = buffer;
 						break;
 					}
-					else if ("退出程序" == _name || this->isEqual("Exit", _name))
+					else if ("退出程序" == buffer || this->isEqual("Exit", buffer))
 						return false;
 				}
 			}
