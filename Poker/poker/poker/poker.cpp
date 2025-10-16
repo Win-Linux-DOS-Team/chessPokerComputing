@@ -364,7 +364,7 @@ protected:
 				else
 				{
 					unionCountFlag = true;
-					lambdas.emplace_back([&unionCounts](const Card a, const Card b) { const Count countA = unionCounts[a.point][static_cast<unsigned char>(a.suit) & 0x3/* 0b11 */], countB = unionCounts[b.point][static_cast<unsigned char>(b.suit) & 0b11/* 0x3 */]; return countA > countB ? -1 : countA < countB; });
+					lambdas.emplace_back([&unionCounts](const Card a, const Card b) { const Count countA = unionCounts[a.point][static_cast<unsigned char>(a.suit) & 0x3/* 0b11 */], countB = unionCounts[b.point][static_cast<unsigned char>(b.suit) & 0x3/* 0b11 */]; return countA > countB ? -1 : countA < countB; });
 					break;
 				}
 			case 0x6: // 'N' (0b01001110) = 'V' (0b01010110) - 0b1000 -> 0b0110 (Fetch the 1st, 2nd, 4th, and 6th bits)
@@ -427,7 +427,7 @@ protected:
 				else
 				{
 					unionCountFlag = true;
-					lambdas.emplace_back([&unionCounts](const Card a, const Card b) { const Count countA = unionCounts[a.point][static_cast<unsigned char>(a.suit) & 0b11/* 0x3 */], countB = unionCounts[b.point][static_cast<unsigned char>(b.suit) & 0b11/* 0x3 */]; return countA < countB ? -1 : countA > countB; });
+					lambdas.emplace_back([&unionCounts](const Card a, const Card b) { const Count countA = unionCounts[a.point][static_cast<unsigned char>(a.suit) & 0x3/* 0b11 */], countB = unionCounts[b.point][static_cast<unsigned char>(b.suit) & 0x3/* 0b11 */]; return countA < countB ? -1 : countA > countB; });
 					break;
 				}
 			case 0xE: // 'n' (0b01101110) = 'v' (0b01110110) - 0b1000 -> 0b1110 (Fetch the 1st, 2nd, 4th, and 6th bits)
@@ -462,7 +462,7 @@ protected:
 					++pointCounts[card.point];
 			if (unionCountFlag)
 				for (const Card& card : cards)
-					++unionCounts[card.point][static_cast<unsigned char>(card.suit) & 0b11/* 0x3 */];
+					++unionCounts[card.point][static_cast<unsigned char>(card.suit) & 0x3/* 0b11 */];
 			if (valueCountFlag)
 				for (const Card& card : cards)
 					++valueCounts[this->values[card.point]];
@@ -1144,6 +1144,7 @@ public:
 			if (this->processHand(hand, candidates) && this->removeCards(cards, this->players[this->currentPlayer]))
 			{
 				this->records.push_back(std::vector<Hand>{ hand });
+				this->status = Status::Started;
 				this->processBasis(hand);
 				if (this->isOver())
 				{
@@ -1157,7 +1158,6 @@ public:
 					if (!this->isAbsolutelyLargest(hand))
 						this->nextPlayer();
 					this->lastHand = this->records[1][0];
-					this->status = Status::Started;
 				}
 				return true;
 			}
@@ -1364,10 +1364,17 @@ private:
 	}
 	bool processBasis(const Hand& hand) override final
 	{
-		if (Status::Assigned <= this->status && this->status <= Status::Started && !this->records.empty() && !this->records.back().empty() && this->amounts.size() == 1)
+		if (Status::Started == this->status && !this->records.empty() && !this->records.back().empty() && this->amounts.size() == 1)
 		{
+			if (Type::Single <= hand.type && hand.type <= Type::QuadrupleWithPairPair && !hand.cards.empty())
+			{
+				if (hand.player != this->dealer)
+					this->amounts[0] &= 0x1FFD/* 0b1111111111101 */;
+				else if (!this->lastHand)
+					this->amounts[0] &= 0x1FFE/* 0b1111111111110 */;
+			}
 			if (Type::Quadruple == hand.type || Type::PairJokers == hand.type)
-				this->amounts[0] += !this->lastHand || hand.player == this->lastHand.player ? 0x1/* 0b1 */ : 0x10/* 0b10000 */;
+				this->amounts[0] += !this->lastHand || hand.player == this->lastHand.player ? 0x4/* 0b100 */ : 0x40/* 0b1000000 */;
 			return true;
 		}
 		else
@@ -1383,9 +1390,9 @@ private:
 			{
 				if (this->amounts[0] < 0)
 					return false;
-				const Amount backup = this->amounts[0];
-				Amount mutableAmounts[5] = { /* calling = */ (backup >> 10) & 0x1/* 0b1 */, /* robbing = */ (backup >> 8) & 0x3/* 0b11 */, /* realBooms = */ (backup >> 4) & 0xF/* 0b1111 */, /* emptyBooms = */ backup & 0xF/* 0b1111 */ };
-				const Amount constAmounts[5] = { mutableAmounts[0], mutableAmounts[1], mutableAmounts[2], mutableAmounts[3] };
+				const Amount baseline = this->amounts[0];
+				Amount mutableAmounts[5] = { /* calling = */ (baseline >> 12) & 0x1/* 0b1 */, /* robbing = */ (baseline >> 10) & 0x3/* 0b11 */, /* realBooms = */ (baseline >> 6) & 0xF/* 0b1111 */, /* emptyBooms = */ (baseline >> 2) & 0xF/* 0b1111 */, /* springAntispring = */ static_cast<Amount>((bool)(baseline & 0x3/* 0b11 */)) };
+				const Amount constAmounts[5] = { mutableAmounts[0], mutableAmounts[1], mutableAmounts[2], mutableAmounts[3], mutableAmounts[4] };
 				Amount* p = mutableAmounts;
 				const Amount* q = constAmounts;
 				for (Count count = 0, offset = 16; count < 4; ++count)
@@ -1454,26 +1461,28 @@ private:
 					offset -= 4;
 				}
 				if (multiplication1Opening7 >> 7)
-					this->amounts[0] = static_cast<Amount>(multiplication1Opening7 & 0x7F/* 0b1111111*/) * (basis12Calling4Robbing4Real4Empty4Spring4 >> 20) * mutableAmounts[0] * mutableAmounts[1] * mutableAmounts[2] * mutableAmounts[3] * mutableAmounts[4];
+					this->amounts[0] = static_cast<Amount>(multiplication1Opening7 & 0x7F/* 0b01111111*/) * (basis12Calling4Robbing4Real4Empty4Spring4 >> 20) * mutableAmounts[0] * mutableAmounts[1] * mutableAmounts[2] * mutableAmounts[3] * mutableAmounts[4];
 				else
-					this->amounts[0] = static_cast<Amount>(multiplication1Opening7 & 0x7F/* 0b1111111*/) + (basis12Calling4Robbing4Real4Empty4Spring4 >> 20) + mutableAmounts[0] + mutableAmounts[1] + mutableAmounts[2] + mutableAmounts[3] + mutableAmounts[4];
-				this->amounts = std::vector<Amount>(3);
+					this->amounts[0] = static_cast<Amount>(multiplication1Opening7 & 0x7F/* 0b01111111*/) + (basis12Calling4Robbing4Real4Empty4Spring4 >> 20) + mutableAmounts[0] + mutableAmounts[1] + mutableAmounts[2] + mutableAmounts[3] + mutableAmounts[4];
+				this->amounts = std::vector<Amount>(4);
 				Amount s = 0;
-				for (Player player = 0; player < 3; ++player)
+				for (Player player = 0; player < 3;)
 				{
-					this->amounts[player] = player == this->dealer ? (this->players[player].empty() ? backup << 1 : -(backup << 1)) : (this->players[player].empty() ? backup : -backup);
-					s += this->amounts[player];
+					this->amounts[static_cast<size_t>(player) + 1] = player == this->dealer ? (this->players[player].empty() ? baseline << 1 : -(baseline << 1)) : (this->players[player].empty() ? baseline : -baseline);
+					s += this->amounts[++player];
 				}
 				if (s)
 				{
-					this->amounts = std::vector<Amount>{ backup };
+					this->amounts = std::vector<Amount>{ baseline };
 					return false;
 				}
+				else
+					this->amounts[0] = baseline;
 #if ((defined _MSVC_LANG && _MSVC_LANG >= 201703L) || (!defined _MSVC_LANG && defined __cplusplus && __cplusplus >= 201103L))
 				[[fallthrough]];
 #endif
 			}
-			case 3:
+			case 4:
 				return true;
 			default:
 				return false;
@@ -1492,7 +1501,7 @@ private:
 	}
 	std::string getBasisString() const override final
 	{
-		return this->amounts.size() == 1 ? "倍数信息：当前共叫地主 " + std::to_string(this->amounts[0] >> 10) + " 次，抢地主 " + std::to_string((this->amounts[0] >> 8) & 0x3/* 0b11 */) + " 次；共出实炸 " + std::to_string((this->amounts[0] >> 4) & 0xF/* 0b1111 */) + " 个，空炸 " + std::to_string(this->amounts[0] & 0xF/* 0b1111 */) + " 个。\n" : "";
+		return this->amounts.size() >= 1 ? "倍数信息：当前共叫地主 " + std::to_string(this->amounts[0] >> 12) + " 次，抢地主 " + std::to_string((this->amounts[0] >> 10) & 0x3/* 0b11 */) + " 次；共出实炸 " + std::to_string((this->amounts[0] >> 6) & 0xF/* 0b1111 */) + " 个，空炸 " + std::to_string((this->amounts[0] >> 2) & 0xF/* 0b1111 */) + " 个；春天" + ((this->amounts[0] >> 1) & 0x1/* 0b1 */ ? "未" : "已") + "解除，反春天" + (this->amounts[0] & 0x1/* 0b1 */ ? "未" : "已") + "解除。\n" : "";
 	}
 	std::string getPreRoundString() const override final
 	{
@@ -2185,7 +2194,7 @@ public:
 				{
 					this->records[0].push_back(Hand{ this->currentPlayer, std::vector<Card>{ Card{} } });
 					this->lastHand = this->records[0][0];
-					this->amounts[0] = 0x400; // 0b10000000000
+					this->amounts[0] = 0x1003; // 0b1000000000011
 				}
 				else
 					this->records[0].push_back(Hand{ this->currentPlayer, std::vector<Card>{} });
@@ -2196,11 +2205,11 @@ public:
 				{
 					this->records[0].push_back(Hand{ this->currentPlayer, std::vector<Card>{ Card{} } });
 					if (this->lastHand)
-						this->amounts[0] += 0x100; // 0b100000000
+						this->amounts[0] += 0x400; // 0b10000000000
 					else
 					{
 						this->lastHand = this->records[0][1];
-						this->amounts[0] = 0x400; // 0b10000000000
+						this->amounts[0] = 0x1003; // 0b1000000000011
 					}
 				}
 				else
@@ -2213,9 +2222,9 @@ public:
 				{
 					this->records[0].push_back(Hand{ this->currentPlayer, std::vector<Card>{ Card{} } });
 					if (this->lastHand)
-						this->amounts[0] += 0x100; // 0b100000000
+						this->amounts[0] += 0x400; // 0b10000000000
 					else
-						this->amounts[0] = 0x400; // 0b10000000000
+						this->amounts[0] = 0x1003; // 0b1000000000011
 				}
 				else
 					this->records[0].push_back(Hand{ this->currentPlayer, std::vector<Card>{} });
@@ -2250,7 +2259,7 @@ public:
 				{
 					this->records[0].push_back(Hand{ this->currentPlayer, std::vector<Card>{ Card{} } });
 					if (this->lastHand)
-						this->amounts[0] += 0x100; // 0b100000000
+						this->amounts[0] += 0x400; // 0b10000000000
 					else
 						return false;
 				}
@@ -4291,7 +4300,7 @@ private:
 	}
 	bool processBasis(const Hand& hand) override final
 	{
-		if (Status::Assigned <= this->status && this->status <= Status::Started && this->amounts.size() == 1)
+		if (Status::Started == this->status && this->amounts.size() == 1)
 		{
 			switch (hand.type)
 			{
@@ -4338,80 +4347,85 @@ private:
 	}
 	bool computeAmounts() override final
 	{
-		const size_t recordCount = this->records.size(), playerCount = this->players.size();
-		if (Status::Over == this->status && recordCount >= 2 && 4 == playerCount)
-			switch (this->amounts.size())
-			{
-			case 1:
-			{
-				/* Winner fetching */
-				Player winner = INVALID_PLAYER;
-				char playerFlags[4] = { static_cast<char>(-1), static_cast<char>(-1), static_cast<char>(-1), static_cast<char>(-1) };
-				for (Player player = 0; player < 4; ++player)
-					if (this->players[player].empty())
-					{
-						if (INVALID_PLAYER == winner)
-						{
-							winner = player;
-							playerFlags[player] = 3;
-						}
-						else
-							return false;
-					}
-				if (INVALID_PLAYER == winner)
-					return false;
-				else if (winner != this->dealer)
+		if (Status::Over == this->status)
+		{
+			const size_t recordCount = this->records.size(), playerCount = this->players.size();
+			if (recordCount >= 2 && 4 == playerCount)
+				switch (this->amounts.size())
+				{
+				case 1:
+				{
+					/* Winner fetching */
+					Player winner = INVALID_PLAYER;
+					char playerFlags[4] = { static_cast<char>(-1), static_cast<char>(-1), static_cast<char>(-1), static_cast<char>(-1) };
 					for (Player player = 0; player < 4; ++player)
-						if (player != this->dealer)
-							playerFlags[player] = 1;
-
-				/* Spring and anti-sprint parsing */
-				bool isSpring = true, isAntiSpring = true;
-				{
-					const size_t handCount = this->records[1].size();
-					for (size_t innerIdx = 1; innerIdx < handCount; ++innerIdx)
-						if (Type::Single <= this->records[1][innerIdx].type && this->records[1][innerIdx].type <= Type::Octuple && !this->records[1][innerIdx].cards.empty())
+						if (this->players[player].empty())
 						{
-							if (this->records[1][innerIdx].player == this->dealer)
-								isAntiSpring = false;
+							if (INVALID_PLAYER == winner)
+							{
+								winner = player;
+								playerFlags[player] = 3;
+							}
 							else
-								isSpring = false;
+								return false;
 						}
-				}
-				for (size_t outerIdx = 2; outerIdx < recordCount && (isSpring || isAntiSpring); ++outerIdx)
-				{
-					const size_t handCount = this->records[outerIdx].size();
-					for (size_t innerIdx = 0; innerIdx < handCount; ++innerIdx)
-						if (Type::Single <= this->records[outerIdx][innerIdx].type && this->records[outerIdx][innerIdx].type <= Type::Octuple && !this->records[outerIdx][innerIdx].cards.empty())
-						{
-							if (this->records[outerIdx][innerIdx].player == this->dealer)
-								isAntiSpring = false;
-							else
-								isSpring = false;
-						}
-				}
-				if (isSpring)
-					if (isAntiSpring)
+					if (INVALID_PLAYER == winner)
 						return false;
-					else
+					else if (winner != this->dealer)
+						for (Player player = 0; player < 4; ++player)
+							if (player != this->dealer)
+								playerFlags[player] = 1;
+					
+					/* Spring and anti-sprint parsing */
+					bool isSpring = true, isAntiSpring = true;
+					{
+						const size_t handCount = this->records[1].size();
+						for (size_t innerIdx = 1; innerIdx < handCount; ++innerIdx)
+							if (Type::Single <= this->records[1][innerIdx].type && this->records[1][innerIdx].type <= Type::Octuple && !this->records[1][innerIdx].cards.empty())
+							{
+								if (this->records[1][innerIdx].player == this->dealer)
+									isAntiSpring = false;
+								else
+									isSpring = false;
+							}
+					}
+					for (size_t outerIdx = 2; outerIdx < recordCount && (isSpring || isAntiSpring); ++outerIdx)
+					{
+						const size_t handCount = this->records[outerIdx].size();
+						for (size_t innerIdx = 0; innerIdx < handCount; ++innerIdx)
+							if (Type::Single <= this->records[outerIdx][innerIdx].type && this->records[outerIdx][innerIdx].type <= Type::Octuple && !this->records[outerIdx][innerIdx].cards.empty())
+							{
+								if (this->records[outerIdx][innerIdx].player == this->dealer)
+									isAntiSpring = false;
+								else
+									isSpring = false;
+							}
+					}
+					if (isSpring)
+						if (isAntiSpring)
+							return false;
+						else
+							this->amounts[0] <<= 1;
+					else if (isAntiSpring)
 						this->amounts[0] <<= 1;
-				else if (isAntiSpring)
-					this->amounts[0] <<= 1;
-
-				/* Amount finalization */
-				const Amount base = this->amounts[0];
-				this->amounts = std::vector<Amount>(4);
-				for (Player player = 0; player < 4; ++player)
-					this->amounts[player] = base * playerFlags[player];
+					
+					/* Amount finalization */
+					const Amount base = this->amounts[0];
+					this->amounts = std::vector<Amount>(4);
+					for (Player player = 0; player < 4; ++player)
+						this->amounts[player] = base * playerFlags[player];
 #if ((defined _MSVC_LANG && _MSVC_LANG >= 201703L) || (!defined _MSVC_LANG && defined __cplusplus && __cplusplus >= 201103L))
-				[[fallthrough]];
+					[[fallthrough]];
 #endif
-			}
-			case 4:
-				return true;
-			default:
+				}
+				case 4:
+					return true;
+				default:
+					return false;
+				}
+			else
 				return false;
-			}
+		}
 		else
 			return false;
 	}
@@ -5863,6 +5877,18 @@ private:
 			return false;
 		}
 	}
+	bool processBasis(const Hand& hand) override final
+	{
+		if (Status::Started == this->status && !this->records.empty() && !this->records.back().empty())
+		{
+
+			if (Type::Quadruple == hand.type || Type::PairJokers == hand.type)
+				this->amounts[0] += !this->lastHand || hand.player == this->lastHand.player ? 0x1/* 0b1 */ : 0x10/* 0b10000 */;
+			return true;
+		}
+		else
+			return false;
+	}
 	bool isOver() const override final
 	{
 		if (this->status >= Status::Started && this->deck.empty())
@@ -5886,8 +5912,34 @@ private:
 		{
 			if (this->amounts.size() != this->players.size())
 			{
+				std::vector<Amount> scores(this->players.size());
+				const size_t length = this->records.size();
+				for (size_t round = 1; round < length; ++round)
+				{
+					unsigned char pointScore = 0;
+					const size_t handCount = this->records[round].size();
+					Player formerPlayer = INVALID_PLAYER, latterPlayer = INVALID_PLAYER;
+					for (const Hand& hand : this->records[round])
+					{
 
-				/////
+						if (!hand && Type::Single <= hand.type && hand.type <= Type::QuadrupleWithSingle && !hand.cards.empty())
+						{
+							if (INVALID_PLAYER == formerPlayer)
+								formerPlayer = hand.player;
+							else if (INVALID_PLAYER == latterPlayer)
+								latterPlayer = hand.player;
+							else
+							{
+								if (formerPlayer == latterPlayer)
+								{
+									latterPlayer;
+								}
+								formerPlayer = latterPlayer;
+								latterPlayer = hand.player;
+							}
+						}
+					}
+				}
 			}
 			return true;
 		}

@@ -1,1 +1,3 @@
 ﻿  poker.cpp
+E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\poker\poker\poker.cpp(5920,19): warning C4189: “handCount”: 局部变量已初始化但不引用
+E:\星空\Win Linux DOS团队\chessPokerComputing\Poker\poker\poker\poker.cpp(5919,20): warning C4189: “pointScore”: 局部变量已初始化但不引用
