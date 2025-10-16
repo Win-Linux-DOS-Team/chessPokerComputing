@@ -320,7 +320,7 @@ protected:
 		Count pointCounts[14] = { 0 }, unionCounts[14][4] = { { 0 } }, valueCounts[15] = { 0 }, suitCounts[7] = { 0 };
 		while (sorter) // From right to left, each 4 bits represent a single-level sorter. 
 		{
-			switch (sorter & 0xF) // 0b1111
+			switch (sorter & 0xF/* 0b1111 */)
 			{
 			case 0x0: // 'P' (0b01010000) -> 0b0000 (Fetch the 1st, 2nd, 4th, and 6th bits)
 				if (pointFlag)
@@ -364,7 +364,7 @@ protected:
 				else
 				{
 					unionCountFlag = true;
-					lambdas.emplace_back([&unionCounts](const Card a, const Card b) { const Count countA = unionCounts[a.point][static_cast<unsigned char>(a.suit) & 0b11], countB = unionCounts[b.point][static_cast<unsigned char>(b.suit) & 0b11]; return countA > countB ? -1 : countA < countB; });
+					lambdas.emplace_back([&unionCounts](const Card a, const Card b) { const Count countA = unionCounts[a.point][static_cast<unsigned char>(a.suit) & 0x3/* 0b11 */], countB = unionCounts[b.point][static_cast<unsigned char>(b.suit) & 0b11/* 0x3 */]; return countA > countB ? -1 : countA < countB; });
 					break;
 				}
 			case 0x6: // 'N' (0b01001110) = 'V' (0b01010110) - 0b1000 -> 0b0110 (Fetch the 1st, 2nd, 4th, and 6th bits)
@@ -427,7 +427,7 @@ protected:
 				else
 				{
 					unionCountFlag = true;
-					lambdas.emplace_back([&unionCounts](const Card a, const Card b) { const Count countA = unionCounts[a.point][static_cast<unsigned char>(a.suit) & 0b11], countB = unionCounts[b.point][static_cast<unsigned char>(b.suit) & 0b11]; return countA < countB ? -1 : countA > countB; });
+					lambdas.emplace_back([&unionCounts](const Card a, const Card b) { const Count countA = unionCounts[a.point][static_cast<unsigned char>(a.suit) & 0b11/* 0x3 */], countB = unionCounts[b.point][static_cast<unsigned char>(b.suit) & 0b11/* 0x3 */]; return countA < countB ? -1 : countA > countB; });
 					break;
 				}
 			case 0xE: // 'n' (0b01101110) = 'v' (0b01110110) - 0b1000 -> 0b1110 (Fetch the 1st, 2nd, 4th, and 6th bits)
@@ -462,7 +462,7 @@ protected:
 					++pointCounts[card.point];
 			if (unionCountFlag)
 				for (const Card& card : cards)
-					++unionCounts[card.point][static_cast<unsigned char>(card.suit) & 0b11];
+					++unionCounts[card.point][static_cast<unsigned char>(card.suit) & 0b11/* 0x3 */];
 			if (valueCountFlag)
 				for (const Card& card : cards)
 					++valueCounts[this->values[card.point]];
@@ -475,7 +475,7 @@ protected:
 	}
 	virtual bool sortCards(std::vector<Card>& cards) const final
 	{
-		return this->sortCards(cards, 0xbA); // 0b10111010
+		return this->sortCards(cards, 0xbA/* 0b10111010 */);
 	}
 	virtual bool assignDealer()
 	{
@@ -1254,7 +1254,7 @@ public:
 			case '8':
 			case '9':
 			{
-				const Player player = (Player)(keyChar & 0b1111);
+				const Player player = (Player)(keyChar & 0xF/* 0b1111 */);
 				if (/* 0 <= player && */player < playerCount)
 					break;
 				else
@@ -1352,7 +1352,7 @@ private:
 			this->currentPlayer = (Player)(distribution(this->seed));
 			this->dealer = INVALID_PLAYER;
 			this->lastHand = Hand{};
-			this->amounts = std::vector<Amount>{ 0x0 }; // 0b0
+			this->amounts = std::vector<Amount>{ 0x0/* 0b0 */};
 			return true;
 		}
 		else
@@ -1367,7 +1367,7 @@ private:
 		if (Status::Assigned <= this->status && this->status <= Status::Started && !this->records.empty() && !this->records.back().empty() && this->amounts.size() == 1)
 		{
 			if (Type::Quadruple == hand.type || Type::PairJokers == hand.type)
-				this->amounts[0] += !this->lastHand || hand.player == this->lastHand.player ? 0x1 : 0x10; // 0b1 | 0b10000
+				this->amounts[0] += !this->lastHand || hand.player == this->lastHand.player ? 0x1/* 0b1 */ : 0x10/* 0b10000 */;
 			return true;
 		}
 		else
@@ -1384,13 +1384,13 @@ private:
 				if (this->amounts[0] < 0)
 					return false;
 				const Amount backup = this->amounts[0];
-				Amount mutableAmounts[5] = { /* calling = */ (backup >> 10) & 0b1, /* robbing = */ (backup >> 8) & 0b11, /* realBooms = */ (backup >> 4) & 0b1111, /* emptyBooms = */ backup & 0b1111 };
+				Amount mutableAmounts[5] = { /* calling = */ (backup >> 10) & 0x1/* 0b1 */, /* robbing = */ (backup >> 8) & 0x3/* 0b11 */, /* realBooms = */ (backup >> 4) & 0xF/* 0b1111 */, /* emptyBooms = */ backup & 0xF/* 0b1111 */ };
 				const Amount constAmounts[5] = { mutableAmounts[0], mutableAmounts[1], mutableAmounts[2], mutableAmounts[3] };
 				Amount* p = mutableAmounts;
 				const Amount* q = constAmounts;
 				for (Count count = 0, offset = 16; count < 4; ++count)
 				{
-					switch ((basis12Calling4Robbing4Real4Empty4Spring4 >> offset) & 0b1111)
+					switch ((basis12Calling4Robbing4Real4Empty4Spring4 >> offset) & 0xF/* 0b1111 */)
 					{
 					case 0:
 						*p = 0;
@@ -1454,9 +1454,9 @@ private:
 					offset -= 4;
 				}
 				if (multiplication1Opening7 >> 7)
-					this->amounts[0] = static_cast<Amount>(multiplication1Opening7 & 0b1111111) * (basis12Calling4Robbing4Real4Empty4Spring4 >> 20) * mutableAmounts[0] * mutableAmounts[1] * mutableAmounts[2] * mutableAmounts[3] * mutableAmounts[4];
+					this->amounts[0] = static_cast<Amount>(multiplication1Opening7 & 0x7F/* 0b1111111*/) * (basis12Calling4Robbing4Real4Empty4Spring4 >> 20) * mutableAmounts[0] * mutableAmounts[1] * mutableAmounts[2] * mutableAmounts[3] * mutableAmounts[4];
 				else
-					this->amounts[0] = static_cast<Amount>(multiplication1Opening7 & 0b1111111) + (basis12Calling4Robbing4Real4Empty4Spring4 >> 20) + mutableAmounts[0] + mutableAmounts[1] + mutableAmounts[2] + mutableAmounts[3] + mutableAmounts[4];
+					this->amounts[0] = static_cast<Amount>(multiplication1Opening7 & 0x7F/* 0b1111111*/) + (basis12Calling4Robbing4Real4Empty4Spring4 >> 20) + mutableAmounts[0] + mutableAmounts[1] + mutableAmounts[2] + mutableAmounts[3] + mutableAmounts[4];
 				this->amounts = std::vector<Amount>(3);
 				Amount s = 0;
 				for (Player player = 0; player < 3; ++player)
@@ -1484,7 +1484,7 @@ private:
 	}
 	bool computeAmounts() override final
 	{
-		return this->computeAmounts(0x80, 0x00ACCCC); // 0b10000000 | 0b00000000101011001100110011001100
+		return this->computeAmounts(0x80/* 0b10000000 */, 0x00ACCCC/* 0b00000000101011001100110011001100 */);
 	}
 	bool isAbsolutelyLargest(const Hand& hand) const override final
 	{
@@ -1492,7 +1492,7 @@ private:
 	}
 	std::string getBasisString() const override final
 	{
-		return this->amounts.size() == 1 ? "倍数信息：当前共叫地主 " + std::to_string(this->amounts[0] >> 10) + " 次，抢地主 " + std::to_string((this->amounts[0] >> 8) & 0x3/* 0b11 */) + " 次；共出实炸 " + std::to_string((this->amounts[0] >> 4) & 0xF/* 0b1111 */) + " 个，空炸 " + std::to_string(this->amounts[0] & 0b1111) + " 个。\n" : "";
+		return this->amounts.size() == 1 ? "倍数信息：当前共叫地主 " + std::to_string(this->amounts[0] >> 10) + " 次，抢地主 " + std::to_string((this->amounts[0] >> 8) & 0x3/* 0b11 */) + " 次；共出实炸 " + std::to_string((this->amounts[0] >> 4) & 0xF/* 0b1111 */) + " 个，空炸 " + std::to_string(this->amounts[0] & 0xF/* 0b1111 */) + " 个。\n" : "";
 	}
 	std::string getPreRoundString() const override final
 	{
