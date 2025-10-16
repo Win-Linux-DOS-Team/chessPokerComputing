@@ -45,41 +45,41 @@ enum class Suit : unsigned char
 
 enum class Type : unsigned char
 {
-	Empty = 0b00000000, 
+	Empty = 0x00, // 0b00000000
 	
-	Single = 0b00010000, 
-	SingleStraight = 0b00010001, 
-	SingleFlush = 0b00010010, 
-	SingleFlushStraight = 0b00010011, 
+	Single = 0x10, // 0b00010000
+	SingleStraight = 0x11, // 0b00010001
+	SingleFlush = 0x12, // 0b00010010
+	SingleFlushStraight = 0x13, // 0b00010011
 	
-	Pair = 0b00100000, 
-	PairStraight = 0b00100001, 
-	PairStraightWithSingle = 0b00100010, 
-	PairJokers = 0b00100011, 
+	Pair = 0x20, // 0b00100000
+	PairStraight = 0x21, // 0b00100001
+	PairStraightWithSingle = 0x22, // 0b00100010
+	PairJokers = 0x23, // 0b00100011
 	
-	Triple = 0b00110000, 
-	TripleWithSingle = 0b00110001, 
-	TripleWithPair = 0b00110010, 
-	TripleWithPairSingle = 0b00110011, 
-	TripleStraight = 0b00110100, 
-	TripleStraightWithSingle = 0b00110101, 
-	TripleStraightWithSingles = 0b00110110, 
-	TripleStraightWithPairs = 0b00110111, 
+	Triple = 0x30, // 0b00110000
+	TripleWithSingle = 0x31, // 0b00110001
+	TripleWithPair = 0x32, // 0b00110010
+	TripleWithPairSingle = 0x33, // 0b00110011
+	TripleStraight = 0x34, // 0b00110100
+	TripleStraightWithSingle = 0x35, // 0b00110101
+	TripleStraightWithSingles = 0x36, // 0b00110110
+	TripleStraightWithPairs = 0x37, // 0b00110111
 	
-	Quadruple = 0b01000000, 
-	QuadrupleWithSingle = 0b01000001, 
-	QuadrupleWithSingleSingle = 0b01000010, 
-	QuadrupleWithPairPair = 0b01000011, 
-	QuadrupleStraight = 0b01000100, 
-	QuadrupleStraightWithSingle = 0b01000101, 
-	QuadrupleJokers = 0b01000110, 
+	Quadruple = 0x40, // 0b01000000
+	QuadrupleWithSingle = 0x41, // 0b01000001
+	QuadrupleWithSingleSingle = 0x42, // 0b01000010
+	QuadrupleWithPairPair = 0x43, // 0b01000011
+	QuadrupleStraight = 0x44, // 0b01000100
+	QuadrupleStraightWithSingle = 0x45, // 0b01000101
+	QuadrupleJokers = 0x46, // 0b01000110
 	
-	Quintuple = 0b01010000, 
-	Sextuple = 0b01100000, 
-	Septuple = 0b01110000, 
-	Octuple = 0b10000000, 
+	Quintuple = 0x50, // 0b01010000
+	Sextuple = 0x60, // 0b01100000
+	Septuple = 0x70, // 0b01110000
+	Octuple = 0x80, // 0b10000000
 	
-	Invalid = 0b11111111
+	Invalid = 0xFF // 0b11111111
 };
 
 enum class Status : unsigned char
@@ -318,11 +318,11 @@ protected:
 		bool pointFlag = false, valueFlag = false, suitFlag = false, pointCountFlag = false, unionCountFlag = false, valueCountFlag = false, suitCountFlag = false;
 		std::vector<std::function<int(const Card, const Card)>> lambdas{};
 		Count pointCounts[14] = { 0 }, unionCounts[14][4] = { { 0 } }, valueCounts[15] = { 0 }, suitCounts[7] = { 0 };
-		while (sorter)
+		while (sorter) // From right to left, each 4 bits represent a single-level sorter. 
 		{
-			switch (sorter & 0b1111)
+			switch (sorter & 0xF) // 0b1111
 			{
-			case 0b0000: // 'P' (0b01010000)
+			case 0x0: // 'P' (0b01010000) -> 0b0000 (Fetch the 1st, 2nd, 4th, and 6th bits)
 				if (pointFlag)
 					return false;
 				else
@@ -331,7 +331,7 @@ protected:
 					lambdas.emplace_back([](const Card a, const Card b) { const Point pointA = a.point, pointB = b.point; return pointA > pointB ? -1 : pointA < pointB; });
 					break;
 				}
-			case 0b0010: // 'V' (0b01010110)
+			case 0x2: // 'V' (0b01010110) -> 0b0010 (Fetch the 1st, 2nd, 4th, and 6th bits)
 				if (valueFlag)
 					return false;
 				else
@@ -340,7 +340,7 @@ protected:
 					lambdas.emplace_back([this](const Card a, const Card b) { const Value valueA = this->values[a.point], valueB = this->values[b.point]; return valueA > valueB ? -1 : valueA < valueB; });
 					break;
 				}
-			case 0b0011: // 'S' (0b01010011)
+			case 0x3: // 'S' (0b01010011) -> 0b0011 (Fetch the 1st, 2nd, 4th, and 6th bits)
 				if (suitFlag)
 					return false;
 				else
@@ -349,7 +349,7 @@ protected:
 					lambdas.emplace_back([](const Card a, const Card b) { const Suit suitA = a.suit, suitB = b.suit; return suitA > suitB ? -1 : suitA < suitB; });
 					break;
 				}
-			case 0b0100: // 'H' (0b01001000) = 'P' (0b01010000) - 0b1000
+			case 0x4: // 'H' (0b01001000) = 'P' (0b01010000) - 0b1000 -> 0b0100 (Fetch the 1st, 2nd, 4th, and 6th bits)
 				if (pointCountFlag)
 					return false;
 				else
@@ -358,7 +358,7 @@ protected:
 					lambdas.emplace_back([&pointCounts](const Card a, const Card b) { const Count countA = pointCounts[a.point], countB = pointCounts[b.point]; return countA > countB ? -1 : countA < countB; });
 					break;
 				}
-			case 0b0101: // 'M' (0b01001101) = 'U' (0b01010101) - 0b1000
+			case 0x5: // 'M' (0b01001101) = 'U' (0b01010101) - 0b1000 -> 0b0101 (Fetch the 1st, 2nd, 4th, and 6th bits)
 				if (unionCountFlag)
 					return false;
 				else
@@ -367,7 +367,7 @@ protected:
 					lambdas.emplace_back([&unionCounts](const Card a, const Card b) { const Count countA = unionCounts[a.point][static_cast<unsigned char>(a.suit) & 0b11], countB = unionCounts[b.point][static_cast<unsigned char>(b.suit) & 0b11]; return countA > countB ? -1 : countA < countB; });
 					break;
 				}
-			case 0b0110: // 'N' (0b01001110) = 'V' (0b01010110) - 0b1000
+			case 0x6: // 'N' (0b01001110) = 'V' (0b01010110) - 0b1000 -> 0b0110 (Fetch the 1st, 2nd, 4th, and 6th bits)
 				if (valueCountFlag)
 					return false;
 				else
@@ -376,7 +376,7 @@ protected:
 					lambdas.emplace_back([&valueCounts,this](const Card a, const Card b) { const Count countA = valueCounts[this->values[a.point]], countB = valueCounts[this->values[b.point]]; return countA > countB ? -1 : countA < countB; });
 					break;
 				}
-			case 0b0111: // 'K' (0b01001011) = 'S' (0b01010011) - 0b1000
+			case 0x7: // 'K' (0b01001011) = 'S' (0b01010011) - 0b1000 -> 0b0111 (Fetch the 1st, 2nd, 4th, and 6th bits)
 				if (suitCountFlag)
 					return false;
 				else
@@ -385,7 +385,7 @@ protected:
 					lambdas.emplace_back([&suitCounts](const Card a, const Card b) { const Count countA = suitCounts[static_cast<unsigned char>(a.suit)], countB = suitCounts[static_cast<unsigned char>(b.suit)]; return countA > countB ? -1 : countA < countB; });
 					break;
 				}
-			case 0b1000: // 'p' (0b01110000)
+			case 0x8: // 'p' (0b01110000) -> 0b1000 (Fetch the 1st, 2nd, 4th, and 6th bits)
 				if (pointFlag)
 					return false;
 				else
@@ -394,7 +394,7 @@ protected:
 					lambdas.emplace_back([](const Card a, const Card b) { const Point pointA = a.point, pointB = b.point; return pointA < pointB ? -1 : pointA > pointB; });
 					break;
 				}
-			case 0b1010: // 'v' (0b01110110)
+			case 0xA: // 'v' (0b01110110) -> 0b1010 (Fetch the 1st, 2nd, 4th, and 6th bits)
 				if (valueFlag)
 					return false;
 				else
@@ -403,7 +403,7 @@ protected:
 					lambdas.emplace_back([this](const Card a, const Card b) { const Value valueA = this->values[a.point], valueB = this->values[b.point]; return valueA < valueB ? -1 : valueA > valueB; });
 					break;
 				}
-			case 0b1011: // 's' (0b01110011)
+			case 0xB: // 's' (0b01110011) -> 0b1011 (Fetch the 1st, 2nd, 4th, and 6th bits)
 				if (suitFlag)
 					return false;
 				else
@@ -412,7 +412,7 @@ protected:
 					lambdas.emplace_back([](const Card a, const Card b) { const Suit suitA = a.suit, suitB = b.suit; return suitA < suitB ? -1 : suitA > suitB; });
 					break;
 				}
-			case 0b1100: // 'h' (0b01101000) = 'p' (0b01110000) - 0b1000
+			case 0xC: // 'h' (0b01101000) = 'p' (0b01110000) - 0b1000 -> 0b1100 (Fetch the 1st, 2nd, 4th, and 6th bits)
 				if (pointCountFlag)
 					return false;
 				else
@@ -421,7 +421,7 @@ protected:
 					lambdas.emplace_back([&pointCounts](const Card a, const Card b) { const Count countA = pointCounts[a.point], countB = pointCounts[b.point]; return countA < countB ? -1 : countA > countB; });
 					break;
 				}
-			case 0b1101: // 'm' (0b01101101) = 'u' (0b01110101) - 0b1000
+			case 0xD: // 'm' (0b01101101) = 'u' (0b01110101) - 0b1000 -> 0b1101 (Fetch the 1st, 2nd, 4th, and 6th bits)
 				if (unionCountFlag)
 					return false;
 				else
@@ -430,7 +430,7 @@ protected:
 					lambdas.emplace_back([&unionCounts](const Card a, const Card b) { const Count countA = unionCounts[a.point][static_cast<unsigned char>(a.suit) & 0b11], countB = unionCounts[b.point][static_cast<unsigned char>(b.suit) & 0b11]; return countA < countB ? -1 : countA > countB; });
 					break;
 				}
-			case 0b1110: // 'n' (0b01101110) = 'v' (0b01110110) - 0b1000
+			case 0xE: // 'n' (0b01101110) = 'v' (0b01110110) - 0b1000 -> 0b1110 (Fetch the 1st, 2nd, 4th, and 6th bits)
 				if (valueCountFlag)
 					return false;
 				else
@@ -439,7 +439,7 @@ protected:
 					lambdas.emplace_back([&valueCounts, this](const Card a, const Card b) { const Count countA = valueCounts[this->values[a.point]], countB = valueCounts[this->values[b.point]]; return countA < countB ? -1 : countA > countB; });
 					break;
 				}
-			case 0b1111: // 'k' (0b01101011) = 's' (0b01110011) - 0b1000
+			case 0xF: // 'k' (0b01101011) = 's' (0b01110011) - 0b1000 -> 0b1111 (Fetch the 1st, 2nd, 4th, and 6th bits)
 				if (suitCountFlag)
 					return false;
 				else
@@ -475,7 +475,7 @@ protected:
 	}
 	virtual bool sortCards(std::vector<Card>& cards) const final
 	{
-		return this->sortCards(cards, 0b10111010);
+		return this->sortCards(cards, 0xbA); // 0b10111010
 	}
 	virtual bool assignDealer()
 	{
@@ -1352,7 +1352,7 @@ private:
 			this->currentPlayer = (Player)(distribution(this->seed));
 			this->dealer = INVALID_PLAYER;
 			this->lastHand = Hand{};
-			this->amounts = std::vector<Amount>{ 0b0 };
+			this->amounts = std::vector<Amount>{ 0x0 }; // 0b0
 			return true;
 		}
 		else
@@ -1367,7 +1367,7 @@ private:
 		if (Status::Assigned <= this->status && this->status <= Status::Started && !this->records.empty() && !this->records.back().empty() && this->amounts.size() == 1)
 		{
 			if (Type::Quadruple == hand.type || Type::PairJokers == hand.type)
-				this->amounts[0] += !this->lastHand || hand.player == this->lastHand.player ? 0b1 : 0b10000;
+				this->amounts[0] += !this->lastHand || hand.player == this->lastHand.player ? 0x1 : 0x10; // 0b1 | 0b10000
 			return true;
 		}
 		else
@@ -1484,7 +1484,7 @@ private:
 	}
 	bool computeAmounts() override final
 	{
-		return this->computeAmounts(0b10000000, 0b00000000101011001100110011001100);
+		return this->computeAmounts(0x80, 0x00ACCCC); // 0b10000000 | 0b00000000101011001100110011001100
 	}
 	bool isAbsolutelyLargest(const Hand& hand) const override final
 	{
@@ -1492,7 +1492,7 @@ private:
 	}
 	std::string getBasisString() const override final
 	{
-		return this->amounts.size() == 1 ? "倍数信息：当前共叫地主 " + std::to_string(this->amounts[0] >> 10) + " 次，抢地主 " + std::to_string((this->amounts[0] >> 8) & 0b11) + " 次；共出实炸 " + std::to_string((this->amounts[0] >> 4) & 0b1111) + " 个，空炸 " + std::to_string(this->amounts[0] & 0b1111) + " 个。\n" : "";
+		return this->amounts.size() == 1 ? "倍数信息：当前共叫地主 " + std::to_string(this->amounts[0] >> 10) + " 次，抢地主 " + std::to_string((this->amounts[0] >> 8) & 0x3/* 0b11 */) + " 次；共出实炸 " + std::to_string((this->amounts[0] >> 4) & 0xF/* 0b1111 */) + " 个，空炸 " + std::to_string(this->amounts[0] & 0b1111) + " 个。\n" : "";
 	}
 	std::string getPreRoundString() const override final
 	{
@@ -2185,7 +2185,7 @@ public:
 				{
 					this->records[0].push_back(Hand{ this->currentPlayer, std::vector<Card>{ Card{} } });
 					this->lastHand = this->records[0][0];
-					this->amounts[0] = 0b10000000000;
+					this->amounts[0] = 0x400; // 0b10000000000
 				}
 				else
 					this->records[0].push_back(Hand{ this->currentPlayer, std::vector<Card>{} });
@@ -2196,11 +2196,11 @@ public:
 				{
 					this->records[0].push_back(Hand{ this->currentPlayer, std::vector<Card>{ Card{} } });
 					if (this->lastHand)
-						this->amounts[0] += 0b100000000;
+						this->amounts[0] += 0x100; // 0b100000000
 					else
 					{
 						this->lastHand = this->records[0][1];
-						this->amounts[0] = 0b10000000000;
+						this->amounts[0] = 0x400; // 0b10000000000
 					}
 				}
 				else
@@ -2213,9 +2213,9 @@ public:
 				{
 					this->records[0].push_back(Hand{ this->currentPlayer, std::vector<Card>{ Card{} } });
 					if (this->lastHand)
-						this->amounts[0] += 0b100000000;
+						this->amounts[0] += 0x100; // 0b100000000
 					else
-						this->amounts[0] = 0b10000000000;
+						this->amounts[0] = 0x400; // 0b10000000000
 				}
 				else
 					this->records[0].push_back(Hand{ this->currentPlayer, std::vector<Card>{} });
@@ -2250,7 +2250,7 @@ public:
 				{
 					this->records[0].push_back(Hand{ this->currentPlayer, std::vector<Card>{ Card{} } });
 					if (this->lastHand)
-						this->amounts[0] += 0b100000000;
+						this->amounts[0] += 0x100; // 0b100000000
 					else
 						return false;
 				}
