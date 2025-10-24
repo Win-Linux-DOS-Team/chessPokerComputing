@@ -3,7 +3,7 @@
 #include <fstream>
 #include <vector>
 #include <functional>
-#if !defined _WIN32 && !defined _WIN64
+#if !defined _WIN32 && !defined _WIN64 && !defined WIN32 && !defined WIN64
 #include <algorithm>
 #endif
 #include <random>
@@ -21,15 +21,18 @@
 #define UNREFERENCED_PARAMETER(P) (void(P))
 #endif
 typedef unsigned char HelpKey;
-typedef unsigned short Sorting;
+typedef unsigned short Order;
 typedef unsigned char Value;
 typedef unsigned char Point; // Please remove the comments by searching the std::string "/* 0 <= " if the ``unsigned`` here is removed. 
 typedef unsigned char Player; // Please remove the comments by searching the std::string "/* 0 <= " if the ``unsigned`` here is removed. 
 typedef unsigned char Count;
+typedef unsigned char Integral;
 typedef long long int Amount;
-constexpr long long int TIME_FOR_SLEEP = 3;
-constexpr Point JOKER_POINT = 0;
-constexpr Player INVALID_PLAYER = (Player)(-1);
+typedef Player Ranking;
+constexpr const long long int TIME_FOR_SLEEP = 3;
+constexpr const char* const DEFAULT_STRING = "/";
+constexpr const Point JOKER_POINT = 0;
+constexpr const Player INVALID_PLAYER = (Player)(-1);
 
 
 enum class Suit : unsigned char
@@ -268,8 +271,11 @@ public:
 
 class Poker
 {
+public:
+	static const size_t MinimumPlayerCount = 2, MaximumPlayerCount = 10, CardCountPerPlayer = 0;
+	
 protected:
-	std::mt19937 seed{};
+	std::mt19937 seed = std::mt19937(std::random_device{}());
 	std::string name = "扑克牌";
 	Values values{};
 	std::vector<std::vector<Card>> players{};
@@ -301,6 +307,12 @@ private:
 	}
 	
 protected:
+	/* Poker::initialize */
+	virtual bool checkPlayerCount(const size_t playerCount) const
+	{
+		return Poker::MinimumPlayerCount <= playerCount && playerCount <= Poker::MaximumPlayerCount;
+	}
+	
 	/* Poker::deal */
 	virtual void add52CardsToDeck() final
 	{
@@ -312,15 +324,15 @@ protected:
 		this->add54CardsToDeck(this->deck);
 		return;
 	}
-	virtual bool sortCards(std::vector<Card>& cards, const Sorting _sorter) const final
+	virtual bool sortCards(std::vector<Card>& cards, const Order order) const final
 	{
-		Sorting sorter = _sorter;
+		Order runningOrder = order;
 		bool pointFlag = false, valueFlag = false, suitFlag = false, pointCountFlag = false, unionCountFlag = false, valueCountFlag = false, suitCountFlag = false;
 		std::vector<std::function<int(const Card, const Card)>> lambdas{};
 		Count pointCounts[14] = { 0 }, unionCounts[14][4] = { { 0 } }, valueCounts[15] = { 0 }, suitCounts[7] = { 0 };
-		while (sorter) // From right to left, each 4 bits represent a single-level sorter. 
+		while (runningOrder) // From right to left, each 4 bits represent a single-level order. 
 		{
-			switch (sorter & 0xF/* 0b1111 */)
+			switch (runningOrder & 0xF/* 0b1111 */)
 			{
 			case 0x0: // 'P' (0b01010000) -> 0b0000 (Fetch the 1st, 2nd, 4th, and 6th bits)
 				if (pointFlag)
@@ -451,7 +463,7 @@ protected:
 			default:
 				break;
 			}
-			sorter >>= 4;
+			runningOrder >>= 4;
 		}
 		if (lambdas.empty())
 			sort(cards.begin(), cards.end(), [this](const Card a, const Card b) { const Value valueA = this->values[a.point], valueB = this->values[b.point]; return valueA > valueB || (valueA == valueB && a.suit > b.suit); });
@@ -476,25 +488,6 @@ protected:
 	virtual bool sortCards(std::vector<Card>& cards) const final
 	{
 		return this->sortCards(cards, 0xbA/* 0b10111010 */);
-	}
-	virtual bool assignDealer()
-	{
-		if (Status::Dealt == this->status && this->records.empty())
-		{
-			this->records.push_back(std::vector<Hand>{});
-			const size_t playerCount = this->players.size();
-			for (Player player = 0; player < playerCount; ++player)
-				this->records[0].push_back(Hand{ player, std::vector<Card>{ this->players[player].back() } });
-			sort(this->records[0].begin(), this->records[0].end(), [this](Hand a, Hand b) { return this->values[a.cards.back().point] > this->values[b.cards.back().point] || (this->values[a.cards.back().point] == this->values[b.cards.back().point] && a.cards.back().suit > b.cards.back().suit); });
-			this->currentPlayer = this->records[0].back().player;
-			this->dealer = this->records[0].back().player;
-			this->lastHand = Hand{};
-			this->amounts.clear();
-			this->status = Status::Assigned;
-			return true;
-		}
-		else
-			return false;
 	}
 	
 	/* Poker::setLandlord */
@@ -521,7 +514,7 @@ protected:
 	/* Poker::start */
 	virtual bool description2cards(const std::string& description, std::vector<Card>& cards) const final
 	{
-		if ("/" == description || "\\" == description || "-" == description || "--" == description || "要不起" == description || "不出" == description || "不打" == description)
+		if (DEFAULT_STRING == description || "\\" == description || "-" == description || "--" == description || "要不起" == description || "不出" == description || "不打" == description)
 		{
 			cards.clear();
 			return true;
@@ -833,6 +826,8 @@ protected:
 			return "";
 		}
 	}
+	virtual bool isRealHand(const Hand& hand) const = 0;
+	virtual bool coverLastHand(const Hand& currentHand) const = 0;
 	virtual bool judgeStraight(std::vector<Card>& cards, const Count repeatedCount, const Point pointNotAllowedToConnectK, const bool applySorting) const final // This function can only be used when every point is valid with the same count. 
 	{
 		const size_t cardCount = cards.size();
@@ -942,7 +937,7 @@ protected:
 			return 0;
 	}
 	virtual bool processHand(Hand& hand, std::vector<Candidate>& candidates) const = 0;
-	virtual bool removeCards(const std::vector<Card>& smallerCards, std::vector<Card>& largerCards) const final // The vector ``largerCards`` must have been sorted according to the default sorter method. 
+	virtual bool removeCards(const std::vector<Card>& smallerCards, std::vector<Card>& largerCards) const final // The vector ``largerCards`` must have been sorted according to the default multi-level order. 
 	{
 		std::vector<Card> sortedCards(smallerCards);
 		this->sortCards(sortedCards);
@@ -981,12 +976,9 @@ protected:
 		return false;
 	}
 	virtual bool computeAmounts(const unsigned char multiplication1Opening7, const unsigned int basis12Calling4Robbing4Real4Empty4Spring4) { UNREFERENCED_PARAMETER(multiplication1Opening7); UNREFERENCED_PARAMETER(basis12Calling4Robbing4Real4Empty4Spring4); return false; }
-	virtual bool computeAmounts() = 0;
+	virtual bool computeAmounts() { return true; }
 	virtual bool isAbsolutelyLargest(const Hand& hand) const = 0;
-	
-	/* Poker::play */
-	virtual bool coverLastHand(const Hand& currentHand) const = 0;
-	
+		
 	/* Poker::display */
 	virtual std::string getBasisString() const { return ""; }
 	virtual std::string cards2string(const std::vector<Card>& cards, const std::string& prefix, const std::string& separator, const std::string& suffix, const std::string& returnIfEmpty) const final
@@ -996,7 +988,7 @@ protected:
 		else
 		{
 			std::string stringBuffer = prefix + (std::string)cards[0];
-			size_t length = cards.size();
+			const size_t length = cards.size();
 			for (size_t cardID = 1; cardID < length; ++cardID)
 				stringBuffer += separator + (std::string)cards[cardID];
 			stringBuffer += suffix;
@@ -1004,12 +996,12 @@ protected:
 		}
 	}
 	virtual std::string getPreRoundString() const = 0;
-	virtual std::string getAmountString() const final
+	virtual std::string getAmountString() const
 	{
-		if (Status::Over == this->status && this->amounts.size() == this->players.size())
+		const size_t playerCount = this->players.size();
+		if (Status::Over == this->status && playerCount == this->amounts.size() && this->checkPlayerCount(playerCount))
 		{
 			std::string amountString = "/* 结算信息 */\n";
-			const size_t playerCount = this->players.size();
 			for (Player player = 0; player < playerCount; ++player)
 				amountString += "玩家 " + std::to_string(player + 1) + "：" + std::to_string(this->amounts[player]) + "\n";
 			return amountString;
@@ -1111,18 +1103,16 @@ protected:
 	}
 	
 public:
-	Poker() // seed, name, and status = Status::Ready
+	Poker() // name and status = Status::Ready
 	{
-		std::random_device rd;
-		std::mt19937 g(rd());
-		this->seed = g;
+		
 	}
 	virtual ~Poker()
 	{
 		
 	}
 	virtual bool initialize() = 0; // values, players (= std::vector<std::vector<Card>>(n)), deck (clear), records (clear), currentPlayer (reset), dealer (reset), lastHand (reset), amounts (clear), and status = Status::Initialized
-	virtual bool initialize(const size_t playerCount) = 0; // values, players (= std::vector<std::vector<Card>>(n)), deck (clear), records (clear), currentPlayer (reset), dealer (reset), lastHand (reset), amounts (clear), and status = Status::Initialized
+	virtual bool initialize(const size_t playerCount) { return this->checkPlayerCount(playerCount) && this->initialize(); } // values, players (= std::vector<std::vector<Card>>(n)), deck (clear), records (clear), currentPlayer (reset), dealer (reset), lastHand (reset), amounts (clear), and status = Status::Initialized
 	virtual bool deal() = 0; // players, deck, records (clear) -> records[0], currentPlayer, dealer, lastHand (reset), amounts (clear) | amounts = std::vector<Amount>{ 0 }, and status = Status::Dealt | Status::Assigned
 	virtual bool getCurrentPlayer(Player& player) const final // const
 	{
@@ -1196,6 +1186,7 @@ public:
 				{
 					this->records.back().push_back(hand);
 					this->nextPlayer();
+					this->processBasis(hand);
 					return true;
 				}
 				else if (this->coverLastHand(hand) && this->removeCards(hand.cards, this->players[this->currentPlayer]))
@@ -1342,25 +1333,55 @@ public:
 
 class Landlords : public Poker /* Next: LandlordsX */
 {
+public:
+	static const size_t MinimumPlayerCount = 3, MaximumPlayerCount = 3, CardCountPerPlayer = 17;
+	
 private:
-	bool assignDealer() override final
+	bool checkPlayerCount(const size_t playerCount) const override final
 	{
-		if (Status::Dealt == this->status && this->records.empty())
-		{
-			this->records.push_back(std::vector<Hand>{});
-			std::uniform_int_distribution<size_t> distribution(0, this->players.size() - 1);
-			this->currentPlayer = (Player)(distribution(this->seed));
-			this->dealer = INVALID_PLAYER;
-			this->lastHand = Hand{};
-			this->amounts = std::vector<Amount>{ 0x0/* 0b0 */};
-			return true;
-		}
-		else
-			return false;
+		return Landlords::MinimumPlayerCount <= playerCount && playerCount <= Landlords::MaximumPlayerCount;
 	}
 	bool checkStarting(const std::vector<Card>& cards) const override final
 	{
 		return !cards.empty();
+	}
+	bool isRealHand(const Hand& hand) const override final
+	{
+		switch (hand.type)
+		{
+		case Type::Single: // 单牌
+		case Type::SingleStraight: // 顺子
+		case Type::Pair: // 对子
+		case Type::PairStraight: // 连对
+		case Type::Triple: // 三条
+		case Type::TripleWithSingle: // 三带一
+		case Type::TripleWithPair: // 三带一对
+		case Type::TripleStraight: // 飞机（不带翅膀）
+		case Type::TripleStraightWithSingles: // 飞机带小翼
+		case Type::TripleStraightWithPairs: // 飞机带大翼
+		case Type::QuadrupleWithSingleSingle: // 四带二单
+		case Type::QuadrupleWithPairPair: // 四带二对
+		case Type::PairJokers: // 王炸/火箭
+		case Type::Quadruple: // 炸弹
+			return !hand.cards.empty();
+		case Type::Empty:
+		case Type::SingleFlush:
+		case Type::SingleFlushStraight:
+		case Type::PairStraightWithSingle:
+		case Type::TripleWithPairSingle:
+		case Type::TripleStraightWithSingle:
+		case Type::QuadrupleWithSingle:
+		case Type::QuadrupleStraight:
+		case Type::QuadrupleStraightWithSingle:
+		case Type::QuadrupleJokers:
+		case Type::Quintuple:
+		case Type::Sextuple:
+		case Type::Septuple:
+		case Type::Octuple:
+		case Type::Invalid:
+		default:
+			return false;
+		}
 	}
 	bool processBasis(const Hand& hand) override final
 	{
@@ -1540,6 +1561,50 @@ private:
 	}
 	
 protected:
+	bool coverLastHand(const Hand& currentHand) const override final
+	{
+		if (this->isRealHand(this->lastHand) && this->isRealHand(currentHand))
+			switch (this->lastHand.type)
+			{
+			case Type::Single: // 单牌
+				return Type::PairJokers == currentHand.type || Type::Quadruple == currentHand.type || (Type::Single == currentHand.type && (JOKER_POINT == currentHand.cards[0].point && JOKER_POINT == this->lastHand.cards[0].point ? currentHand.cards[0].suit > this->lastHand.cards[0].suit : this->values[currentHand.cards[0].point] > this->values[this->lastHand.cards[0].point]));
+			case Type::SingleStraight: // 顺子
+			case Type::Pair: // 对子
+			case Type::PairStraight: // 连对
+			case Type::Triple: // 三条
+			case Type::TripleWithSingle: // 三带一
+			case Type::TripleWithPair: // 三带一对
+			case Type::TripleStraight: // 飞机（不带翅膀）
+			case Type::TripleStraightWithSingles: // 飞机带小翼
+			case Type::TripleStraightWithPairs: // 飞机带大翼
+			case Type::QuadrupleWithSingleSingle: // 四带二单
+			case Type::QuadrupleWithPairPair: // 四带二对
+				return Type::PairJokers == currentHand.type || Type::Quadruple == currentHand.type || (currentHand.type == this->lastHand.type && currentHand.cards.size() == this->lastHand.cards.size() && this->values[currentHand.cards[0].point] > this->values[this->lastHand.cards[0].point]);
+			case Type::PairJokers: // 王炸/火箭
+				return false;
+			case Type::Quadruple: // 炸弹
+				return Type::PairJokers == currentHand.type || (Type::Quadruple == currentHand.type && this->values[currentHand.cards[0].point] > this->values[this->lastHand.cards[0].point]);
+			case Type::Empty:
+			case Type::SingleFlush:
+			case Type::SingleFlushStraight:
+			case Type::PairStraightWithSingle:
+			case Type::TripleWithPairSingle:
+			case Type::TripleStraightWithSingle:
+			case Type::QuadrupleWithSingle:
+			case Type::QuadrupleStraight:
+			case Type::QuadrupleStraightWithSingle:
+			case Type::QuadrupleJokers:
+			case Type::Quintuple:
+			case Type::Sextuple:
+			case Type::Septuple:
+			case Type::Octuple:
+			case Type::Invalid:
+			default:
+				return false;
+			}
+		else
+			return false;
+	}
 	bool processHand(Hand& hand, std::vector<Candidate>& candidates) const override
 	{
 		hand.type = Type::Invalid;
@@ -2085,50 +2150,6 @@ protected:
 			return false;
 		}
 	}
-	bool coverLastHand(const Hand& currentHand) const override final
-	{
-		if (this->lastHand && Type::Single <= this->lastHand.type && this->lastHand.type <= Type::QuadrupleWithPairPair && !this->lastHand.cards.empty() && Type::Single <= currentHand.type && currentHand.type <= Type::QuadrupleWithPairPair && !currentHand.cards.empty())
-			switch (this->lastHand.type)
-			{
-			case Type::Single: // 单牌
-				return Type::PairJokers == currentHand.type || Type::Quadruple == currentHand.type || (Type::Single == currentHand.type && (JOKER_POINT == currentHand.cards[0].point && JOKER_POINT == this->lastHand.cards[0].point ? currentHand.cards[0].suit > this->lastHand.cards[0].suit : this->values[currentHand.cards[0].point] > this->values[this->lastHand.cards[0].point]));
-			case Type::SingleStraight: // 顺子
-			case Type::Pair: // 对子
-			case Type::PairStraight: // 连对
-			case Type::Triple: // 三条
-			case Type::TripleWithSingle: // 三带一
-			case Type::TripleWithPair: // 三带一对
-			case Type::TripleStraight: // 飞机（不带翅膀）
-			case Type::TripleStraightWithSingles: // 飞机带小翼
-			case Type::TripleStraightWithPairs: // 飞机带大翼
-			case Type::QuadrupleWithSingleSingle: // 四带二单
-			case Type::QuadrupleWithPairPair: // 四带二对
-				return Type::PairJokers == currentHand.type || Type::Quadruple == currentHand.type || (currentHand.type == this->lastHand.type && currentHand.cards.size() == this->lastHand.cards.size() && this->values[currentHand.cards[0].point] > this->values[this->lastHand.cards[0].point]);
-			case Type::PairJokers: // 王炸/火箭
-				return false;
-			case Type::Quadruple: // 炸弹
-				return Type::PairJokers == currentHand.type || (Type::Quadruple == currentHand.type && this->values[currentHand.cards[0].point] > this->values[this->lastHand.cards[0].point]);
-			case Type::Empty:
-			case Type::SingleFlush:
-			case Type::SingleFlushStraight:
-			case Type::PairStraightWithSingle:
-			case Type::TripleWithPairSingle:
-			case Type::TripleStraightWithSingle:
-			case Type::QuadrupleWithSingle:
-			case Type::QuadrupleStraight:
-			case Type::QuadrupleStraightWithSingle:
-			case Type::QuadrupleJokers:
-			case Type::Quintuple:
-			case Type::Sextuple:
-			case Type::Septuple:
-			case Type::Octuple:
-			case Type::Invalid:
-			default:
-				return false;
-			}
-		else
-			return false;
-	}
 	
 public:
 	Landlords() : Poker()
@@ -2158,27 +2179,31 @@ public:
 		else
 			return false;
 	}
-	bool initialize(const size_t playerCount) override final { return 3 == playerCount && this->initialize(); }
 	bool deal() override final
 	{
-		if (this->status >= Status::Initialized && this->players.size() == 3)
+		const size_t playerCount = this->players.size();
+		if (this->status >= Status::Initialized && this->checkPlayerCount(playerCount))
 		{
 			this->deck.clear();
 			this->add54CardsToDeck();
 			shuffle(this->deck.begin(), this->deck.end(), this->seed);
-			for (Player player = 0; player < 3; ++player)
+			for (Player player = 0; player < playerCount; ++player)
 			{
-				this->players[player] = std::vector<Card>(17);
-				for (size_t idx = 0; idx < 17; ++idx)
+				this->players[player] = std::vector<Card>(Landlords::CardCountPerPlayer);
+				for (size_t idx = 0; idx < Landlords::CardCountPerPlayer; ++idx)
 				{
 					this->players[player][idx] = this->deck.back();
 					this->deck.pop_back();
 				}
 				this->sortCards(this->players[player]);
 			}
-			this->records.clear();
+			this->records = std::vector<std::vector<Hand>>{ std::vector<Hand>{} };
+			std::uniform_int_distribution<size_t> distribution(0, playerCount - 1);
+			this->currentPlayer = (Player)(distribution(this->seed));
+			this->dealer = INVALID_PLAYER;
+			this->lastHand = Hand{};
+			this->amounts = std::vector<Amount>{ 0x0/* 0b0 */ };
 			this->status = Status::Dealt;
-			this->assignDealer();
 			return true;
 		}
 		else
@@ -3840,7 +3865,7 @@ protected:
 			return false;
 		}
 	}
-
+	
 public:
 	LandlordsX() : Landlords()
 	{
@@ -3850,25 +3875,99 @@ public:
 
 class Landlords4P : public Poker /* Previous: LandlordsX | Next: BigTwo */
 {
+public:
+	static const size_t MinimumPlayerCount = 4, MaximumPlayerCount = 4, CardCountPerPlayer = 25;
+	
 private:
-	bool assignDealer() override final
+	bool checkPlayerCount(const size_t playerCount) const override final
 	{
-		if (Status::Dealt == this->status && this->records.empty())
-		{
-			this->records.push_back(std::vector<Hand>{});
-			std::uniform_int_distribution<size_t> distribution(0, this->players.size() - 1);
-			this->currentPlayer = (Player)(distribution(this->seed));
-			this->dealer = INVALID_PLAYER;
-			this->lastHand = Hand{};
-			this->amounts.clear();
-			return true;
-		}
-		else
-			return false;
+		return Landlords4P::MinimumPlayerCount <= playerCount && playerCount <= Landlords4P::MaximumPlayerCount;
 	}
 	bool checkStarting(const std::vector<Card>& cards) const override final
 	{
 		return !cards.empty();
+	}
+	bool isRealHand(const Hand& hand) const override final
+	{
+		switch (this->lastHand.type)
+		{
+		case Type::Single: // 单牌
+		case Type::Pair: // 对子
+		case Type::SingleStraight: // 顺子
+		case Type::PairStraight: // 连对
+		case Type::Triple: // 三条
+		case Type::TripleWithPair: // 三带一对
+		case Type::TripleStraight: // 飞机
+		case Type::TripleStraightWithPairs: // 飞机带大翼
+		case Type::Quadruple: // 四条炸弹
+		case Type::QuadrupleJokers: // 天王炸弹
+		case Type::Quintuple: // 五张炸弹
+		case Type::Sextuple: // 六张炸弹
+		case Type::Septuple: // 七张炸弹
+		case Type::Octuple: // 八张炸弹
+			return !hand.cards.empty();
+		case Type::Empty:
+		case Type::SingleFlush:
+		case Type::SingleFlushStraight:
+		case Type::PairStraightWithSingle:
+		case Type::PairJokers:
+		case Type::TripleWithSingle:
+		case Type::TripleWithPairSingle:
+		case Type::TripleStraightWithSingle:
+		case Type::TripleStraightWithSingles:
+		case Type::QuadrupleWithSingle:
+		case Type::QuadrupleWithSingleSingle:
+		case Type::QuadrupleWithPairPair:
+		case Type::QuadrupleStraight:
+		case Type::QuadrupleStraightWithSingle:
+		case Type::Invalid:
+		default:
+			return false;
+		}
+	}
+	bool coverLastHand(const Hand& currentHand) const override final
+	{
+		if (this->isRealHand(this->lastHand) && this->isRealHand(currentHand))
+			switch (this->lastHand.type)
+			{
+			case Type::Single: // 单牌
+			case Type::Pair: // 对子
+				return currentHand.type >= Type::Quintuple || Type::Quadruple == currentHand.type || (currentHand.type == this->lastHand.type && (JOKER_POINT == currentHand.cards[0].point && JOKER_POINT == this->lastHand.cards[0].point ? currentHand.cards[0].suit > this->lastHand.cards[0].suit : this->values[currentHand.cards[0].point] > this->values[this->lastHand.cards[0].point]));
+			case Type::SingleStraight: // 顺子
+			case Type::PairStraight: // 连对
+			case Type::Triple: // 三条
+			case Type::TripleWithPair: // 三带一对
+			case Type::TripleStraight: // 飞机
+			case Type::TripleStraightWithPairs: // 飞机带大翼
+				return currentHand.type >= Type::Quintuple || Type::Quadruple == currentHand.type || (currentHand.type == this->lastHand.type && currentHand.cards.size() == this->lastHand.cards.size() && this->values[currentHand.cards[0].point] > this->values[this->lastHand.cards[0].point]);
+			case Type::Quadruple: // 四条炸弹
+				return currentHand.type >= Type::Quintuple || (Type::Quadruple == currentHand.type && this->values[currentHand.cards[0].point] > this->values[this->lastHand.cards[0].point]);
+			case Type::QuadrupleJokers: // 天王炸弹
+			case Type::Quintuple: // 五张炸弹
+			case Type::Sextuple: // 六张炸弹
+			case Type::Septuple: // 七张炸弹
+			case Type::Octuple: // 八张炸弹
+				return currentHand.type > this->lastHand.type || (currentHand.type == this->lastHand.type && this->values[currentHand.cards[0].point] > this->values[this->lastHand.cards[0].point]);
+			case Type::Empty:
+			case Type::SingleFlush:
+			case Type::SingleFlushStraight:
+			case Type::PairStraightWithSingle:
+			case Type::PairJokers:
+			case Type::TripleWithSingle:
+			case Type::TripleWithPairSingle:
+			case Type::TripleStraightWithSingle:
+			case Type::TripleStraightWithSingles:
+			case Type::QuadrupleWithSingle:
+			case Type::QuadrupleWithSingleSingle:
+			case Type::QuadrupleWithPairPair:
+			case Type::QuadrupleStraight:
+			case Type::QuadrupleStraightWithSingle:
+			case Type::Invalid:
+			default:
+				return false;
+			}
+		else
+			return false;
 	}
 	bool processHand(Hand& hand, std::vector<Candidate>& candidates) const override final
 	{
@@ -4433,53 +4532,9 @@ private:
 	{
 		return Type::QuadrupleJokers == hand.type;
 	}
-	bool coverLastHand(const Hand& currentHand) const override final
-	{
-		if (this->lastHand && Type::Single <= this->lastHand.type && this->lastHand.type <= Type::Octuple && !this->lastHand.cards.empty() && Type::Single <= currentHand.type && currentHand.type <= Type::Octuple && !currentHand.cards.empty())
-			switch (this->lastHand.type)
-			{
-			case Type::Single: // 单牌
-			case Type::Pair: // 对子
-				return currentHand.type >= Type::Quintuple || Type::Quadruple == currentHand.type || (currentHand.type == this->lastHand.type && (JOKER_POINT == currentHand.cards[0].point && JOKER_POINT == this->lastHand.cards[0].point ? currentHand.cards[0].suit > this->lastHand.cards[0].suit : this->values[currentHand.cards[0].point] > this->values[this->lastHand.cards[0].point]));
-			case Type::SingleStraight: // 顺子
-			case Type::PairStraight: // 连对
-			case Type::Triple: // 三条
-			case Type::TripleWithPair: // 三带一对
-			case Type::TripleStraight: // 飞机
-			case Type::TripleStraightWithPairs: // 飞机带大翼
-				return currentHand.type >= Type::Quintuple || Type::Quadruple == currentHand.type || (currentHand.type == this->lastHand.type && currentHand.cards.size() == this->lastHand.cards.size() && this->values[currentHand.cards[0].point] > this->values[this->lastHand.cards[0].point]);
-			case Type::Quadruple: // 四条炸弹
-				return currentHand.type >= Type::Quintuple || (Type::Quadruple == currentHand.type && this->values[currentHand.cards[0].point] > this->values[this->lastHand.cards[0].point]);
-			case Type::QuadrupleJokers: // 天王炸弹
-			case Type::Quintuple: // 五张炸弹
-			case Type::Sextuple: // 六张炸弹
-			case Type::Septuple: // 七张炸弹
-			case Type::Octuple: // 八张炸弹
-				return currentHand.type > this->lastHand.type || (currentHand.type == this->lastHand.type && this->values[currentHand.cards[0].point] > this->values[this->lastHand.cards[0].point]);
-			case Type::Empty:
-			case Type::SingleFlush:
-			case Type::SingleFlushStraight:
-			case Type::PairStraightWithSingle:
-			case Type::PairJokers:
-			case Type::TripleWithSingle:
-			case Type::TripleWithPairSingle:
-			case Type::TripleStraightWithSingle:
-			case Type::TripleStraightWithSingles:
-			case Type::QuadrupleWithSingle:
-			case Type::QuadrupleWithSingleSingle:
-			case Type::QuadrupleWithPairPair:
-			case Type::QuadrupleStraight:
-			case Type::QuadrupleStraightWithSingle:
-			case Type::Invalid:
-			default:
-				return false;
-			}
-		else
-			return false;
-	}
 	std::string getBasisString() const override final
 	{
-		return this->amounts.size() == 1 ? "当前倍数：" + std::to_string(this->amounts[0]) : "";
+		return this->amounts.size() == 1 ? "当前倍数：" + std::to_string(this->amounts[0]) + "\n" : "";
 	}
 	std::string getPreRoundString() const override final
 	{
@@ -4558,28 +4613,32 @@ public:
 		else
 			return false;
 	}
-	bool initialize(const size_t playerCount) override final { return 3 == playerCount && this->initialize(); }
 	bool deal() override final
 	{
-		if (this->status >= Status::Initialized && this->players.size() == 4)
+		const size_t playerCount = this->players.size();
+		if (this->status >= Status::Initialized && this->checkPlayerCount(playerCount))
 		{
 			this->deck.clear();
 			this->add54CardsToDeck();
-			this->add54CardsToDeck();
+			this->add54CardsToDeck(); // We confirmed that this line is not mis-duplicated. 
 			shuffle(this->deck.begin(), this->deck.end(), this->seed);
-			for (Player player = 0; player < 4; ++player)
+			for (Player player = 0; player < playerCount; ++player)
 			{
-				this->players[player] = std::vector<Card>(25);
-				for (size_t idx = 0; idx < 25; ++idx)
+				this->players[player] = std::vector<Card>(Landlords4P::CardCountPerPlayer);
+				for (size_t idx = 0; idx < Landlords4P::CardCountPerPlayer; ++idx)
 				{
 					this->players[player][idx] = this->deck.back();
 					this->deck.pop_back();
 				}
 				this->sortCards(this->players[player]);
 			}
-			this->records.clear();
+			this->records = std::vector<std::vector<Hand>>{ std::vector<Hand>{} };
+			std::uniform_int_distribution<size_t> distribution(0, playerCount - 1);
+			this->currentPlayer = (Player)(distribution(this->seed));
+			this->dealer = INVALID_PLAYER;
+			this->lastHand = Hand{};
+			this->amounts.clear();
 			this->status = Status::Dealt;
-			this->assignDealer();
 			return true;
 		}
 		else
@@ -4696,7 +4755,97 @@ public:
 
 class BigTwo : public Poker /* Previous: Landlords4P | Next: ThreeTwoOne */
 {
+public:
+	static const size_t MinimumPlayerCount = 4, MaximumPlayerCount = 4, CardCountPerPlayer = 13;
+	
 private:
+	bool checkPlayerCount(const size_t playerCount) const override final
+	{
+		return BigTwo::MinimumPlayerCount <= playerCount && playerCount <= BigTwo::MaximumPlayerCount;
+	}
+	bool isRealHand(const Hand& hand) const override final
+	{
+		switch (hand.type)
+		{
+		case Type::Single: // 单牌
+		case Type::SingleStraight: // 顺子（长度只能为 5）：可被一条龙|同花顺、金刚、葫芦/俘虏/乌龙/副路、同花以及比自己大的顺子盖过
+		case Type::SingleFlush: // 同花（长度只能为 5）：可被一条龙|同花顺、金刚、葫芦/俘虏/乌龙/副路以及比自己大的同花盖过
+		case Type::SingleFlushStraight: // 一条龙|同花顺（长度只能为 5）
+		case Type::Pair: // 对子
+		case Type::Triple: // 三条
+		case Type::TripleWithPair: // 葫芦/俘虏/乌龙/副路：可被一条龙|同花顺、金刚、以及比自己大的葫芦/俘虏/乌龙/副路盖过
+		case Type::QuadrupleWithSingle: // 金刚：可被一条龙|同花顺和比自己大的金刚盖过
+			return hand.player != INVALID_PLAYER && !hand.cards.empty();
+		case Type::Empty:
+		case Type::PairStraight:
+		case Type::PairStraightWithSingle:
+		case Type::PairJokers:
+		case Type::TripleWithSingle:
+		case Type::TripleWithPairSingle:
+		case Type::TripleStraight:
+		case Type::TripleStraightWithSingle:
+		case Type::TripleStraightWithSingles:
+		case Type::TripleStraightWithPairs:
+		case Type::Quadruple:
+		case Type::QuadrupleWithSingleSingle:
+		case Type::QuadrupleWithPairPair:
+		case Type::QuadrupleStraight:
+		case Type::QuadrupleStraightWithSingle:
+		case Type::QuadrupleJokers:
+		case Type::Quintuple:
+		case Type::Sextuple:
+		case Type::Septuple:
+		case Type::Octuple:
+		case Type::Invalid:
+		default:
+			return false;
+		}
+	}
+	bool coverLastHand(const Hand& currentHand) const override final
+	{
+		if (this->isRealHand(this->lastHand) && this->isRealHand(currentHand))
+			switch (this->lastHand.type)
+			{
+			case Type::Single: // 单牌
+			case Type::SingleFlushStraight: // 一条龙|同花顺（长度只能为 5）
+			case Type::Pair: // 对子
+			case Type::Triple: // 三条
+				return currentHand.type == this->lastHand.type && (this->values[currentHand.cards[0].point] > this->values[this->lastHand.cards[0].point] || (currentHand.cards[0].point == this->lastHand.cards[0].point && currentHand.cards[0].suit > this->lastHand.cards[0].suit));
+			case Type::SingleStraight: // 顺子（长度只能为 5）：可被一条龙|同花顺、金刚、葫芦/俘虏/乌龙/副路、同花以及比自己大的顺子盖过
+				return Type::SingleFlushStraight == currentHand.type || Type::QuadrupleWithSingle == currentHand.type || Type::TripleWithPair == currentHand.type || Type::SingleFlush == currentHand.type || (Type::SingleStraight == currentHand.type && (this->values[currentHand.cards[0].point] > this->values[this->lastHand.cards[0].point] || (currentHand.cards[0].point == this->lastHand.cards[0].point && currentHand.cards[0].suit > this->lastHand.cards[0].suit)));
+			case Type::SingleFlush: // 同花（长度只能为 5）：可被一条龙|同花顺、金刚、葫芦/俘虏/乌龙/副路以及比自己大的同花盖过
+				return Type::SingleFlushStraight == currentHand.type || Type::QuadrupleWithSingle == currentHand.type || Type::TripleWithPair == currentHand.type || (Type::SingleFlush == currentHand.type && (this->values[currentHand.cards[0].point] > this->values[this->lastHand.cards[0].point] || (currentHand.cards[0].point == this->lastHand.cards[0].point && currentHand.cards[0].suit > this->lastHand.cards[0].suit)));
+			case Type::TripleWithPair: // 葫芦/俘虏/乌龙/副路：可被一条龙|同花顺、金刚、以及比自己大的葫芦/俘虏/乌龙/副路盖过
+				return Type::SingleFlushStraight == currentHand.type || Type::QuadrupleWithSingle == currentHand.type || (Type::TripleWithPair == currentHand.type && (this->values[currentHand.cards[0].point] > this->values[this->lastHand.cards[0].point] || (currentHand.cards[0].point == this->lastHand.cards[0].point && currentHand.cards[0].suit > this->lastHand.cards[0].suit)));
+			case Type::QuadrupleWithSingle: // 金刚：可被一条龙|同花顺和比自己大的金刚盖过
+				return Type::SingleFlushStraight == currentHand.type || (Type::QuadrupleWithSingle == currentHand.type && (this->values[currentHand.cards[0].point] > this->values[this->lastHand.cards[0].point] || (currentHand.cards[0].point == this->lastHand.cards[0].point && currentHand.cards[0].suit > this->lastHand.cards[0].suit)));
+			case Type::Empty:
+			case Type::PairStraight:
+			case Type::PairStraightWithSingle:
+			case Type::PairJokers:
+			case Type::TripleWithSingle:
+			case Type::TripleWithPairSingle:
+			case Type::TripleStraight:
+			case Type::TripleStraightWithSingle:
+			case Type::TripleStraightWithSingles:
+			case Type::TripleStraightWithPairs:
+			case Type::Quadruple:
+			case Type::QuadrupleWithSingleSingle:
+			case Type::QuadrupleWithPairPair:
+			case Type::QuadrupleStraight:
+			case Type::QuadrupleStraightWithSingle:
+			case Type::QuadrupleJokers:
+			case Type::Quintuple:
+			case Type::Sextuple:
+			case Type::Septuple:
+			case Type::Octuple:
+			case Type::Invalid:
+			default:
+				return false;
+			}
+		else
+			return false;
+	}
 	bool processHand(Hand& hand, std::vector<Candidate>& candidates) const override final
 	{
 		hand.type = Type::Invalid;
@@ -4834,51 +4983,6 @@ private:
 	{
 		return (Type::Single == hand.type || Type::Pair == hand.type || Type::Triple == hand.type || Type::Quadruple == hand.type || Type::SingleFlushStraight == hand.type) && (!hand.cards.empty() && Card { 2, Suit::Spade } == hand.cards[0]);
 	}
-	bool coverLastHand(const Hand& currentHand) const override final
-	{
-		if (this->lastHand && Type::Single <= this->lastHand.type && this->lastHand.type <= Type::QuadrupleWithSingle && !this->lastHand.cards.empty() && Type::Single <= currentHand.type && currentHand.type <= Type::QuadrupleWithSingle && !currentHand.cards.empty())
-			switch (this->lastHand.type)
-			{
-			case Type::Single: // 单牌
-			case Type::SingleFlushStraight: // 一条龙|同花顺（长度只能为 5）
-			case Type::Pair: // 对子
-			case Type::Triple: // 三条
-				return currentHand.type == this->lastHand.type && (this->values[currentHand.cards[0].point] > this->values[this->lastHand.cards[0].point] || (currentHand.cards[0].point == this->lastHand.cards[0].point && currentHand.cards[0].suit > this->lastHand.cards[0].suit));
-			case Type::SingleStraight: // 顺子（长度只能为 5）：可被一条龙|同花顺、金刚、葫芦/俘虏/乌龙/副路、同花以及比自己大的顺子盖过
-				return Type::SingleFlushStraight == currentHand.type || Type::QuadrupleWithSingle == currentHand.type || Type::TripleWithPair == currentHand.type || Type::SingleFlush == currentHand.type || (Type::SingleStraight == currentHand.type && (this->values[currentHand.cards[0].point] > this->values[this->lastHand.cards[0].point] || (currentHand.cards[0].point == this->lastHand.cards[0].point && currentHand.cards[0].suit > this->lastHand.cards[0].suit)));
-			case Type::SingleFlush: // 同花（长度只能为 5）：可被一条龙|同花顺、金刚、葫芦/俘虏/乌龙/副路以及比自己大的同花盖过
-				return Type::SingleFlushStraight == currentHand.type || Type::QuadrupleWithSingle == currentHand.type || Type::TripleWithPair == currentHand.type || (Type::SingleFlush == currentHand.type && (this->values[currentHand.cards[0].point] > this->values[this->lastHand.cards[0].point] || (currentHand.cards[0].point == this->lastHand.cards[0].point && currentHand.cards[0].suit > this->lastHand.cards[0].suit)));
-			case Type::TripleWithPair: // 葫芦/俘虏/乌龙/副路：可被一条龙|同花顺、金刚、以及比自己大的葫芦/俘虏/乌龙/副路盖过
-				return Type::SingleFlushStraight == currentHand.type || Type::QuadrupleWithSingle == currentHand.type || (Type::TripleWithPair == currentHand.type && (this->values[currentHand.cards[0].point] > this->values[this->lastHand.cards[0].point] || (currentHand.cards[0].point == this->lastHand.cards[0].point && currentHand.cards[0].suit > this->lastHand.cards[0].suit)));
-			case Type::QuadrupleWithSingle: // 金刚：可被一条龙|同花顺和比自己大的金刚盖过
-				return Type::SingleFlushStraight == currentHand.type || (Type::QuadrupleWithSingle == currentHand.type && (this->values[currentHand.cards[0].point] > this->values[this->lastHand.cards[0].point] || (currentHand.cards[0].point == this->lastHand.cards[0].point && currentHand.cards[0].suit > this->lastHand.cards[0].suit)));
-			case Type::Empty:
-			case Type::PairStraight:
-			case Type::PairStraightWithSingle:
-			case Type::PairJokers:
-			case Type::TripleWithSingle:
-			case Type::TripleWithPairSingle:
-			case Type::TripleStraight:
-			case Type::TripleStraightWithSingle:
-			case Type::TripleStraightWithSingles:
-			case Type::TripleStraightWithPairs:
-			case Type::Quadruple:
-			case Type::QuadrupleWithSingleSingle:
-			case Type::QuadrupleWithPairPair:
-			case Type::QuadrupleStraight:
-			case Type::QuadrupleStraightWithSingle:
-			case Type::QuadrupleJokers:
-			case Type::Quintuple:
-			case Type::Sextuple:
-			case Type::Septuple:
-			case Type::Octuple:
-			case Type::Invalid:
-			default:
-				return false;
-			}
-		else
-			return false;
-	}
 	std::string getPreRoundString() const override final
 	{
 		if (this->records.empty() || this->records[0].empty())
@@ -4914,27 +5018,33 @@ public:
 		else
 			return false;
 	}
-	bool initialize(const size_t playerCount) override final { return 3 == playerCount && this->initialize(); }
 	bool deal() override final
 	{
-		if (this->status >= Status::Initialized && this->players.size() == 4)
+		const size_t playerCount = this->players.size();
+		if (this->status >= Status::Initialized && this->checkPlayerCount(playerCount))
 		{
 			this->deck.clear();
 			this->add52CardsToDeck();
 			shuffle(this->deck.begin(), this->deck.end(), this->seed);
-			for (Player player = 0; player < 4; ++player)
+			for (Player player = 0; player < playerCount; ++player)
 			{
-				this->players[player] = std::vector<Card>(13);
-				for (size_t idx = 0; idx < 13; ++idx)
+				this->players[player] = std::vector<Card>(BigTwo::CardCountPerPlayer);
+				for (size_t idx = 0; idx < BigTwo::CardCountPerPlayer; ++idx)
 				{
 					this->players[player][idx] = this->deck.back();
 					this->deck.pop_back();
 				}
 				this->sortCards(this->players[player]);
 			}
-			this->records.clear();
-			this->status = Status::Dealt;
-			this->assignDealer();
+			this->records = std::vector<std::vector<Hand>>{ std::vector<Hand>{} };
+			for (Player player = 0; player < playerCount; ++player)
+				this->records[0].push_back(Hand{ player, std::vector<Card>{ this->players[player].back() } });
+			sort(this->records[0].begin(), this->records[0].end(), [this](Hand a, Hand b) { const Value valueA = this->values[a.cards.back().point], valueB = this->values[b.cards.back().point]; return valueA > valueB || (valueA == valueB && a.cards.back().suit > b.cards.back().suit); });
+			this->currentPlayer = this->records[0].back().player;
+			this->dealer = this->records[0].back().player;
+			this->lastHand = Hand{};
+			this->amounts.clear();
+			this->status = Status::Assigned;
 			return true;
 		}
 		else
@@ -4948,7 +5058,56 @@ public:
 
 class ThreeTwoOne : public Poker /* Previous: BigTwo | Next: Wuguapi */
 {
+public:
+	static const size_t MinimumPlayerCount = 4, MaximumPlayerCount = 4, CardCountPerPlayer = 13;
+	
 private:
+	bool checkPlayerCount(const size_t playerCount) const override final
+	{
+		return ThreeTwoOne::MinimumPlayerCount <= playerCount && playerCount <= ThreeTwoOne::MaximumPlayerCount;
+	}
+	bool isRealHand(const Hand& hand) const override final
+	{
+		switch (hand.type)
+		{
+		case Type::Single: // 单牌
+		case Type::SingleStraight: // 顺子
+		case Type::Pair: // 对子
+		case Type::PairStraight: // 连对
+		case Type::PairStraightWithSingle: // 连对夹一
+		case Type::Triple: // 三张
+		case Type::TripleWithPair: // 三两不一
+		case Type::TripleWithPairSingle: // 三两一
+		case Type::TripleStraight: // 三顺
+		case Type::TripleStraightWithSingle: // 三顺夹一
+		case Type::Quadruple: // 四张
+		case Type::QuadrupleWithSingle: // 四夹一
+		case Type::QuadrupleStraight: // 四顺
+		case Type::QuadrupleStraightWithSingle: // 四顺夹一
+			return !hand.cards.empty();
+		case Type::Empty:
+		case Type::SingleFlush:
+		case Type::SingleFlushStraight:
+		case Type::PairJokers:
+		case Type::TripleWithSingle:
+		case Type::TripleStraightWithSingles:
+		case Type::TripleStraightWithPairs:
+		case Type::QuadrupleWithSingleSingle:
+		case Type::QuadrupleWithPairPair:
+		case Type::QuadrupleJokers:
+		case Type::Quintuple:
+		case Type::Sextuple:
+		case Type::Septuple:
+		case Type::Octuple:
+		case Type::Invalid:
+		default:
+			return false;
+		}
+	}
+	bool coverLastHand(const Hand& currentHand) const override final
+	{
+		return this->isRealHand(this->lastHand) && this->isRealHand(currentHand) && currentHand.type == this->lastHand.type && currentHand.cards.size() == this->lastHand.cards.size() && this->values[currentHand.cards[0].point] > this->values[this->lastHand.cards[0].point];
+	}
 	bool processHand(Hand& hand, std::vector<Candidate>& candidates) const override final
 	{
 		hand.type = Type::Invalid;
@@ -5629,13 +5788,6 @@ private:
 	{
 		return Type::Single <= hand.type && hand.type <= Type::QuadrupleStraightWithSingle && !hand.cards.empty() && 2 == hand.cards[0].point;
 	}
-	bool coverLastHand(const Hand& currentHand) const override final
-	{
-		if (this->lastHand && Type::Single <= this->lastHand.type && this->lastHand.type <= Type::QuadrupleStraightWithSingle && !this->lastHand.cards.empty() && Type::Single <= currentHand.type && currentHand.type <= Type::QuadrupleStraightWithSingle && !currentHand.cards.empty())
-			return (currentHand.type == this->lastHand.type || (Type::TripleWithPairSingle == this->lastHand.type && Type::TripleStraight == currentHand.type)) && currentHand.cards.size() == this->lastHand.cards.size() && this->values[currentHand.cards[0].point] > this->values[this->lastHand.cards[0].point];
-		else
-			return false;
-	}
 	std::string getPreRoundString() const override final
 	{
 		if (this->records.empty() || this->records[0].empty())
@@ -5673,27 +5825,33 @@ public:
 		else
 			return false;
 	}
-	bool initialize(const size_t playerCount) override final { return 3 == playerCount && this->initialize(); }
 	bool deal() override final
 	{
-		if (this->status >= Status::Initialized && this->players.size() == 4)
+		const size_t playerCount = this->players.size();
+		if (this->status >= Status::Initialized && this->checkPlayerCount(playerCount))
 		{
 			this->deck.clear();
 			this->add52CardsToDeck();
 			shuffle(this->deck.begin(), this->deck.end(), this->seed);
-			for (Player player = 0; player < 4; ++player)
+			for (Player player = 0; player < playerCount; ++player)
 			{
-				this->players[player] = std::vector<Card>(13);
-				for (size_t idx = 0; idx < 13; ++idx)
+				this->players[player] = std::vector<Card>(ThreeTwoOne::CardCountPerPlayer);
+				for (size_t idx = 0; idx < ThreeTwoOne::CardCountPerPlayer; ++idx)
 				{
 					this->players[player][idx] = this->deck.back();
 					this->deck.pop_back();
 				}
 				this->sortCards(this->players[player]);
 			}
-			this->records.clear();
-			this->status = Status::Dealt;
-			this->assignDealer();
+			this->records = std::vector<std::vector<Hand>>{ std::vector<Hand>{} };
+			for (Player player = 0; player < playerCount; ++player)
+				this->records[0].push_back(Hand{ player, std::vector<Card>{ this->players[player].back() } });
+			sort(this->records[0].begin(), this->records[0].end(), [this](Hand a, Hand b) { const Value valueA = this->values[a.cards.back().point], valueB = this->values[b.cards.back().point]; return valueA > valueB || (valueA == valueB && a.cards.back().suit > b.cards.back().suit); });
+			this->currentPlayer = this->records[0].back().player;
+			this->dealer = this->records[0].back().player;
+			this->lastHand = Hand{};
+			this->amounts.clear();
+			this->status = Status::Assigned;
 			return true;
 		}
 		else
@@ -5730,9 +5888,137 @@ public:
 	}
 };
 
-class Wuguapi : public Poker /* Previous: ThreeTwoOne | Next: Qiguiwueryi */
+class Wuguapi : public Poker /* Previous: ThreeTwoOne | Next: Qiguiwuersan */
 {
+public:
+	static const size_t MinimumPlayerCount = 2, MaximumPlayerCount = 10, CardCountPerPlayer = 5;
+	
 private:
+	bool checkPlayerCount(const size_t playerCount) const override final
+	{
+		return Wuguapi::MinimumPlayerCount <= playerCount && playerCount <= Wuguapi::MaximumPlayerCount;
+	}
+	bool nextPlayer() override final
+	{
+		const size_t playerCount = this->players.size();
+		if (this->checkPlayerCount(playerCount))
+			for (Count count = 1; count < playerCount; ++count)
+			{
+				if (++this->currentPlayer >= playerCount)
+					this->currentPlayer = 0;
+				if (!this->players[this->currentPlayer].empty())
+					return true;
+			}
+		return false;
+	}
+	bool isRealHand(const Hand& hand) const override final
+	{
+		switch (hand.type)
+		{
+		case Type::Single: // 单牌
+		case Type::SingleStraight: // 顺子
+		case Type::SingleFlush: // 同花
+		case Type::SingleFlushStraight: // 一条龙|同花顺
+		case Type::Pair: // 对子
+		case Type::PairJokers: // 对鬼
+		case Type::Triple: // 三条
+		case Type::TripleWithPair: // 葫芦/俘虏/乌龙/副路
+		case Type::Quadruple: // 四条
+		case Type::QuadrupleWithSingle: // 金刚
+			return true;
+		case Type::Empty:
+		case Type::PairStraight:
+		case Type::PairStraightWithSingle:
+		case Type::TripleWithSingle:
+		case Type::TripleWithPairSingle:
+		case Type::TripleStraight:
+		case Type::TripleStraightWithSingle:
+		case Type::TripleStraightWithSingles:
+		case Type::TripleStraightWithPairs:
+		case Type::QuadrupleWithSingleSingle:
+		case Type::QuadrupleWithPairPair:
+		case Type::QuadrupleStraight:
+		case Type::QuadrupleStraightWithSingle:
+		case Type::QuadrupleJokers:
+		case Type::Quintuple:
+		case Type::Sextuple:
+		case Type::Septuple:
+		case Type::Octuple:
+		case Type::Invalid:
+		default:
+			return false;
+		}
+	}
+	bool coverLastHand(const Hand& currentHand) const override final
+	{
+		if (this->isRealHand(this->lastHand) && this->isRealHand(currentHand))
+			switch (this->lastHand.type)
+			{
+			case Type::Single: // 单牌
+				return currentHand.type == this->lastHand.type && (this->values[currentHand.cards[0].point] > this->values[this->lastHand.cards[0].point] || (currentHand.cards[0].point == this->lastHand.cards[0].point && currentHand.cards[0].suit > this->lastHand.cards[0].suit));
+			case Type::SingleStraight: // 顺子
+				switch (this->lastHand.cards.size())
+				{
+				case 3: // 可被一条龙|同花顺、三条、同花以及比自己大的顺子盖过
+					return currentHand.cards.size() == this->lastHand.cards.size() && (Type::SingleFlushStraight == currentHand.type || Type::Triple == currentHand.type || Type::SingleFlush == currentHand.type || (Type::SingleStraight == currentHand.type && (this->values[currentHand.cards[0].point] > this->values[this->lastHand.cards[0].point] || (currentHand.cards[0].point == this->lastHand.cards[0].point && currentHand.cards[0].suit > this->lastHand.cards[0].suit))));
+				case 4: // 可被一条龙|同花顺、四条、同花以及比自己大的顺子盖过
+					return currentHand.cards.size() == this->lastHand.cards.size() && (Type::SingleFlushStraight == currentHand.type || Type::Quadruple == currentHand.type || Type::SingleFlush == currentHand.type || (Type::SingleStraight == currentHand.type && (this->values[currentHand.cards[0].point] > this->values[this->lastHand.cards[0].point] || (currentHand.cards[0].point == this->lastHand.cards[0].point && currentHand.cards[0].suit > this->lastHand.cards[0].suit))));
+				case 5: // 可被一条龙|同花顺、金刚、葫芦/俘虏/乌龙/副路、同花以及比自己大的顺子盖过
+					return currentHand.cards.size() == this->lastHand.cards.size() && (Type::SingleFlushStraight == currentHand.type || Type::QuadrupleWithSingle == currentHand.type || Type::TripleWithPair == currentHand.type || Type::SingleFlush == currentHand.type || (Type::SingleStraight == currentHand.type && (this->values[currentHand.cards[0].point] > this->values[this->lastHand.cards[0].point] || (currentHand.cards[0].point == this->lastHand.cards[0].point && currentHand.cards[0].suit > this->lastHand.cards[0].suit))));
+				default:
+					return false;
+				}
+			case Type::SingleFlush: // 同花
+				switch (this->lastHand.cards.size())
+				{
+				case 3: // 可被一条龙|同花顺、三条、以及比自己大的同花盖过
+					return currentHand.cards.size() == this->lastHand.cards.size() && (Type::SingleFlushStraight == currentHand.type || Type::Triple == currentHand.type || (Type::SingleFlush == currentHand.type && (this->values[currentHand.cards[0].point] > this->values[this->lastHand.cards[0].point] || (currentHand.cards[0].point == this->lastHand.cards[0].point && currentHand.cards[0].suit > this->lastHand.cards[0].suit))));
+				case 4: // 可被一条龙|同花顺、四条、以及比自己大的同花盖过
+					return currentHand.cards.size() == this->lastHand.cards.size() && (Type::SingleFlushStraight == currentHand.type || Type::Quadruple == currentHand.type || (Type::SingleFlush == currentHand.type && (this->values[currentHand.cards[0].point] > this->values[this->lastHand.cards[0].point] || (currentHand.cards[0].point == this->lastHand.cards[0].point && currentHand.cards[0].suit > this->lastHand.cards[0].suit))));
+				case 5: // 可被一条龙|同花顺、金刚、葫芦/俘虏/乌龙/副路、以及比自己大的同花盖过
+					return currentHand.cards.size() == this->lastHand.cards.size() && (Type::SingleFlushStraight == currentHand.type || Type::QuadrupleWithSingle == currentHand.type || Type::TripleWithPair == currentHand.type || (Type::SingleFlush == currentHand.type && (this->values[currentHand.cards[0].point] > this->values[this->lastHand.cards[0].point] || (currentHand.cards[0].point == this->lastHand.cards[0].point && currentHand.cards[0].suit > this->lastHand.cards[0].suit))));
+				default:
+					return false;
+				}
+			case Type::SingleFlushStraight: // 一条龙|同花顺
+				return currentHand.type == this->lastHand.type && currentHand.cards.size() == this->lastHand.cards.size() && (this->values[currentHand.cards[0].point] > this->values[this->lastHand.cards[0].point] || (currentHand.cards[0].point == this->lastHand.cards[0].point && currentHand.cards[0].suit > this->lastHand.cards[0].suit));
+			case Type::Pair: // 对子
+				return Type::PairJokers == currentHand.type || (currentHand.type == this->lastHand.type && (this->values[currentHand.cards[0].point] > this->values[this->lastHand.cards[0].point] || (currentHand.cards[0].point == this->lastHand.cards[0].point && currentHand.cards[0].suit > this->lastHand.cards[0].suit)));
+			case Type::PairJokers: // 对鬼
+				return false;
+			case Type::Triple: // 三条：可被一条龙|同花顺和比自己大的三条盖过
+				return (Type::SingleFlushStraight == currentHand.type && currentHand.cards.size() == 3) || (Type::Triple == currentHand.type && (this->values[currentHand.cards[0].point] > this->values[this->lastHand.cards[0].point] || (currentHand.cards[0].point == this->lastHand.cards[0].point && currentHand.cards[0].suit > this->lastHand.cards[0].suit)));
+			case Type::TripleWithPair: // 葫芦/俘虏/乌龙/副路：可被一条龙|同花顺、金刚、以及比自己大的葫芦/俘虏/乌龙/副路盖过
+				return Type::SingleFlushStraight == currentHand.type || Type::QuadrupleWithSingle == currentHand.type || (Type::TripleWithPair == currentHand.type && (this->values[currentHand.cards[0].point] > this->values[this->lastHand.cards[0].point] || (currentHand.cards[0].point == this->lastHand.cards[0].point && currentHand.cards[0].suit > this->lastHand.cards[0].suit)));
+			case Type::Quadruple: // 四条：可被一条龙|同花顺和比自己大的四条盖过
+				return (Type::SingleFlushStraight == currentHand.type && currentHand.cards.size() == 4) || (Type::Quadruple == currentHand.type && (this->values[currentHand.cards[0].point] > this->values[this->lastHand.cards[0].point] || (currentHand.cards[0].point == this->lastHand.cards[0].point && currentHand.cards[0].suit > this->lastHand.cards[0].suit)));
+			case Type::QuadrupleWithSingle: // 金刚：可被一条龙|同花顺和比自己大的金刚盖过
+				return Type::SingleFlushStraight == currentHand.type || (Type::QuadrupleWithSingle == currentHand.type && (this->values[currentHand.cards[0].point] > this->values[this->lastHand.cards[0].point] || (currentHand.cards[0].point == this->lastHand.cards[0].point && currentHand.cards[0].suit > this->lastHand.cards[0].suit)));
+			case Type::Empty:
+			case Type::PairStraight:
+			case Type::PairStraightWithSingle:
+			case Type::TripleWithSingle:
+			case Type::TripleWithPairSingle:
+			case Type::TripleStraight:
+			case Type::TripleStraightWithSingle:
+			case Type::TripleStraightWithSingles:
+			case Type::TripleStraightWithPairs:
+			case Type::QuadrupleWithSingleSingle:
+			case Type::QuadrupleWithPairPair:
+			case Type::QuadrupleStraight:
+			case Type::QuadrupleStraightWithSingle:
+			case Type::QuadrupleJokers:
+			case Type::Quintuple:
+			case Type::Sextuple:
+			case Type::Septuple:
+			case Type::Octuple:
+			case Type::Invalid:
+			default:
+				return false;
+			}
+		else
+			return false;
+	}
 	bool processHand(Hand& hand, std::vector<Candidate>& candidates) const override final
 	{
 		hand.type = Type::Invalid;
@@ -5855,7 +6141,6 @@ private:
 				}
 				else
 					return false;
-
 			case 1:
 				if (1 == counts[1]) // && 1 == counts[2] && 1 == counts[3]
 				{
@@ -5877,14 +6162,180 @@ private:
 			return false;
 		}
 	}
+	bool isAbsolutelyLargest(const Hand& hand) const override final
+	{
+		return ((Type::Single == hand.type || Type::PairJokers == hand.type) && Card { JOKER_POINT, Suit::Red } == hand.cards[0]) || (Type::SingleFlushStraight == hand.type && Card{ 5, Suit::Spade } == hand.cards[0]);
+	}
 	bool processBasis(const Hand& hand) override final
 	{
 		if (Status::Started == this->status && !this->records.empty() && !this->records.back().empty())
 		{
-
-			if (Type::Quadruple == hand.type || Type::PairJokers == hand.type)
-				this->amounts[0] += !this->lastHand || hand.player == this->lastHand.player ? 0x1/* 0b1 */ : 0x10/* 0b10000 */;
-			return true;
+			const size_t playerCount = this->players.size();
+			if (this->amounts.size() == playerCount && this->checkPlayerCount(playerCount))
+				if (this->isRealHand(hand))
+				{
+					/* Compute the winner bonus */
+					if (this->deck.empty() && this->players[hand.player].empty())
+					{
+						Count winnerCount = 0;
+						for (const Amount& amount : this->amounts)
+							if (amount >> 8)
+								++winnerCount;
+						if (winnerCount >= playerCount)
+							return false;
+						this->amounts[hand.player] += static_cast<Amount>(winnerCount) << 8;
+					}
+					
+					/* Compute the winner integrals */
+					if (this->isAbsolutelyLargest(hand))
+					{
+						/* Scan the integrals */
+						Integral integral = 0;
+						Count emptyCount = 1;
+						for (std::vector<Hand>::const_reverse_iterator it = this->records.back().rbegin() + 1; it != this->records.back().rend(); ++it)
+							if (this->isRealHand(*it))
+								if (this->isAbsolutelyLargest(*it))
+									break;
+								else
+								{
+									for (const Card& card : it->cards)
+										switch (card.point)
+										{
+										case 5:
+											integral += 5;
+											break;
+										case 10:
+										case 13:
+											integral += 10;
+											break;
+										default:
+											break;
+										}
+									emptyCount = 1;
+								}
+							else if (Type::Empty == it->type && it->cards.empty())
+							{
+								if (++emptyCount >= playerCount)
+								{
+									if (this->records.back().rend() == ++it || !this->isRealHand(*it))
+										return false;
+									else
+										break;
+								}
+							}
+							else
+								return false;
+						
+						/* Apply the amount */
+						Player bonusPlayer = hand.player;
+						this->amounts[bonusPlayer] += integral;
+						
+						/* Draw */
+						for (Count count = 0; count < playerCount; ++count)
+						{
+							while (this->players[bonusPlayer].size() < Wuguapi::CardCountPerPlayer)
+								if (this->deck.empty())
+									return true;
+								else
+								{
+									this->players[bonusPlayer].emplace_back(std::move(this->deck.back()));
+									this->deck.pop_back();
+								}
+							this->sortCards(this->players[bonusPlayer]);
+							if (++bonusPlayer >= playerCount)
+								bonusPlayer = 0;
+						}
+					}
+					return true;
+				}
+				else if (Type::Empty == hand.type && hand.cards.empty()) // Compute the winner integrals
+				{
+					/* Judge an end of a circle */
+					std::vector<Hand>::const_reverse_iterator it = this->records.back().rbegin();
+					for (Count emptyCount = 2; emptyCount < playerCount;)
+						if (this->records.back().rend() == ++it || this->isRealHand(*it))
+							return true;
+						else if (Type::Empty == it->type && it->cards.empty())
+							++emptyCount;
+						else
+							return false;
+					if (this->records.back().rend() == ++it || !this->isRealHand(*it))
+						return false;
+					
+					/* Scan the integrals */
+					Integral integral = 0;
+					Player bonusPlayer = it->player;
+					for (const Card& card : it->cards)
+						switch (card.point)
+						{
+						case 5:
+							integral += 5;
+							break;
+						case 10:
+						case 13:
+							integral += 10;
+							break;
+						default:
+							break;
+						}
+					for (Count emptyCount = 1; ++it != this->records.back().rend();)
+						if (this->isRealHand(*it))
+							if (this->isAbsolutelyLargest(*it))
+								break;
+							else
+							{
+								for (const Card& card : it->cards)
+									switch (card.point)
+									{
+									case 5:
+										integral += 5;
+										break;
+									case 10:
+									case 13:
+										integral += 10;
+										break;
+									default:
+										break;
+									}
+								emptyCount = 1;
+							}
+						else if (Type::Empty == it->type && it->cards.empty())
+						{
+							if (++emptyCount >= playerCount)
+							{
+								if (this->records.back().rend() == ++it || !this->isRealHand(*it))
+									return false;
+								else
+									break;
+							}
+						}
+						else
+							return false;
+					
+					/* Apply the amount */
+					this->amounts[bonusPlayer] += integral;
+					
+					/* Draw */
+					for (Count count = 0; count < playerCount; ++count)
+					{
+						while (this->players[bonusPlayer].size() < Wuguapi::CardCountPerPlayer)
+							if (this->deck.empty())
+								return true;
+							else
+							{
+								this->players[bonusPlayer].emplace_back(std::move(this->deck.back()));
+								this->deck.pop_back();
+							}
+						this->sortCards(this->players[bonusPlayer]);
+						if (++bonusPlayer >= playerCount)
+							bonusPlayer = 0;
+					}
+					return true;
+				}
+				else
+					return false;
+			else
+				return false;
 		}
 		else
 			return false;
@@ -5906,119 +6357,38 @@ private:
 		}
 		return false;
 	}
-	bool computeAmounts() override final
+	std::string getBasisString() const override final
 	{
-		if (Status::Over == this->status)
+		const size_t playerCount = this->players.size();
+		if (playerCount == this->amounts.size() && this->checkPlayerCount(playerCount))
 		{
-			if (this->amounts.size() != this->players.size())
+			std::string basisString = "积分信息：";
+			bool flag = false;
+			for (Player player = 0; player < playerCount; ++player)
 			{
-				std::vector<Amount> scores(this->players.size());
-				const size_t length = this->records.size();
-				for (size_t round = 1; round < length; ++round)
+				Amount upperAmount = this->amounts[player] >> 8, lowerAmount = this->amounts[player] & 0xFF/* 0b11111111*/;
+				if (upperAmount)
 				{
-					unsigned char pointScore = 0;
-					const size_t handCount = this->records[round].size();
-					Player formerPlayer = INVALID_PLAYER, latterPlayer = INVALID_PLAYER;
-					for (const Hand& hand : this->records[round])
-					{
-
-						if (!hand && Type::Single <= hand.type && hand.type <= Type::QuadrupleWithSingle && !hand.cards.empty())
-						{
-							if (INVALID_PLAYER == formerPlayer)
-								formerPlayer = hand.player;
-							else if (INVALID_PLAYER == latterPlayer)
-								latterPlayer = hand.player;
-							else
-							{
-								if (formerPlayer == latterPlayer)
-								{
-									latterPlayer;
-								}
-								formerPlayer = latterPlayer;
-								latterPlayer = hand.player;
-							}
-						}
-					}
+					if (flag)
+						basisString += "；";
+					basisString += "玩家 " + std::to_string(player + 1) + " 是第 " + std::to_string(upperAmount) + " 位出完牌的玩家";
+					if (lowerAmount)
+						basisString += "，得 " + std::to_string(lowerAmount) + " 积分";
+					flag = true;
+				}
+				else if (lowerAmount)
+				{
+					if (flag)
+						basisString += "；";
+					basisString += "玩家 " + std::to_string(player + 1) + " 得 " + std::to_string(lowerAmount) + " 积分";
+					flag = true;
 				}
 			}
-			return true;
+			basisString += flag ? "。\n" : "暂无玩家获得积分或出完牌。\n";
+			return basisString;
 		}
 		else
-			return false;
-	}
-	bool isAbsolutelyLargest(const Hand& hand) const override final
-	{
-		return ((Type::Single == hand.type || Type::PairJokers == hand.type) && Card { JOKER_POINT, Suit::Red } == hand.cards[0]) || (Type::SingleFlushStraight == hand.type && Card{ 5, Suit::Spade } == hand.cards[0]);
-	}
-	bool coverLastHand(const Hand& currentHand) const override final
-	{
-		if (this->lastHand && Type::Single <= this->lastHand.type && this->lastHand.type <= Type::QuadrupleWithSingle && !this->lastHand.cards.empty() && Type::Single <= currentHand.type && currentHand.type <= Type::QuadrupleWithSingle && !currentHand.cards.empty())
-			switch (this->lastHand.type)
-			{
-			case Type::Single: // 单牌
-				return currentHand.type == this->lastHand.type && (this->values[currentHand.cards[0].point] > this->values[this->lastHand.cards[0].point] || (currentHand.cards[0].point == this->lastHand.cards[0].point && currentHand.cards[0].suit > this->lastHand.cards[0].suit));
-			case Type::SingleStraight: // 顺子
-				switch (this->lastHand.cards.size())
-				{
-				case 3: // 可被一条龙|同花顺、三条、同花以及比自己大的顺子盖过
-					return currentHand.cards.size() == this->lastHand.cards.size() && (Type::SingleFlushStraight == currentHand.type || Type::Triple == currentHand.type || Type::SingleFlush == currentHand.type || (Type::SingleStraight == currentHand.type && (this->values[currentHand.cards[0].point] > this->values[this->lastHand.cards[0].point] || (currentHand.cards[0].point == this->lastHand.cards[0].point && currentHand.cards[0].suit > this->lastHand.cards[0].suit))));
-				case 4: // 可被一条龙|同花顺、四条、同花以及比自己大的顺子盖过
-					return currentHand.cards.size() == this->lastHand.cards.size() && (Type::SingleFlushStraight == currentHand.type || Type::Quadruple == currentHand.type || Type::SingleFlush == currentHand.type || (Type::SingleStraight == currentHand.type && (this->values[currentHand.cards[0].point] > this->values[this->lastHand.cards[0].point] || (currentHand.cards[0].point == this->lastHand.cards[0].point && currentHand.cards[0].suit > this->lastHand.cards[0].suit))));
-				case 5: // 可被一条龙|同花顺、金刚、葫芦/俘虏/乌龙/副路、同花以及比自己大的顺子盖过
-					return currentHand.cards.size() == this->lastHand.cards.size() && (Type::SingleFlushStraight == currentHand.type || Type::QuadrupleWithSingle == currentHand.type || Type::TripleWithPair == currentHand.type || Type::SingleFlush == currentHand.type || (Type::SingleStraight == currentHand.type && (this->values[currentHand.cards[0].point] > this->values[this->lastHand.cards[0].point] || (currentHand.cards[0].point == this->lastHand.cards[0].point && currentHand.cards[0].suit > this->lastHand.cards[0].suit))));
-				default:
-					return false;
-				}
-			case Type::SingleFlush: // 同花
-				switch (this->lastHand.cards.size())
-				{
-				case 3: // 可被一条龙|同花顺、三条、以及比自己大的同花盖过
-					return currentHand.cards.size() == this->lastHand.cards.size() && (Type::SingleFlushStraight == currentHand.type || Type::Triple == currentHand.type || (Type::SingleFlush == currentHand.type && (this->values[currentHand.cards[0].point] > this->values[this->lastHand.cards[0].point] || (currentHand.cards[0].point == this->lastHand.cards[0].point && currentHand.cards[0].suit > this->lastHand.cards[0].suit))));
-				case 4: // 可被一条龙|同花顺、四条、以及比自己大的同花盖过
-					return currentHand.cards.size() == this->lastHand.cards.size() && (Type::SingleFlushStraight == currentHand.type || Type::Quadruple == currentHand.type || (Type::SingleFlush == currentHand.type && (this->values[currentHand.cards[0].point] > this->values[this->lastHand.cards[0].point] || (currentHand.cards[0].point == this->lastHand.cards[0].point && currentHand.cards[0].suit > this->lastHand.cards[0].suit))));
-				case 5: // 可被一条龙|同花顺、金刚、葫芦/俘虏/乌龙/副路、以及比自己大的同花盖过
-					return currentHand.cards.size() == this->lastHand.cards.size() && (Type::SingleFlushStraight == currentHand.type || Type::QuadrupleWithSingle == currentHand.type || Type::TripleWithPair == currentHand.type || (Type::SingleFlush == currentHand.type && (this->values[currentHand.cards[0].point] > this->values[this->lastHand.cards[0].point] || (currentHand.cards[0].point == this->lastHand.cards[0].point && currentHand.cards[0].suit > this->lastHand.cards[0].suit))));
-				default:
-					return false;
-				}
-			case Type::SingleFlushStraight: // 一条龙|同花顺
-				return currentHand.type == this->lastHand.type && currentHand.cards.size() == this->lastHand.cards.size() && (this->values[currentHand.cards[0].point] > this->values[this->lastHand.cards[0].point] || (currentHand.cards[0].point == this->lastHand.cards[0].point && currentHand.cards[0].suit > this->lastHand.cards[0].suit));
-			case Type::Pair: // 对子
-				return Type::PairJokers == currentHand.type || (currentHand.type == this->lastHand.type && (this->values[currentHand.cards[0].point] > this->values[this->lastHand.cards[0].point] || (currentHand.cards[0].point == this->lastHand.cards[0].point && currentHand.cards[0].suit > this->lastHand.cards[0].suit)));
-			case Type::PairJokers: // 对鬼
-				return false;
-			case Type::Triple: // 三条：可被一条龙|同花顺和比自己大的三条盖过
-				return (Type::SingleFlushStraight == currentHand.type && currentHand.cards.size() == 3) || (Type::Triple == currentHand.type && (this->values[currentHand.cards[0].point] > this->values[this->lastHand.cards[0].point] || (currentHand.cards[0].point == this->lastHand.cards[0].point && currentHand.cards[0].suit > this->lastHand.cards[0].suit)));
-			case Type::TripleWithPair: // 葫芦/俘虏/乌龙/副路：可被一条龙|同花顺、金刚、以及比自己大的葫芦/俘虏/乌龙/副路盖过
-				return Type::SingleFlushStraight == currentHand.type || Type::QuadrupleWithSingle == currentHand.type || (Type::TripleWithPair == currentHand.type && (this->values[currentHand.cards[0].point] > this->values[this->lastHand.cards[0].point] || (currentHand.cards[0].point == this->lastHand.cards[0].point && currentHand.cards[0].suit > this->lastHand.cards[0].suit)));
-			case Type::Quadruple: // 四条：可被一条龙|同花顺和比自己大的四条盖过
-				return (Type::SingleFlushStraight == currentHand.type && currentHand.cards.size() == 4) || (Type::Quadruple == currentHand.type && (this->values[currentHand.cards[0].point] > this->values[this->lastHand.cards[0].point] || (currentHand.cards[0].point == this->lastHand.cards[0].point && currentHand.cards[0].suit > this->lastHand.cards[0].suit)));
-			case Type::QuadrupleWithSingle: // 金刚：可被一条龙|同花顺和比自己大的金刚盖过
-				return Type::SingleFlushStraight == currentHand.type || (Type::QuadrupleWithSingle == currentHand.type && (this->values[currentHand.cards[0].point] > this->values[this->lastHand.cards[0].point] || (currentHand.cards[0].point == this->lastHand.cards[0].point && currentHand.cards[0].suit > this->lastHand.cards[0].suit)));
-			case Type::Empty:
-			case Type::PairStraight:
-			case Type::PairStraightWithSingle:
-			case Type::TripleWithSingle:
-			case Type::TripleWithPairSingle:
-			case Type::TripleStraight:
-			case Type::TripleStraightWithSingle:
-			case Type::TripleStraightWithSingles:
-			case Type::TripleStraightWithPairs:
-			case Type::QuadrupleWithSingleSingle:
-			case Type::QuadrupleWithPairPair:
-			case Type::QuadrupleStraight:
-			case Type::QuadrupleStraightWithSingle:
-			case Type::QuadrupleJokers:
-			case Type::Quintuple:
-			case Type::Sextuple:
-			case Type::Septuple:
-			case Type::Octuple:
-			case Type::Invalid:
-			default:
-				return false;
-			}
-		else
-			return false;
+			return "";
 	}
 	std::string getPreRoundString() const override final
 	{
@@ -6036,16 +6406,72 @@ private:
 			return preRoundString;
 		}
 	}
+	std::string getAmountString() const override final
+	{
+		const size_t playerCount = this->players.size();
+		if (Status::Over == this->status && playerCount == this->amounts.size() && this->checkPlayerCount(playerCount))
+		{
+			/* Compress rankings */
+			std::vector<Player> sortedPlayers(playerCount);
+			std::vector<Amount> upperAmounts(playerCount), lowerAmounts(playerCount);
+			for (Player player = 0; player < playerCount; ++player)
+			{
+				sortedPlayers[player] = player;
+				upperAmounts[player] = this->amounts[player] >> 8;
+				lowerAmounts[player] = this->amounts[player] & 0xFF/* 0b11111111*/;
+			}
+			sort(sortedPlayers.begin(), sortedPlayers.end(), [&lowerAmounts](const Player playerA, const Player playerB) {return lowerAmounts[playerA] > lowerAmounts[playerB]; });
+			std::vector<Ranking> rankings(playerCount);
+			rankings[sortedPlayers[0]] = 1;
+			Ranking zippedRanking = 1, ranking = 1;
+			for (size_t idx = 1; idx < playerCount; ++idx)
+			{
+				if (lowerAmounts[sortedPlayers[idx - 1]] == lowerAmounts[sortedPlayers[idx]])
+					++zippedRanking;
+				else
+				{
+					ranking += zippedRanking;
+					zippedRanking = 1;
+				}
+				rankings[sortedPlayers[idx]] = ranking;
+			}
+			
+			/* Output rankings */
+			std::string amountString = "/* 结算信息 */\n";
+			bool flag = false;
+			for (Player player = 0; player < playerCount; ++player)
+				if (upperAmounts[player])
+				{
+					if (flag)
+						amountString += "；";
+					amountString += "玩家 " + std::to_string(player + 1) + " 是第 " + std::to_string(upperAmounts[player]) + " 位出完牌的玩家";
+					if (lowerAmounts[player])
+						amountString += "，得 " + std::to_string(lowerAmounts[player]) + " 积分，积分排名为 " + std::to_string(rankings[player]);
+					flag = true;
+				}
+				else if (lowerAmounts[player])
+				{
+					if (flag)
+						amountString += "；";
+					amountString += "玩家 " + std::to_string(player + 1) + " 得 " + std::to_string(lowerAmounts[player]) + " 积分，积分排名为 " + std::to_string(rankings[player]);
+					flag = true;
+				}
+			amountString += flag ? "。\n" : "结算信息异常，请各位玩家自行计算结算信息。\n";
+			return amountString;
+		}
+		else
+			return "结算信息异常，请各位玩家自行计算结算信息。\n";
+	}
 	
 public:
 	Wuguapi() : Poker()
 	{
 		this->name = "五瓜皮";
 	}
-	bool initialize() override final { return this->initialize(2); }
+	bool initialize() override final { return this->initialize(Wuguapi::MinimumPlayerCount); }
 	bool initialize(const size_t playerCount) override final
 	{
-		if (this->status >= Status::Ready && 2 <= playerCount && playerCount <= 10)
+		if (this->status >= Status::Ready && this->checkPlayerCount(playerCount))
 		{
 			Value value = 1;
 			for (Point point = 6; point <= 13; ++point)
@@ -6068,25 +6494,31 @@ public:
 	}
 	bool deal() override final
 	{
-		if (this->status >= Status::Initialized)
+		const size_t playerCount = this->players.size();
+		if (this->status >= Status::Initialized && this->checkPlayerCount(playerCount))
 		{
 			this->deck.clear();
 			this->add54CardsToDeck();
 			shuffle(this->deck.begin(), this->deck.end(), this->seed);
-			const size_t playerCount = this->players.size();
 			for (Player player = 0; player < playerCount; ++player)
 			{
-				this->players[player] = std::vector<Card>(5);
-				for (size_t idx = 0; idx < 5; ++idx)
+				this->players[player] = std::vector<Card>(Wuguapi::CardCountPerPlayer);
+				for (size_t idx = 0; idx < Wuguapi::CardCountPerPlayer; ++idx)
 				{
 					this->players[player][idx] = this->deck.back();
 					this->deck.pop_back();
 				}
 				this->sortCards(this->players[player]);
 			}
-			this->records.clear();
-			this->status = Status::Dealt;
-			this->assignDealer();
+			this->records = std::vector<std::vector<Hand>>{ std::vector<Hand>{} };
+			for (Player player = 0; player < playerCount; ++player)
+				this->records[0].push_back(Hand{ player, std::vector<Card>{ this->players[player].back() } });
+			sort(this->records[0].begin(), this->records[0].end(), [this](Hand a, Hand b) { const Value valueA = this->values[a.cards.back().point], valueB = this->values[b.cards.back().point]; return valueA > valueB || (valueA == valueB && a.cards.back().suit > b.cards.back().suit); });
+			this->currentPlayer = this->records[0].back().player;
+			this->dealer = this->records[0].back().player;
+			this->lastHand = Hand{};
+			this->amounts = std::vector<Amount>(playerCount);
+			this->status = Status::Assigned;
 			return true;
 		}
 		else
@@ -6098,9 +6530,105 @@ public:
 	}
 };
 
-class Qiguiwueryi : public Poker /* Previous: ThreeTwoOne | Next: Qiguiwuersan */
+class Qiguiwuersan : public Poker /* Previous: Wuguapi | Next: Qiguiwueryi */
 {
+public:
+	static const size_t MinimumPlayerCount = 2, MaximumPlayerCount = 7, CardCountPerPlayer = 7;
+	
 private:
+	bool nextPlayer() override final
+	{
+		const size_t playerCount = this->players.size();
+		if (this->checkPlayerCount(playerCount))
+			for (Count count = 1; count < playerCount; ++count)
+			{
+				if (++this->currentPlayer >= playerCount)
+					this->currentPlayer = 0;
+				if (!this->players[this->currentPlayer].empty())
+					return true;
+			}
+		return false;
+	}
+	bool isRealHand(const Hand& hand) const override final
+	{
+		switch (this->lastHand.type)
+		{
+		case Type::Single:
+		case Type::Pair:
+		case Type::PairJokers:
+		case Type::Triple:
+		case Type::Quadruple:
+			return hand.player != INVALID_PLAYER && !hand.cards.empty();
+		case Type::Empty:
+		case Type::SingleStraight:
+		case Type::SingleFlush:
+		case Type::SingleFlushStraight:
+		case Type::PairStraight:
+		case Type::PairStraightWithSingle:
+		case Type::TripleWithSingle:
+		case Type::TripleWithPair:
+		case Type::TripleWithPairSingle:
+		case Type::TripleStraight:
+		case Type::TripleStraightWithSingle:
+		case Type::TripleStraightWithSingles:
+		case Type::TripleStraightWithPairs:
+		case Type::QuadrupleWithSingle:
+		case Type::QuadrupleWithSingleSingle:
+		case Type::QuadrupleWithPairPair:
+		case Type::QuadrupleStraight:
+		case Type::QuadrupleStraightWithSingle:
+		case Type::QuadrupleJokers:
+		case Type::Quintuple:
+		case Type::Sextuple:
+		case Type::Septuple:
+		case Type::Octuple:
+		case Type::Invalid:
+		default:
+			return false;
+		}
+	}
+	bool coverLastHand(const Hand& currentHand) const override final
+	{
+		if (this->isRealHand(this->lastHand) && this->isRealHand(currentHand))
+			switch (this->lastHand.type)
+			{
+			case Type::Single:
+			case Type::Triple:
+			case Type::Quadruple:
+				return currentHand.type == this->lastHand.type && (this->values[currentHand.cards[0].point] > this->values[this->lastHand.cards[0].point] || (currentHand.cards[0].point == this->lastHand.cards[0].point && currentHand.cards[0].suit > this->lastHand.cards[0].suit));
+			case Type::Pair:
+			case Type::PairJokers:
+				return (Type::Pair == currentHand.type || Type::PairJokers == currentHand.type) && (this->values[currentHand.cards[0].point] > this->values[this->lastHand.cards[0].point] || (currentHand.cards[0].point == this->lastHand.cards[0].point && currentHand.cards[0].suit > this->lastHand.cards[0].suit));
+			case Type::Empty:
+			case Type::SingleStraight:
+			case Type::SingleFlush:
+			case Type::SingleFlushStraight:
+			case Type::PairStraight:
+			case Type::PairStraightWithSingle:
+			case Type::TripleWithSingle:
+			case Type::TripleWithPair:
+			case Type::TripleWithPairSingle:
+			case Type::TripleStraight:
+			case Type::TripleStraightWithSingle:
+			case Type::TripleStraightWithSingles:
+			case Type::TripleStraightWithPairs:
+			case Type::QuadrupleWithSingle:
+			case Type::QuadrupleWithSingleSingle:
+			case Type::QuadrupleWithPairPair:
+			case Type::QuadrupleStraight:
+			case Type::QuadrupleStraightWithSingle:
+			case Type::QuadrupleJokers:
+			case Type::Quintuple:
+			case Type::Sextuple:
+			case Type::Septuple:
+			case Type::Octuple:
+			case Type::Invalid:
+			default:
+				return false;
+			}
+		else
+			return false;
+	}
 	bool processHand(Hand& hand, std::vector<Candidate>& candidates) const override final
 	{
 		hand.type = Type::Invalid;
@@ -6183,6 +6711,180 @@ private:
 			return false;
 		}
 	}
+	bool processBasis(const Hand& hand) override final
+	{
+		if (Status::Started == this->status && !this->records.empty() && !this->records.back().empty())
+		{
+			const size_t playerCount = this->players.size();
+			if (this->amounts.size() == playerCount && this->checkPlayerCount(playerCount))
+				if (this->isRealHand(hand))
+				{
+					/* Compute the winner bonus */
+					if (this->deck.empty() && this->players[hand.player].empty())
+					{
+						Count winnerCount = 0;
+						for (const Amount& amount : this->amounts)
+							if (amount >> 8)
+								++winnerCount;
+						if (winnerCount >= playerCount)
+							return false;
+						this->amounts[hand.player] += static_cast<Amount>(winnerCount) << 8;
+					}
+					
+					/* Compute the winner integrals */
+					if (this->isAbsolutelyLargest(hand))
+					{
+						/* Scan the integrals */
+						Integral integral = 0;
+						Count emptyCount = 1;
+						for (std::vector<Hand>::const_reverse_iterator it = this->records.back().rbegin() + 1; it != this->records.back().rend(); ++it)
+							if (this->isRealHand(*it))
+								if (this->isAbsolutelyLargest(*it))
+									break;
+								else
+								{
+									for (const Card& card : it->cards)
+										switch (card.point)
+										{
+										case 5:
+											integral += 5;
+											break;
+										case 10:
+										case 13:
+											integral += 10;
+											break;
+										default:
+											break;
+										}
+									emptyCount = 1;
+								}
+							else if (Type::Empty == it->type && it->cards.empty())
+							{
+								if (++emptyCount >= playerCount)
+								{
+									if (this->records.back().rend() == ++it || !this->isRealHand(*it))
+										return false;
+									else
+										break;
+								}
+							}
+							else
+								return false;
+						
+						/* Apply the amount */
+						Player bonusPlayer = hand.player;
+						this->amounts[bonusPlayer] += integral;
+						
+						/* Draw */
+						for (Count count = 0; count < playerCount; ++count)
+						{
+							while (this->players[bonusPlayer].size() < Qiguiwuersan::CardCountPerPlayer)
+								if (this->deck.empty())
+									return true;
+								else
+								{
+									this->players[bonusPlayer].emplace_back(std::move(this->deck.back()));
+									this->deck.pop_back();
+								}
+							this->sortCards(this->players[bonusPlayer]);
+							if (++bonusPlayer >= playerCount)
+								bonusPlayer = 0;
+						}
+					}
+					return true;
+				}
+				else if (Type::Empty == hand.type && hand.cards.empty()) // Compute the winner integrals
+				{
+					/* Judge an end of a circle */
+					std::vector<Hand>::const_reverse_iterator it = this->records.back().rbegin();
+					for (Count emptyCount = 2; emptyCount < playerCount;)
+						if (this->records.back().rend() == ++it || this->isRealHand(*it))
+							return true;
+						else if (Type::Empty == it->type && it->cards.empty())
+							++emptyCount;
+						else
+							return false;
+					if (this->records.back().rend() == ++it || !this->isRealHand(*it))
+						return false;
+					
+					/* Scan the integrals */
+					Integral integral = 0;
+					Player bonusPlayer = it->player;
+					for (const Card& card : it->cards)
+						switch (card.point)
+						{
+						case 5:
+							integral += 5;
+							break;
+						case 10:
+						case 13:
+							integral += 10;
+							break;
+						default:
+							break;
+						}
+					for (Count emptyCount = 1; ++it != this->records.back().rend();)
+						if (this->isRealHand(*it))
+							if (this->isAbsolutelyLargest(*it))
+								break;
+							else
+							{
+								for (const Card& card : it->cards)
+									switch (card.point)
+									{
+									case 5:
+										integral += 5;
+										break;
+									case 10:
+									case 13:
+										integral += 10;
+										break;
+									default:
+										break;
+									}
+								emptyCount = 1;
+							}
+						else if (Type::Empty == it->type && it->cards.empty())
+						{
+							if (++emptyCount >= playerCount)
+							{
+								if (this->records.back().rend() == ++it || !this->isRealHand(*it))
+									return false;
+								else
+									break;
+							}
+						}
+						else
+							return false;
+					
+					/* Apply the amount */
+					this->amounts[bonusPlayer] += integral;
+					
+					/* Draw */
+					for (Count count = 0; count < playerCount; ++count)
+					{
+						while (this->players[bonusPlayer].size() < Qiguiwuersan::CardCountPerPlayer)
+							if (this->deck.empty())
+								return true;
+							else
+							{
+								this->players[bonusPlayer].emplace_back(std::move(this->deck.back()));
+								this->deck.pop_back();
+							}
+						this->sortCards(this->players[bonusPlayer]);
+						if (++bonusPlayer >= playerCount)
+							bonusPlayer = 0;
+					}
+					return true;
+				}
+				else
+					return false;
+			else
+				return false;
+		}
+		else
+			return false;
+	}
 	bool isOver() const override final
 	{
 		if (this->status >= Status::Started && this->deck.empty())
@@ -6200,65 +6902,42 @@ private:
 		}
 		return false;
 	}
-	bool computeAmounts() override final
-	{
-		if (Status::Over == this->status)
-		{
-			if (this->amounts.size() != this->players.size())
-			{
-
-				/////
-			}
-			return true;
-		}
-		else
-			return false;
-	}
 	bool isAbsolutelyLargest(const Hand& hand) const override final
 	{
 		return (Type::Single == hand.type || Type::Pair == hand.type || Type::Triple == hand.type || Type::Quadruple == hand.type) && (!hand.cards.empty() && Card { 7, Suit::Spade } == hand.cards[0]);
 	}
-	bool coverLastHand(const Hand& currentHand) const override final
+	std::string getBasisString() const override final
 	{
-		if (this->lastHand && Type::Single <= this->lastHand.type && this->lastHand.type <= Type::Quadruple && !this->lastHand.cards.empty() && Type::Single <= currentHand.type && currentHand.type <= Type::Quadruple && !currentHand.cards.empty())
-			switch (this->lastHand.type)
+		const size_t playerCount = this->players.size();
+		if (playerCount == this->amounts.size() && this->checkPlayerCount(playerCount))
+		{
+			std::string basisString = "积分信息：";
+			bool flag = false;
+			for (Player player = 0; player < playerCount; ++player)
 			{
-			case Type::Single:
-			case Type::Triple:
-			case Type::Quadruple:
-				return currentHand.type == this->lastHand.type && (this->values[currentHand.cards[0].point] > this->values[this->lastHand.cards[0].point] || (currentHand.cards[0].point == this->lastHand.cards[0].point && currentHand.cards[0].suit > this->lastHand.cards[0].suit));
-			case Type::Pair:
-			case Type::PairJokers:
-				return (Type::Pair == currentHand.type || Type::PairJokers == currentHand.type) && (this->values[currentHand.cards[0].point] > this->values[this->lastHand.cards[0].point] || (currentHand.cards[0].point == this->lastHand.cards[0].point && currentHand.cards[0].suit > this->lastHand.cards[0].suit));
-			case Type::Empty:
-			case Type::SingleStraight:
-			case Type::SingleFlush:
-			case Type::SingleFlushStraight:
-			case Type::PairStraight:
-			case Type::PairStraightWithSingle:
-			case Type::TripleWithSingle:
-			case Type::TripleWithPair:
-			case Type::TripleWithPairSingle:
-			case Type::TripleStraight:
-			case Type::TripleStraightWithSingle:
-			case Type::TripleStraightWithSingles:
-			case Type::TripleStraightWithPairs:
-			case Type::QuadrupleWithSingle:
-			case Type::QuadrupleWithSingleSingle:
-			case Type::QuadrupleWithPairPair:
-			case Type::QuadrupleStraight:
-			case Type::QuadrupleStraightWithSingle:
-			case Type::QuadrupleJokers:
-			case Type::Quintuple:
-			case Type::Sextuple:
-			case Type::Septuple:
-			case Type::Octuple:
-			case Type::Invalid:
-			default:
-				return false;
+				Amount upperAmount = this->amounts[player] >> 8, lowerAmount = this->amounts[player] & 0xFF/* 0b11111111*/;
+				if (upperAmount)
+				{
+					if (flag)
+						basisString += "；";
+					basisString += "玩家 " + std::to_string(player + 1) + " 是第 " + std::to_string(upperAmount) + " 位出完牌的玩家";
+					if (lowerAmount)
+						basisString += "，得 " + std::to_string(lowerAmount) + " 积分";
+					flag = true;
+				}
+				else if (lowerAmount)
+				{
+					if (flag)
+						basisString += "；";
+					basisString += "玩家 " + std::to_string(player + 1) + " 得 " + std::to_string(lowerAmount) + " 积分";
+					flag = true;
+				}
 			}
+			basisString += flag ? "。\n" : "暂无玩家获得积分或出完牌。\n";
+			return basisString;
+		}
 		else
-			return false;
+			return "";
 	}
 	std::string getPreRoundString() const override final
 	{
@@ -6276,24 +6955,86 @@ private:
 			return preRoundString;
 		}
 	}
+	std::string getAmountString() const override final
+	{
+		const size_t playerCount = this->players.size();
+		if (Status::Over == this->status && playerCount == this->amounts.size() && this->checkPlayerCount(playerCount))
+		{
+			/* Compress rankings */
+			std::vector<Player> sortedPlayers(playerCount);
+			std::vector<Amount> upperAmounts(playerCount), lowerAmounts(playerCount);
+			for (Player player = 0; player < playerCount; ++player)
+			{
+				sortedPlayers[player] = player;
+				upperAmounts[player] = this->amounts[player] >> 8;
+				lowerAmounts[player] = this->amounts[player] & 0xFF/* 0b11111111*/;
+			}
+			sort(sortedPlayers.begin(), sortedPlayers.end(), [&lowerAmounts](const Player playerA, const Player playerB) {return lowerAmounts[playerA] > lowerAmounts[playerB]; });
+			std::vector<Ranking> rankings(playerCount);
+			rankings[sortedPlayers[0]] = 1;
+			Ranking zippedRanking = 1, ranking = 1;
+			for (size_t idx = 1; idx < playerCount; ++idx)
+			{
+				if (lowerAmounts[sortedPlayers[idx - 1]] == lowerAmounts[sortedPlayers[idx]])
+					++zippedRanking;
+				else
+				{
+					ranking += zippedRanking;
+					zippedRanking = 1;
+				}
+				rankings[sortedPlayers[idx]] = ranking;
+			}
+			
+			/* Output rankings */
+			std::string amountString = "/* 结算信息 */\n";
+			bool flag = false;
+			for (Player player = 0; player < playerCount; ++player)
+				if (upperAmounts[player])
+				{
+					if (flag)
+						amountString += "；";
+					amountString += "玩家 " + std::to_string(player + 1) + " 是第 " + std::to_string(upperAmounts[player]) + " 位出完牌的玩家";
+					if (lowerAmounts[player])
+						amountString += "，得 " + std::to_string(lowerAmounts[player]) + " 积分，积分排名为 " + std::to_string(rankings[player]);
+					flag = true;
+				}
+				else if (lowerAmounts[player])
+				{
+					if (flag)
+						amountString += "；";
+					amountString += "玩家 " + std::to_string(player + 1) + " 得 " + std::to_string(lowerAmounts[player]) + " 积分，积分排名为 " + std::to_string(rankings[player]);
+					flag = true;
+				}
+			amountString += flag ? "。\n" : "结算信息异常，请各位玩家自行计算结算信息。\n";
+			return amountString;
+		}
+		else
+			return "结算信息异常，请各位玩家自行计算结算信息。\n";
+	}
+	
+protected:
+	bool checkPlayerCount(const size_t playerCount) const override final
+	{
+		return Qiguiwuersan::MinimumPlayerCount <= playerCount && playerCount <= Qiguiwuersan::MaximumPlayerCount;
+	}
 	
 public:
-	Qiguiwueryi() : Poker()
+	Qiguiwuersan() : Poker()
 	{
-		this->name = "七鬼五二一";
+		this->name = "七鬼五二三";
 	}
-	bool initialize() override { return this->initialize(2); }
+	bool initialize() override final { return this->initialize(Qiguiwuersan::MinimumPlayerCount); }
 	bool initialize(const size_t playerCount) override
 	{
-		if (this->status >= Status::Ready && 2 <= playerCount && playerCount <= 7)
+		if (this->status >= Status::Ready && this->checkPlayerCount(playerCount))
 		{
 			Value value = 1;
-			this->values.set(3, value++);
 			this->values.set(4, value++);
 			this->values.set(6, value++);
 			for (Point point = 8; point <= 13; ++point)
 				this->values.set(point, value++);
 			this->values.set(1, value++);
+			this->values.set(3, value++);
 			this->values.set(2, value++);
 			this->values.set(5, value++);
 			this->values.set(JOKER_POINT, value++);
@@ -6313,25 +7054,31 @@ public:
 	}
 	bool deal() override final
 	{
-		if (this->status >= Status::Initialized)
+		const size_t playerCount = this->players.size();
+		if (this->status >= Status::Initialized && this->checkPlayerCount(playerCount))
 		{
 			this->deck.clear();
 			this->add54CardsToDeck();
 			shuffle(this->deck.begin(), this->deck.end(), this->seed);
-			const size_t playerCount = this->players.size();
 			for (Player player = 0; player < playerCount; ++player)
 			{
-				this->players[player] = std::vector<Card>(7);
-				for (size_t idx = 0; idx < 7; ++idx)
+				this->players[player] = std::vector<Card>(Qiguiwuersan::CardCountPerPlayer);
+				for (size_t idx = 0; idx < Qiguiwuersan::CardCountPerPlayer; ++idx)
 				{
 					this->players[player][idx] = this->deck.back();
 					this->deck.pop_back();
 				}
 				this->sortCards(this->players[player]);
 			}
-			this->records.clear();
-			this->status = Status::Dealt;
-			this->assignDealer();
+			this->records = std::vector<std::vector<Hand>>{ std::vector<Hand>{} };
+			for (Player player = 0; player < playerCount; ++player)
+				this->records[0].push_back(Hand{ player, std::vector<Card>{ this->players[player].back() } });
+			sort(this->records[0].begin(), this->records[0].end(), [this](Hand a, Hand b) { const Value valueA = this->values[a.cards.back().point], valueB = this->values[b.cards.back().point]; return valueA > valueB || (valueA == valueB && a.cards.back().suit > b.cards.back().suit); });
+			this->currentPlayer = this->records[0].back().player;
+			this->dealer = this->records[0].back().player;
+			this->lastHand = Hand{};
+			this->amounts = std::vector<Amount>(playerCount);
+			this->status = Status::Assigned;
 			return true;
 		}
 		else
@@ -6343,25 +7090,24 @@ public:
 	}
 };
 
-class Qiguiwuersan : public Qiguiwueryi /* Previous: Qiguiwueryi */
+class Qiguiwueryi : public Qiguiwuersan /* Previous: Qiguiwuersan */
 {
 public:
-	Qiguiwuersan() : Qiguiwueryi()
+	Qiguiwueryi() : Qiguiwuersan()
 	{
-		this->name = "七鬼五二三";
+		this->name = "七鬼五二一";
 	}
-	bool initialize() override final { return this->initialize(2); }
 	bool initialize(const size_t playerCount) override final
 	{
-		if (this->status >= Status::Ready && 2 <= playerCount && playerCount <= 7)
+		if (this->status >= Status::Ready && this->checkPlayerCount(playerCount))
 		{
 			Value value = 1;
-			this->values.set(1, value++);
+			this->values.set(3, value++);
 			this->values.set(4, value++);
 			this->values.set(6, value++);
 			for (Point point = 8; point <= 13; ++point)
 				this->values.set(point, value++);
-			this->values.set(3, value++);
+			this->values.set(1, value++);
 			this->values.set(2, value++);
 			this->values.set(5, value++);
 			this->values.set(JOKER_POINT, value++);
@@ -6392,8 +7138,8 @@ private:
 	std::string name = "扑克牌";
 	const std::vector<std::string> playerCountOptions = { "p", "/p", "-p", "playerCount", "/playerCount", "--playerCount" };
 	size_t playerCount = 0;
-	const std::vector<std::string> sorterOptions = { "s", "/s", "-s", "sorter", "/sorter", "--sorter" };
-	std::vector<Sorting> sorters{};
+	const std::vector<std::string> displayOptions = { "d", "/d", "-d", "display", "/display", "--display" };
+	std::vector<Order> orders{};
 	Poker* poker = nullptr;
 	const std::vector<std::string> landlordStatements = { "Y", "yes", "1", "T", "true", "是", "叫", "叫地主", "叫牌", "抢", "抢地主", "抢牌" };
 	const std::vector<std::string> againStatements = { "Again", "再来", "再来一局", "新开", "新开一局" };
@@ -6527,7 +7273,7 @@ private:
 			std::cout << "参数：" << std::endl;
 			std::cout << "\t" << this->vector2string(this->nameOptions, "[", "|", "]") << " [扑克游戏]\t\t\t\t\t\t\t设置扑克游戏" << std::endl;
 			std::cout << "\t" << this->vector2string(this->playerCountOptions, "[", "|", "]") << " [玩家人数]\t\t\t\t设置玩家人数" << std::endl;
-			std::cout << "\t" << this->vector2string(this->sorterOptions, "[", "|", "]") << " [排序显示方式]\t\t\t\t\t设置排序显示方式" << std::endl;
+			std::cout << "\t" << this->vector2string(this->displayOptions, "[", "|", "]") << " [排序显示方式]\t\t\t\t\t设置排序显示方式" << std::endl;
 			std::cout << "\t" << this->vector2string(this->helpOptions, "[", "|", "]") << " 或 [其它参数] " << this->vector2string(this->helpOptions, "[", "|", "]") << "\t显示帮助" << std::endl << std::endl;
 			std::cout << "注意：" << std::endl;
 			std::cout << "\t（1）键和值应当成对出现，即每一个表示键的参数后均应紧接着其对应的值（含帮助参数）；" << std::endl;
@@ -6562,9 +7308,9 @@ private:
 			description += c;
 		return;
 	}
-	size_t fetchPlayerCount(const size_t _lowerBound, const size_t upperBound) const // lowerBound must be not smaller than 2
+	size_t fetchPlayerCount(const size_t _lowerBound, const size_t _upperBound) const // The two boundaries must be within the boundaries of ``Poker``. 
 	{
-		const size_t lowerBound = _lowerBound >= 2 ? _lowerBound : 2;
+		const size_t lowerBound = Poker::MinimumPlayerCount <= _lowerBound && _lowerBound <= Poker::MaximumPlayerCount ? _lowerBound : Poker::MinimumPlayerCount, upperBound = Poker::MinimumPlayerCount <= _upperBound && _upperBound <= Poker::MaximumPlayerCount ? _upperBound : Poker::MaximumPlayerCount;
 		if (lowerBound <= this->playerCount && this->playerCount <= upperBound)
 			return this->playerCount;
 		else
@@ -6575,9 +7321,9 @@ private:
 			for (;;)
 			{
 				std::string playerCountString{};
-				std::cout << "请输入玩家人数（输入“/”并按下回车键将使用默认值）：";
+				std::cout << "请输入玩家人数（输入“" << DEFAULT_STRING << "”并按下回车键将使用默认值）：";
 				this->getDescription(playerCountString);
-				if ("/" == playerCountString)
+				if (DEFAULT_STRING == playerCountString)
 					return lowerBound;
 				else
 				{
@@ -6711,7 +7457,7 @@ private:
 			{
 				this->poker->getCurrentPlayer(player);
 				this->clearScreen();
-				this->poker->display(this->sorters.empty() ? INVALID_PLAYER : player);
+				this->poker->display(this->orders.empty() ? INVALID_PLAYER : player);
 				std::cout << "请玩家 " << (player + 1) << " 选择是否" << (isRobbing ? "抢" : "叫") << "地主：";
 				this->getDescription(buffer);
 				if (this->controlAction(buffer, action))
@@ -6738,7 +7484,7 @@ private:
 				{
 					this->poker->getCurrentPlayer(player);
 					this->clearScreen();
-					this->poker->display(this->sorters.empty() ? INVALID_PLAYER : player);
+					this->poker->display(this->orders.empty() ? INVALID_PLAYER : player);
 					std::cout << "请玩家 " << (player + 1) << " 选择是否抢地主：";
 					this->getDescription(buffer);
 					if (this->controlAction(buffer, action))
@@ -6772,7 +7518,7 @@ private:
 			{
 				this->poker->getCurrentPlayer(player);
 				this->clearScreen();
-				this->poker->display(this->sorters.empty() ? INVALID_PLAYER : player);
+				this->poker->display(this->orders.empty() ? INVALID_PLAYER : player);
 				std::cout << "请玩家 " << (player + 1) << " 选择（" << this->vector2string(scoreDescriptions, "", " | ", "") << "）：";
 				this->getDescription(buffer);
 				if (this->controlAction(buffer, action))
@@ -6826,7 +7572,7 @@ private:
 		this->helpKey = 0;
 		this->name = "扑克牌";
 		this->playerCount = 0;
-		this->sorters = std::vector<Sorting>{};
+		this->orders = std::vector<Order>{};
 		if (this->poker != nullptr)
 		{
 			delete this->poker;
@@ -6842,10 +7588,10 @@ private:
 			std::cout << "\t" << (idx + 1) << " = " << candidates[idx].description << std::endl;
 		for (;;)
 		{
-			std::cout << std::endl << "请选择一种牌型以继续（输入“/”并按下回车键将重新选择要出的牌）：";
+			std::cout << std::endl << "请选择一种牌型以继续（输入“" << DEFAULT_STRING << "”并按下回车键将重新选择要出的牌）：";
 			std::string buffer{};
 			this->getDescription(buffer);
-			if (this->controlAction(buffer, action) || "/" == buffer)
+			if (this->controlAction(buffer, action) || DEFAULT_STRING == buffer)
 				return false;
 			else if (action > Action::None)
 				action = Action::None;
@@ -6868,7 +7614,7 @@ private:
 		for (;;)
 		{
 			this->clearScreen();
-			this->poker->display(this->sorters.empty() ? INVALID_PLAYER : player);
+			this->poker->display(this->orders.empty() ? INVALID_PLAYER : player);
 			std::cout << "请玩家 " << (player + 1) << " 开牌：";
 			this->getDescription(buffer);
 			if (this->controlAction(buffer, action))
@@ -6905,7 +7651,7 @@ private:
 			for (;;)
 			{
 				this->clearScreen();
-				this->poker->display(this->sorters.empty() ? INVALID_PLAYER : player);
+				this->poker->display(this->orders.empty() ? INVALID_PLAYER : player);
 				std::cout << "请玩家 " << (player + 1) << " 出牌：";
 				this->getDescription(buffer);
 				if (this->controlAction(buffer, action))
@@ -6968,13 +7714,13 @@ public:
 						this->helpKey = 'p';
 					else
 					{
-						const size_t _playerCount = (size_t)strtoul(arguments[argumentID].c_str(), NULL, 0);
-						if (2 <= _playerCount && _playerCount <= 10)
-							this->playerCount = _playerCount;
+						const size_t expectedPlayerCount = (size_t)strtoul(arguments[argumentID].c_str(), NULL, 0);
+						if (Poker::MinimumPlayerCount <= expectedPlayerCount && expectedPlayerCount <= Poker::MaximumPlayerCount)
+							this->playerCount = expectedPlayerCount;
 						else
 							invalidArgumentIndexes.push_back(argumentID);
 					}
-				else if (this->isIn(arguments[argumentID], this->sorterOptions))
+				else if (this->isIn(arguments[argumentID], this->displayOptions))
 					if (this->isIn(arguments[++argumentID], this->helpOptions))
 						this->helpKey = 's';
 					else
@@ -7021,10 +7767,10 @@ public:
 						this->poker = new ThreeTwoOne;
 					else if ("五瓜皮" == this->name || this->isEqual("Wuguapi", this->name)) // "五瓜皮"
 						this->poker = new Wuguapi;
-					else if ("七鬼五二一" == this->name || this->isEqual("Qiguiwueryi", this->name)) // "七鬼五二一"
-						this->poker = new Qiguiwueryi;
 					else if ("七鬼五二三" == this->name || this->isEqual("Qiguiwuersan", this->name)) // "七鬼五二三"
 						this->poker = new Qiguiwuersan;
+					else if ("七鬼五二一" == this->name || this->isEqual("Qiguiwueryi", this->name)) // "七鬼五二一"
+						this->poker = new Qiguiwueryi;
 					else if (!this->fetchPokerType())
 						return true;
 				}
@@ -7033,16 +7779,16 @@ public:
 				{
 					/* Beginning */
 					this->clearScreen();
-					std::cout << "当前牌局（" << this->name << "）已初始化，但暂未开局，请发牌或录入残局数据。" << std::endl << "请输入“/”并按下回车键开局，或录入残局库数据：";
+					std::cout << "当前牌局（" << this->name << "）已初始化，但暂未开局，请发牌或录入残局数据。" << std::endl << "请输入“" << DEFAULT_STRING << "”并按下回车键开局，或录入残局库数据：";
 					for (;;)
 					{
 						std::string buffer{};
 						this->getDescription(buffer);
-						if ("/" == buffer)
+						if (DEFAULT_STRING == buffer)
 							if (this->poker->deal())
 								break;
 							else
-								std::cout << "开局失败！请再次尝试输入“/”并按下回车键开局，或录入残局库数据：";
+								std::cout << "开局失败！请再次尝试输入“" << DEFAULT_STRING << "”并按下回车键开局，或录入残局库数据：";
 						else
 						{
 							std::vector<char> binaryChars{};
@@ -7050,7 +7796,7 @@ public:
 							if (this->poker->set(binaryChars))
 								break;
 							else
-								std::cout << "录入失败！请输入“/”并按下回车键开局，或再次尝试录入残局库数据：";
+								std::cout << "录入失败！请输入“" << DEFAULT_STRING << "”并按下回车键开局，或再次尝试录入残局库数据：";
 						}
 					}
 					
