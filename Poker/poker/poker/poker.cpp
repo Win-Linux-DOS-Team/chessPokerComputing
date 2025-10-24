@@ -3,9 +3,6 @@
 #include <fstream>
 #include <vector>
 #include <functional>
-#if !defined _WIN32 && !defined _WIN64 && !defined WIN32 && !defined WIN64
-#include <algorithm>
-#endif
 #include <random>
 #include <thread>
 #ifndef EXIT_SUCCESS
@@ -466,7 +463,7 @@ protected:
 			runningOrder >>= 4;
 		}
 		if (lambdas.empty())
-			sort(cards.begin(), cards.end(), [this](const Card a, const Card b) { const Value valueA = this->values[a.point], valueB = this->values[b.point]; return valueA > valueB || (valueA == valueB && a.suit > b.suit); });
+			std::sort(cards.begin(), cards.end(), [this](const Card a, const Card b) { const Value valueA = this->values[a.point], valueB = this->values[b.point]; return valueA > valueB || (valueA == valueB && a.suit > b.suit); });
 		else
 		{
 			if (pointCountFlag)
@@ -481,7 +478,7 @@ protected:
 			if (suitCountFlag)
 				for (const Card& card : cards)
 					++suitCounts[static_cast<unsigned char>(card.suit)];
-			sort(cards.begin(), cards.end(), [&lambdas](const Card a, const Card b) { for (const std::function<int(const Card, const Card)>& lambda : lambdas) { const int result = lambda(a, b); if (result) return result > 0; } return false; });
+			std::sort(cards.begin(), cards.end(), [&lambdas](const Card a, const Card b) { for (const std::function<int(const Card, const Card)>& lambda : lambdas) { const int result = lambda(a, b); if (result) return result > 0; } return false; });
 		}
 		return true;
 	}
@@ -834,7 +831,7 @@ protected:
 		if (1 <= repeatedCount && repeatedCount <= 4 && cardCount >= repeatedCount && cardCount % repeatedCount == 0 && 1 <= pointNotAllowedToConnectK && pointNotAllowedToConnectK <= 12)
 		{
 			std::vector<Card> sortedCards(cards);
-			sort(sortedCards.begin(), sortedCards.end(), [](const Card a, const Card b) { return a.point > b.point || (a.point == b.point && a.suit > b.suit); });
+			std::sort(sortedCards.begin(), sortedCards.end(), [](const Card a, const Card b) { return a.point > b.point || (a.point == b.point && a.suit > b.suit); });
 			const size_t indexToLastPoint = cardCount - repeatedCount;
 			if (JOKER_POINT == sortedCards[indexToLastPoint].point)
 				return false;
@@ -842,7 +839,7 @@ protected:
 			{
 				if (applySorting)
 				{
-					sort(sortedCards.begin(), sortedCards.end(), [this](const Card a, const Card b) { return this->values[a.point] > this->values[b.point] || (a.point == b.point && a.suit > b.suit); });
+					std::sort(sortedCards.begin(), sortedCards.end(), [this](const Card a, const Card b) { return this->values[a.point] > this->values[b.point] || (a.point == b.point && a.suit > b.suit); });
 					cards = sortedCards;
 				}
 				return true;
@@ -882,7 +879,7 @@ protected:
 		{
 			/* Packing */
 			std::vector<Card> sortedCards(cards);
-			sort(sortedCards.begin(), sortedCards.end(), [](const Card& a, const Card& b) { return a.point > b.point || (a.point == b.point && a.suit > b.suit); });
+			std::sort(sortedCards.begin(), sortedCards.end(), [](const Card& a, const Card& b) { return a.point > b.point || (a.point == b.point && a.suit > b.suit); });
 			Point lastPoint = JOKER_POINT;
 			std::vector<std::vector<Card>> units{};
 			for (const Card& card : sortedCards)
@@ -1645,10 +1642,10 @@ protected:
 				++counts[card.point];
 			else
 				return false;
-		sort(hand.cards.begin(), hand.cards.end(), [&counts, this](const Card a, const Card b) { const Count countA = counts[a.point], countB = counts[b.point]; const Value valueA = this->values[a.point], valueB = this->values[b.point]; return countA > countB || (countA == countB && (valueA > valueB || (valueA == valueB && a.suit > b.suit))); });
+		std::sort(hand.cards.begin(), hand.cards.end(), [&counts, this](const Card a, const Card b) { const Count countA = counts[a.point], countB = counts[b.point]; const Value valueA = this->values[a.point], valueB = this->values[b.point]; return countA > countB || (countA == countB && (valueA > valueB || (valueA == valueB && a.suit > b.suit))); });
 		if (adjacent_find(hand.cards.begin(), hand.cards.end()) != hand.cards.end())
 			return false;
-		sort(counts.begin(), counts.end(), [](const Count a, const Count b) { return a > b; });
+		std::sort(counts.begin(), counts.end(), [](const Count a, const Count b) { return a > b; });
 		if (counts[0] > 4)
 			return false;
 		switch (hand.cards.size())
@@ -2361,13 +2358,13 @@ protected:
 				candidates.clear();
 				return false;
 			}
-		sort(hand.cards.begin(), hand.cards.end(), [&counts, this](const Card a, const Card b) { const Count countA = counts[a.point], countB = counts[b.point]; const Value valueA = this->values[a.point], valueB = this->values[b.point]; return countA > countB || (countA == countB && (valueA > valueB || (valueA == valueB && a.suit > b.suit))); });
+		std::sort(hand.cards.begin(), hand.cards.end(), [&counts, this](const Card a, const Card b) { const Count countA = counts[a.point], countB = counts[b.point]; const Value valueA = this->values[a.point], valueB = this->values[b.point]; return countA > countB || (countA == countB && (valueA > valueB || (valueA == valueB && a.suit > b.suit))); });
 		if (adjacent_find(hand.cards.begin(), hand.cards.end()) != hand.cards.end())
 		{
 			candidates.clear();
 			return false;
 		}
-		sort(counts.begin(), counts.end(), [](const Count a, const Count b) { return a > b; });
+		std::sort(counts.begin(), counts.end(), [](const Count a, const Count b) { return a > b; });
 		if (counts[0] > 4)
 		{
 			candidates.clear();
@@ -3067,7 +3064,7 @@ protected:
 							const Value newValue = this->values[hand.cards[0].point];
 							if (newValue <= 12 && this->values[hand.cards[9].point] + 3 == newValue)
 							{
-								sort(hand.cards.begin() + 13, hand.cards.end(), [this](const Card a, const Card b) { const Value valueA = this->values[a.point], valueB = this->values[b.point]; return valueA > valueB || (valueA == valueB && a.suit > b.suit); });
+								std::sort(hand.cards.begin() + 13, hand.cards.end(), [this](const Card a, const Card b) { const Value valueA = this->values[a.point], valueB = this->values[b.point]; return valueA > valueB || (valueA == valueB && a.suit > b.suit); });
 								hand.type = Type::TripleStraightWithSingles; // 飞机带小翼
 								return true;
 							}
@@ -3561,7 +3558,7 @@ protected:
 								const Value newValue = this->values[hand.cards[0].point];
 								if (newValue <= 12 && this->values[hand.cards[12].point] + 4 == newValue)
 								{
-									sort(hand.cards.begin() + 15, hand.cards.end(), [this](const Card a, const Card b) { const Value valueA = this->values[a.point], valueB = this->values[b.point]; return valueA > valueB || (valueA == valueB && a.suit > b.suit); });
+									std::sort(hand.cards.begin() + 15, hand.cards.end(), [this](const Card a, const Card b) { const Value valueA = this->values[a.point], valueB = this->values[b.point]; return valueA > valueB || (valueA == valueB && a.suit > b.suit); });
 									hand.type = Type::TripleStraightWithSingles; // 飞机带小翼
 									return true;
 								}
@@ -3679,7 +3676,7 @@ protected:
 							const Value newValue = this->values[hand.cards[0].point];
 							if (newValue <= 12 && this->values[hand.cards[12].point] + 4 == newValue)
 							{
-								sort(hand.cards.begin() + 15, hand.cards.end(), [this](const Card a, const Card b) { const Value valueA = this->values[a.point], valueB = this->values[b.point]; return valueA > valueB || (valueA == valueB && a.suit > b.suit); });
+								std::sort(hand.cards.begin() + 15, hand.cards.end(), [this](const Card a, const Card b) { const Value valueA = this->values[a.point], valueB = this->values[b.point]; return valueA > valueB || (valueA == valueB && a.suit > b.suit); });
 								if (potentialHands.empty())
 								{
 									hand.type = Type::TripleStraightWithSingles; // 飞机带小翼
@@ -3822,7 +3819,7 @@ protected:
 							candidates.clear();
 							if (this->values[hand.cards[0].point] <= 12 && this->values[hand.cards[12].point] + 4 == this->values[hand.cards[0].point])
 							{
-								sort(hand.cards.begin() + 15, hand.cards.end(), [this](const Card a, const Card b) { const Value valueA = this->values[a.point], valueB = this->values[b.point]; return valueA > valueB || (valueA == valueB && a.suit > b.suit); });
+								std::sort(hand.cards.begin() + 15, hand.cards.end(), [this](const Card a, const Card b) { const Value valueA = this->values[a.point], valueB = this->values[b.point]; return valueA > valueB || (valueA == valueB && a.suit > b.suit); });
 								hand.type = Type::TripleStraightWithSingles; // 飞机带小翼
 								return true;
 							}
@@ -4003,8 +4000,8 @@ private:
 				++counts[card.point];
 			else
 				return false;
-		sort(hand.cards.begin(), hand.cards.end(), [&counts, this](const Card a, const Card b) { const Count countA = counts[a.point], countB = counts[b.point]; const Value valueA = this->values[a.point], valueB = this->values[b.point]; return countA > countB || (countA == countB && (valueA > valueB || (valueA == valueB && a.suit > b.suit))); });
-		sort(counts.begin(), counts.end(), [](const Count a, const Count b) { return a > b; });
+		std::sort(hand.cards.begin(), hand.cards.end(), [&counts, this](const Card a, const Card b) { const Count countA = counts[a.point], countB = counts[b.point]; const Value valueA = this->values[a.point], valueB = this->values[b.point]; return countA > countB || (countA == countB && (valueA > valueB || (valueA == valueB && a.suit > b.suit))); });
+		std::sort(counts.begin(), counts.end(), [](const Count a, const Count b) { return a > b; });
 		if (counts[0] > 8)
 			return false;
 		switch (hand.cards.size())
@@ -4856,10 +4853,10 @@ private:
 				++counts[card.point];
 			else
 				return false;
-		sort(hand.cards.begin(), hand.cards.end(), [&counts, this](const Card a, const Card b) { const Count countA = counts[a.point], countB = counts[b.point]; const Value valueA = this->values[a.point], valueB = this->values[b.point]; return countA > countB || (countA == countB && (valueA > valueB || (valueA == valueB && a.suit > b.suit))); });
+		std::sort(hand.cards.begin(), hand.cards.end(), [&counts, this](const Card a, const Card b) { const Count countA = counts[a.point], countB = counts[b.point]; const Value valueA = this->values[a.point], valueB = this->values[b.point]; return countA > countB || (countA == countB && (valueA > valueB || (valueA == valueB && a.suit > b.suit))); });
 		if (adjacent_find(hand.cards.begin(), hand.cards.end()) != hand.cards.end())
 			return false;
-		sort(counts.begin(), counts.end(), [](const Count a, const Count b) { return a > b; });
+		std::sort(counts.begin(), counts.end(), [](const Count a, const Count b) { return a > b; });
 		if (counts[0] > 4)
 			return false;
 		switch (hand.cards.size())
@@ -5039,7 +5036,7 @@ public:
 			this->records = std::vector<std::vector<Hand>>{ std::vector<Hand>{} };
 			for (Player player = 0; player < playerCount; ++player)
 				this->records[0].push_back(Hand{ player, std::vector<Card>{ this->players[player].back() } });
-			sort(this->records[0].begin(), this->records[0].end(), [this](Hand a, Hand b) { const Value valueA = this->values[a.cards.back().point], valueB = this->values[b.cards.back().point]; return valueA > valueB || (valueA == valueB && a.cards.back().suit > b.cards.back().suit); });
+			std::sort(this->records[0].begin(), this->records[0].end(), [this](Hand a, Hand b) { const Value valueA = this->values[a.cards.back().point], valueB = this->values[b.cards.back().point]; return valueA > valueB || (valueA == valueB && a.cards.back().suit > b.cards.back().suit); });
 			this->currentPlayer = this->records[0].back().player;
 			this->dealer = this->records[0].back().player;
 			this->lastHand = Hand{};
@@ -5120,13 +5117,13 @@ private:
 				candidates.clear();
 				return false;
 			}
-		sort(hand.cards.begin(), hand.cards.end(), [&counts, this](const Card a, const Card b) { const Count countA = counts[a.point], countB = counts[b.point]; const Value valueA = this->values[a.point], valueB = this->values[b.point]; return countA > countB || (countA == countB && (valueA > valueB || (valueA == valueB && a.suit > b.suit))); });
+		std::sort(hand.cards.begin(), hand.cards.end(), [&counts, this](const Card a, const Card b) { const Count countA = counts[a.point], countB = counts[b.point]; const Value valueA = this->values[a.point], valueB = this->values[b.point]; return countA > countB || (countA == countB && (valueA > valueB || (valueA == valueB && a.suit > b.suit))); });
 		if (adjacent_find(hand.cards.begin(), hand.cards.end()) != hand.cards.end())
 		{
 			candidates.clear();
 			return false;
 		}
-		sort(counts.begin(), counts.end(), [](const Count a, const Count b) { return a > b; });
+		std::sort(counts.begin(), counts.end(), [](const Count a, const Count b) { return a > b; });
 		if (counts[0] > 4)
 		{
 			candidates.clear();
@@ -5846,7 +5843,7 @@ public:
 			this->records = std::vector<std::vector<Hand>>{ std::vector<Hand>{} };
 			for (Player player = 0; player < playerCount; ++player)
 				this->records[0].push_back(Hand{ player, std::vector<Card>{ this->players[player].back() } });
-			sort(this->records[0].begin(), this->records[0].end(), [this](Hand a, Hand b) { const Value valueA = this->values[a.cards.back().point], valueB = this->values[b.cards.back().point]; return valueA > valueB || (valueA == valueB && a.cards.back().suit > b.cards.back().suit); });
+			std::sort(this->records[0].begin(), this->records[0].end(), [this](Hand a, Hand b) { const Value valueA = this->values[a.cards.back().point], valueB = this->values[b.cards.back().point]; return valueA > valueB || (valueA == valueB && a.cards.back().suit > b.cards.back().suit); });
 			this->currentPlayer = this->records[0].back().player;
 			this->dealer = this->records[0].back().player;
 			this->lastHand = Hand{};
@@ -6059,10 +6056,10 @@ private:
 				++counts[card.point];
 			else
 				return false;
-		sort(hand.cards.begin(), hand.cards.end(), [&counts, this](const Card a, const Card b) { const Count countA = counts[a.point], countB = counts[b.point]; const Value valueA = this->values[a.point], valueB = this->values[b.point]; return countA > countB || (countA == countB && (valueA > valueB || (valueA == valueB && a.suit > b.suit))); });
+		std::sort(hand.cards.begin(), hand.cards.end(), [&counts, this](const Card a, const Card b) { const Count countA = counts[a.point], countB = counts[b.point]; const Value valueA = this->values[a.point], valueB = this->values[b.point]; return countA > countB || (countA == countB && (valueA > valueB || (valueA == valueB && a.suit > b.suit))); });
 		if (adjacent_find(hand.cards.begin(), hand.cards.end()) != hand.cards.end())
 			return false;
-		sort(counts.begin(), counts.end(), [](const Count a, const Count b) { return a > b; });
+		std::sort(counts.begin(), counts.end(), [](const Count a, const Count b) { return a > b; });
 		if (counts[0] > 4)
 			return false;
 		switch (hand.cards.size())
@@ -6420,7 +6417,7 @@ private:
 				upperAmounts[player] = this->amounts[player] >> 8;
 				lowerAmounts[player] = this->amounts[player] & 0xFF/* 0b11111111*/;
 			}
-			sort(sortedPlayers.begin(), sortedPlayers.end(), [&lowerAmounts](const Player playerA, const Player playerB) {return lowerAmounts[playerA] > lowerAmounts[playerB]; });
+			std::sort(sortedPlayers.begin(), sortedPlayers.end(), [&lowerAmounts](const Player playerA, const Player playerB) {return lowerAmounts[playerA] > lowerAmounts[playerB]; });
 			std::vector<Ranking> rankings(playerCount);
 			rankings[sortedPlayers[0]] = 1;
 			Ranking zippedRanking = 1, ranking = 1;
@@ -6513,7 +6510,7 @@ public:
 			this->records = std::vector<std::vector<Hand>>{ std::vector<Hand>{} };
 			for (Player player = 0; player < playerCount; ++player)
 				this->records[0].push_back(Hand{ player, std::vector<Card>{ this->players[player].back() } });
-			sort(this->records[0].begin(), this->records[0].end(), [this](Hand a, Hand b) { const Value valueA = this->values[a.cards.back().point], valueB = this->values[b.cards.back().point]; return valueA > valueB || (valueA == valueB && a.cards.back().suit > b.cards.back().suit); });
+			std::sort(this->records[0].begin(), this->records[0].end(), [this](Hand a, Hand b) { const Value valueA = this->values[a.cards.back().point], valueB = this->values[b.cards.back().point]; return valueA > valueB || (valueA == valueB && a.cards.back().suit > b.cards.back().suit); });
 			this->currentPlayer = this->records[0].back().player;
 			this->dealer = this->records[0].back().player;
 			this->lastHand = Hand{};
@@ -6669,10 +6666,10 @@ private:
 				++counts[card.point];
 			else
 				return false;
-		sort(hand.cards.begin(), hand.cards.end(), [&counts, this](const Card a, const Card b) { const Count countA = counts[a.point], countB = counts[b.point]; const Value valueA = this->values[a.point], valueB = this->values[b.point]; return countA > countB || (countA == countB && (valueA > valueB || (valueA == valueB && a.suit > b.suit))); });
+		std::sort(hand.cards.begin(), hand.cards.end(), [&counts, this](const Card a, const Card b) { const Count countA = counts[a.point], countB = counts[b.point]; const Value valueA = this->values[a.point], valueB = this->values[b.point]; return countA > countB || (countA == countB && (valueA > valueB || (valueA == valueB && a.suit > b.suit))); });
 		if (adjacent_find(hand.cards.begin(), hand.cards.end()) != hand.cards.end())
 			return false;
-		sort(counts.begin(), counts.end(), [](const Count a, const Count b) { return a > b; });
+		std::sort(counts.begin(), counts.end(), [](const Count a, const Count b) { return a > b; });
 		if (counts[0] > 4)
 			return false;
 		switch (hand.cards.size())
@@ -6969,7 +6966,7 @@ private:
 				upperAmounts[player] = this->amounts[player] >> 8;
 				lowerAmounts[player] = this->amounts[player] & 0xFF/* 0b11111111*/;
 			}
-			sort(sortedPlayers.begin(), sortedPlayers.end(), [&lowerAmounts](const Player playerA, const Player playerB) {return lowerAmounts[playerA] > lowerAmounts[playerB]; });
+			std::sort(sortedPlayers.begin(), sortedPlayers.end(), [&lowerAmounts](const Player playerA, const Player playerB) {return lowerAmounts[playerA] > lowerAmounts[playerB]; });
 			std::vector<Ranking> rankings(playerCount);
 			rankings[sortedPlayers[0]] = 1;
 			Ranking zippedRanking = 1, ranking = 1;
@@ -7073,7 +7070,7 @@ public:
 			this->records = std::vector<std::vector<Hand>>{ std::vector<Hand>{} };
 			for (Player player = 0; player < playerCount; ++player)
 				this->records[0].push_back(Hand{ player, std::vector<Card>{ this->players[player].back() } });
-			sort(this->records[0].begin(), this->records[0].end(), [this](Hand a, Hand b) { const Value valueA = this->values[a.cards.back().point], valueB = this->values[b.cards.back().point]; return valueA > valueB || (valueA == valueB && a.cards.back().suit > b.cards.back().suit); });
+			std::sort(this->records[0].begin(), this->records[0].end(), [this](Hand a, Hand b) { const Value valueA = this->values[a.cards.back().point], valueB = this->values[b.cards.back().point]; return valueA > valueB || (valueA == valueB && a.cards.back().suit > b.cards.back().suit); });
 			this->currentPlayer = this->records[0].back().player;
 			this->dealer = this->records[0].back().player;
 			this->lastHand = Hand{};
